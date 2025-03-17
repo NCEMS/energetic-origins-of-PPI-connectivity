@@ -14,13 +14,23 @@ URLS=(
 	"http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz"
 	"http://sgd-archive.yeastgenome.org/curation/chromosomal_feature/SGD_features.tab"
 	"https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000002311_559292_YEAST_v4.tar"
+	"https://sid.erda.dk/share_redirect/eIZVVNEd8B"
+	"https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz"
+)
+
+# define local files names (must match order of URLs)
+FILENAMES=(
+	"orf_trans.fasta.gz"
+	"SGD_features.tab"
+	"UP000002311_559292_YEAST_v4.tar"
+	"esm_if1_gvp4_t16_142M_UR50.pt"
+	"YEAST_559292_idmapping.dat.gz"
 )
 
 # function to download a file
 download_file() {
-
 	local url="$1"
-	local output="$DIR/$(basename "$url")"
+	local output="$2"
 
 	# Use curl if available, otherwise use wget
 	if command -v curl &>/dev/null; then
@@ -35,28 +45,34 @@ download_file() {
 
 # function to extract compressed files
 extract_file() {
-    local file="$1"
+	local file="$1"
 
-    if [[ "$file" == *.tar.gz || "$file" == *.tgz ]]; then
-        echo "Extracting TAR.GZ: $file"
-        tar -xzf "$file" -C "$DIR" && rm "$file"
-    elif [[ "$file" == *.tar ]]; then
-        echo "Extracting TAR: $file"
-        tar -xf "$file" -C "$DIR" && rm "$file"
-    elif [[ "$file" == *.gz && "$file" != *.tar.gz ]]; then
-        echo "Extracting GZ: $file"
-        gunzip "$file"
-    else
-        echo "No extraction needed: $file"
-    fi
+	if [[ "$file" == *.tar.gz || "$file" == *.tgz ]]; then
+		echo "Extracting TAR.GZ: $file"
+		tar -xzf "$file" -C "$DIR" && rm "$file"
+	elif [[ "$file" == *.tar ]]; then
+		echo "Extracting TAR: $file"
+		tar -xf "$file" -C "$DIR" && rm "$file"
+	elif [[ "$file" == *.gz && "$file" != *.tar.gz ]]; then
+		echo "Extracting GZ: $file"
+		gunzip "$file"
+	else
+		echo "No extraction needed: $file"
+	fi
 }
 
+# ensure URLS and FILENAMES arrays have the same length
+if [[ ${#URLS[@]} -ne ${#FILENAMES[@]} ]]; then
+	echo "Error: The number of URLs does not match the number of filenames." >&2
+	exit 1
+fi
 
-# loop through URLs and download each file
-for url in "${URLS[@]}"; do
-	filename="$DIR/$(basename "$url")"
-	download_file "$url"
+# loop through URLs and download each file with the specified name
+for i in "${!URLS[@]}"; do
+	url="${URLS[$i]}"
+	filename="$DIR/${FILENAMES[$i]}"
+	download_file "$url" "$filename"
 	extract_file "$filename"
 done
 
-echo "All files downloaded to $DIR."
+echo "All files downloaded and saved to $DIR with custom filenames."
