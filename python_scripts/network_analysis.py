@@ -1,147 +1,127 @@
-# load modules
 import sys
+import argparse
 from Bio import SeqIO
 import networkx as nx
-import numpy as np
 import pandas as pd
-from datetime import datetime
 import metapredict as meta
-import matplotlib.pyplot as plt
 
-# function to extract first name for a node
+# function to extract primary name for a node
 def extract_primary_name(node):
 
-	return node.split(";")[0] # take the first part of the name before the semi-colon
+	# Take the first part of the name before the semi-colon
+	return node.split(";")[0]
 
-# Function to compute the fraction of residues > 0.5
+# function to compute the fraction of residues > 0.5
 def fraction_disordered(predictions):
 
-	if predictions is None:  # Handle missing values
+	# this is the threshold mentioned in https://www.biorxiv.org/content/10.1101/2024.11.05.622168v1
+	per_residue_disorder_cutoff = 0.5
 
+	# handle cases when no metapredict prediction is obtained
+	if predictions is None:  
 		return None
 
-	return (predictions > 0.5).sum() / len(predictions)
+	# otherwise return fraction of residues with score > >0.5
+	return (predictions > per_residue_disorder_cutoff).sum() / len(predictions)
 
-# label applied to outputs as a prefix
-output_label = "0_"
+# function to process nodes
+def process_nodes(edges_df, s288c_seqs):
 
-# threshold for determining if a protein is disordered
-# Note well, this should be swapped for a threshold calculated from DisProt
-protein_disorder_cutoff = 0.50
+	# load nodes as a DataFrame
+	nodes_df = pd.DataFrame(pd.unique(edges_df[['source', 'target']].values.ravel()), columns=['node'])
 
-# edges file path
-#edge_file       = "../data-files/The_Yeast_Interactome_edges.csv"
-edge_file       = sys.argv[1]
+	# check to see which nodes have a sequence in s288c_seqs
+	nodes_df['has_verified_sequence'] = nodes_df['node'].isin(s288c_seqs.keys())
 
-# yeast fasta file path
-# from http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/
-s288c_fasta     = "../data-files/orf_trans.fasta"
+	# define "primary_node" as the first gene name within semi-colon delimited lists
+	nodes_df["primary_node"] = nodes_df["node"].apply(extract_primary_name)
 
-# load S288C fasta seqs as a dictionary using Biopython
-s288c_seqs      = SeqIO.to_dict(SeqIO.parse(s288c_fasta, "fasta"))
+	# use "primary_node" as keys to check for sequences
+	nodes_df['has_verified_sequence'] = nodes_df['primary_node'].isin(s288c_seqs.keys())
 
-# load the file DisProt_release_2024_12_with_ambiguous_evidences.tsv
-disprot         = "../data-files/DisProt_release_2024_12_with_ambiguous_evidences.tsv"
-disprot_df      = pd.read_csv(disprot, sep="\t")
+	# grab sequences from s288c_seqs and add as a column in the DataFrame
+	nodes_df["sequence"] = nodes_df["primary_node"].apply(lambda x: str(s288c_seqs[x].seq).rstrip("*") if x in s288c_seqs else None)
 
-# load edges as dataframe
-edges_df  = pd.read_csv(edge_file)
+	# return the updated DataFrame
+	return nodes_df
 
-edges_df.to_csv("../processed-data/"+output_label+"network_edges.csv", columns = ["source", "target"], index=False)
+# function to run metapredict on node sequences
+def predict_disorder(nodes_df):
 
-## EXTRACT NODES
+	# create dictionary in format needed by metapredict
+	map_nodes_to_seq = {k: v for k, v in zip(nodes_df["primary_node"], nodes_df["sequence"]) if v is not None}
 
-# make a single-column DataFrame containing the gene names of all unique nodes; should be 3927 for Yeast Interactome
-nodes_df     = pd.DataFrame(pd.unique(edges_df[['source', 'target']].values.ravel()), columns = ['node'])
+	# run metapredict
+	disorder_predictions = meta.predict_disorder(map_nodes_to_seq)
 
-# check to see how many nodes lack a sequence when using the "raw" Yeast Interactome names
-nodes_df['has_verified_sequence'] = nodes_df['node'].isin(s288c_seqs.keys())
+	# add dictionary information to DataFrame
+	nodes_df["disorder_predictions"] = nodes_df["primary_node"].map(lambda x: disorder_predictions[x][1] if x in disorder_predictions else None)
 
-print ("nodes that cannot be mapped to a sequence by raw name")
-print (nodes_df[nodes_df['has_verified_sequence'] == False].info())
-print (nodes_df[nodes_df['has_verified_sequence'] == False], '\n')
+	# add column with protein's fraction of disordered residues
+	nodes_df["disorder_fraction"] = nodes_df["disorder_predictions"].apply(fraction_disordered)
 
-# rename nodes with compound names - stop gap measure, should be investigated more later (just takes the first name)
-nodes_df["primary_node"] = nodes_df["node"].apply(extract_primary_name)
+	# add binary classification of protein as disordered/not disordered
+	nodes_df["is_disordered"] = nodes_df["disorder_fraction"].apply(lambda x: 1 if x >= 0.50 else 0)
 
-## ADD SEQUENCE INFORMATION
+	# return the updated DataFrame
+	return nodes_df
 
-# determine how many nodes have a sequence in s288c_seqs reference fasta
-nodes_df['has_verified_sequence'] = nodes_df['primary_node'].isin(s288c_seqs.keys())
+# function to compute network centrality measures
+def compute_centrality(edges_df, nodes_df):
 
-print ("nodes that cannot be mapped to a sequence by first name in list")
-print (nodes_df[nodes_df['has_verified_sequence'] == False].info(), '\n')
-print (nodes_df[nodes_df['has_verified_sequence'] == False], '\n')
+	# make networkx style graph
+	interactome_graph = nx.from_pandas_edgelist(edges_df, "source", "target")
 
-# insert sequence if available, otherwise insert None
-# this line also strips off the * that indicates the stop codon location in the fasta file
-nodes_df["sequence"] = nodes_df["primary_node"].apply(lambda x: str(s288c_seqs[x].seq).rstrip("*") if x in s288c_seqs else None)
+	# perform centrality calculations
+	centrality_measures = {"degree_centrality"     : nx.degree_centrality(interactome_graph),
+		               "betweenness_centrality": nx.betweenness_centrality(interactome_graph),
+                               "eigenvector_centrality": nx.eigenvector_centrality(interactome_graph, max_iter=1000),
+                               "closeness_centrality"  : nx.closeness_centrality(interactome_graph),
+                               "load_centrality"       : nx.load_centrality(interactome_graph),
+                               "pagerank"              : nx.pagerank(interactome_graph),
+                               "k_shell"               : nx.core_number(interactome_graph)
+                              }
 
-print ("The following nodes_df have no sequence information:")
-print (nodes_df[nodes_df['has_verified_sequence'] == False].info())
-print (nodes_df[nodes_df['has_verified_sequence'] == False])
+	# add per-node information to the DataFrame
+	for key, values in centrality_measures.items():
+		nodes_df[key] = nodes_df["node"].map(values)
 
-## RUN METAPREDICT
+	# return the updated DataFrame
+	return nodes_df
 
-# create dictionary with node names (gene identifiers) as keys and sequences as values
-# this is the input to metapredict (needs to be cleaned up a bit)
-map_nodes_to_seq = dict(zip(nodes_df["primary_node"], nodes_df["sequence"]))
+# main function
+def main():
 
-# create a clean version that does not include None values
-map_nodes_to_seq_clean = {k: v for k, v in map_nodes_to_seq.items() if v is not None}
+	# setup arguments from the command line
+	parser     = argparse.ArgumentParser(description="Process Yeast interactome network.")
+	parser.add_argument("--edges", default="data-files/The_Yeast_Interactome_edges.csv", help="Path to the edges CSV file")
+	parser.add_argument("--fasta", default="data-files/orf_trans.fasta", help="Path to the yeast protein FASTA file")
+	parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
+	parser.add_argument("--output_dir", default="processed-data", help="Output directory")
+	#parser.add_argument("--disprot", required=True, help="Path to the DisProt TSV file")
+	args       = parser.parse_args()
 
-# perform disoder predictions with metapredict
-disorder_predictions = meta.predict_disorder(map_nodes_to_seq_clean)
+	# load input data
+	s288c_seqs = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
+	edges_df   = pd.read_csv(args.edges)
+	nodes_df   = process_nodes(edges_df, s288c_seqs)
 
-# add metapredict output to dataframe
-nodes_df["disorder_predictions"] = nodes_df["primary_node"].map(lambda x: disorder_predictions[x][1] if x in disorder_predictions else None)
+	# predict disorder using metapredict
+	nodes_df   = predict_disorder(nodes_df)
 
-# calculate the fraction of residues in each protein predicted to be disordered
-nodes_df["disorder_fraction"] = nodes_df["disorder_predictions"].apply(fraction_disordered)
+	# compute network centrality measures
+	nodes_df   = compute_centrality(edges_df, nodes_df)
 
-# create binary classification of "disordered or not"
-nodes_df["is_disordered"] = nodes_df["disorder_fraction"].apply(lambda x: 1 if x >= protein_disorder_cutoff else 0)
+	# save outputs
+	edges_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_edges.csv", columns=["source", "target"], index=False)
+	nodes_df.drop(columns=["disorder_predictions", "sequence"]).to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation.csv", index=False)
 
-## NETWORK CENTRALITY CALCULATIONS
+	# print a "DONE" statement
+	print(f"Processing complete. Output saved to {args.output_dir}")
 
-# ensure the correct column names are present
-if "source" not in edges_df.columns or "target" not in edges_df.columns:
-    print("Column names are incorrect. Available columns:", edges_df.columns)
+# entry point
+if __name__ == "__main__":
 
-# create an undirected graph
-interactome_graph = nx.from_pandas_edgelist(edges_df, "source", "target")
-
-# compute centrality metrics
-
-# a
-degree_centrality = nx.degree_centrality(interactome_graph)
-nodes_df["degree_centrality"] = nodes_df["node"].map(degree_centrality)
-
-# b
-betweenness_centrality = nx.betweenness_centrality(interactome_graph)
-nodes_df["betweenness_centrality"] = nodes_df["node"].map(betweenness_centrality)
-
-# c
-eigenvector_centrality = nx.eigenvector_centrality(interactome_graph, max_iter=1000)
-nodes_df["eigenvector_centrality"] = nodes_df["node"].map(eigenvector_centrality)
-
-# d
-closeness_centrality = nx.closeness_centrality(interactome_graph)
-nodes_df["closeness_centrality"] = nodes_df["node"].map(closeness_centrality)
-
-# e
-load_centrality = nx.load_centrality(interactome_graph)
-nodes_df["load_centrality"] = nodes_df["node"].map(load_centrality)
-
-# f
-pagerank = nx.pagerank(interactome_graph)
-nodes_df["pagerank"] = nodes_df["node"].map(pagerank)
-
-# g
-k_shell = nx.core_number(interactome_graph)  # k-shell decomposition
-nodes_df["k_shell"] = nodes_df["node"].map(k_shell)
-
-# save the results to file; omit the array of per-residue disorder predictions and the amino acid sequence
-nodes_df.drop(columns=["disorder_predictions", "sequence"]).to_csv("../processed-data/"+output_label+"network_nodes_with_annotation.csv", index=False)
-
+	# run the main function
+	main()
 
