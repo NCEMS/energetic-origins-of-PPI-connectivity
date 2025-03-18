@@ -1,0 +1,5 @@
+tmp/
+processed-data/
+# ignore everything in data-files except Yeast Interactome files
+data-files/*
+!data-files/The_Yeast_Interactome*
