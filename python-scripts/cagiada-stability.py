@@ -127,9 +127,6 @@ def main():
 
 	# parse command-line arguments
 	parser = argparse.ArgumentParser(description="Run stability predictions using ESM inverse folding.")
-	#parser.add_argument("--structure", required=True, help="Path to the input PDB structure file")
-	#parser.add_argument("--chain", required=True, help="PDB chain identifier (e.g., 'A')")
-	#parser.add_argument("--output_name", required=True, help="Output filename for the processed PDB")
 	parser.add_argument("--input_node_file", required=True, help="Output from network-analysis.py")
 	parser.add_argument("--output_dir", default="processed-data", help="Directory where results will be saved (default: 'outputs')")
 	args = parser.parse_args()
@@ -142,7 +139,7 @@ def main():
 	# load network node information and prepare set of commands to be run with multiprocessing
 	nodes_df = pd.read_csv(args.input_node_file)
 
-	nodes_df = nodes_df.head(10) # TESTING PURPOSES ONLY
+	#nodes_df = nodes_df.head(10) # TESTING PURPOSES ONLY
 
 	# all protein structure predictions from EBI for S288C contain a single chain with name A
 	chainID = "A"
@@ -150,8 +147,13 @@ def main():
 	# create cagiada class object list for each row in nodes_df
 	#cagiada_jobs = nodes_df.apply(lambda row: cagiada("data-files/AF-"+row["UniProtKB-AC"]+"-F1-model_v4.pdb", chainID, row["UniProtKB-AC"]))
 
+	
+
 	test_object1 = cagiada("data-files/AF-P35725-F1-model_v4.pdb", "A", "P35725")
 	test_object2 = cagiada("data-files/AF-P15700-F1-model_v4.pdb", "A", "P15700")
+	#test_object3 = cagiada()
+	#test_object4 = cagiada()
+	#test_object5 = cagiada()
 
 	predict_dG(test_object1, args.output_dir, model, alphabet)
 	predict_dG(test_object2, args.output_dir, model, alphabet)
