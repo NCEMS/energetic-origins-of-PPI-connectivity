@@ -75,4 +75,7 @@ for i in "${!URLS[@]}"; do
 	extract_file "$filename"
 done
 
+# unpack the PDB files from AF2
+gunzip data-files/*gz
+
 echo "All files downloaded and saved to $DIR with custom filenames."
