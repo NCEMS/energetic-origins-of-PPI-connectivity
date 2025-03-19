@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import esm
+import datetime
 from esm.inverse_folding.util import load_structure, extract_coords_from_structure, CoordBatchConverter
 from esm.inverse_folding.multichain_util import extract_coords_from_complex, _concatenate_coords, load_complex_coords
 
@@ -17,7 +18,13 @@ class cagiada:
 		self.structure = structure
 		self.chainID = chainID
 		self.output_name = output_name
-		
+
+# function to check CUDA memory being used by script
+def print_gpu_memory_usage():
+	allocated = torch.cuda.memory_allocated()
+	reserved = torch.cuda.memory_reserved()
+	print(f"GPU Memory Allocated: {allocated/1e6:.2f} MB")
+	print(f"GPU Memory Reserved:  {reserved/1e6:.2f} MB")
 
 # function to run the model for a set of inputs
 def run_model(coords, sequence, model, alphabet, chain_target='A'):
@@ -125,6 +132,19 @@ def predict_dG(cagiada_info, output_dir, model, alphabet):
 # MAIN
 def main():
 
+	# check if CUDA is available
+	if torch.cuda.is_available():
+		print("CUDA is available!")
+		# Print the current device index
+		device_index = torch.cuda.current_device()
+		print("Current GPU device index:", device_index)
+		# Print the name of the GPU
+		print("GPU Name:", torch.cuda.get_device_name(device_index))
+	else:
+		print("CUDA is not available.")
+
+	#sys.exit()
+
 	# parse command-line arguments
 	parser = argparse.ArgumentParser(description="Run stability predictions using ESM inverse folding.")
 	parser.add_argument("--input_node_file", required=True, help="Output from network-analysis.py")
@@ -134,7 +154,8 @@ def main():
 	# load esm model
 	IF_model_name   = "data-files/esm_if1_gvp4_t16_142M_UR50.pt"
 	model, alphabet = esm.pretrained.load_model_and_alphabet(IF_model_name)
-	model.eval().to("cpu").requires_grad_(False)
+	model.to("cuda")
+	model.eval().cuda().requires_grad_(False)
 
 	# load network node information and prepare set of commands to be run with multiprocessing
 	nodes_df = pd.read_csv(args.input_node_file)
@@ -148,11 +169,32 @@ def main():
 	# run calculations in series; need to make this parallel at some point
 	nrows = len(nodes_df)
 	count = 1
+	count_check = list(np.arange(1, 100, 10))
+
+	# run a few tests to make sure results match expectation 
+	# from https://github.com/KULL-Centre/_2024_cagiada_stability/tree/main
+
+	# run predictions in series using CUDA
+	start = datetime.now()
 	for i, r in nodes_df.iterrows():
-		curr_cagiada = cagiada(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.pdb", chainID, r["UniProtKB-AC"])
-		predict_dG(curr_cagiada, args.output_dir, model, alphabet)
-		print ("Done with ΔG prediction for:", r["UniProtKB-AC"], f"{count} out of {nrows}")
+		if r['has_verified_sequence'] == True:
+			curr_cagiada = cagiada(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.pdb", chainID, r["UniProtKB-AC"])
+			predict_dG(curr_cagiada, args.output_dir, model, alphabet)
+			print ("Done with ΔG prediction for:", r["UniProtKB-AC"], f"{count} out of {nrows}")
+			# clean up GPU memory after each iteration
+			torch.cuda.empty_cache()
+		else:
+			pass
+
+		if count in count_check:
+			print ("\n")
+			print_gpu_memory_usage()
+			print ("\n")
+			print ("Execution time is:", datetime.now() - start)
+			print ("\n")
+
 		count += 1
+	print ("Execution time is:", datetime.now() - start)
 
 # execute main when run from command line
 if __name__ == "__main__":

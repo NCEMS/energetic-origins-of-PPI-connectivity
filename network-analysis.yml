@@ -14,4 +14,4 @@ dependencies:
   - pytorch
   - scikit-learn
   - pip:
-      - pip install metapredict
+      - metapredict
