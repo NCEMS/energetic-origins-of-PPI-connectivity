@@ -6,7 +6,8 @@ import numpy as np
 import pandas as pd
 import argparse
 import esm
-import datetime
+import pytest
+from datetime import datetime
 from esm.inverse_folding.util import load_structure, extract_coords_from_structure, CoordBatchConverter
 from esm.inverse_folding.multichain_util import extract_coords_from_complex, _concatenate_coords, load_complex_coords
 
@@ -19,10 +20,39 @@ class cagiada:
 		self.chainID = chainID
 		self.output_name = output_name
 
+# reads values from last two lines of a file as output by predict_dG function
+def read_values_from_file(f_path):
+
+	with open(f_path, "r") as file:
+		lines = file.readlines()
+		val1  = lines[-2].strip().split(",")[1] # sum of likelihoods
+		val2  = lines[-1].strip().split(",")[1] # dG prediction
+
+	return float(val1), float(val2)
+
+# test that results match expectation
+def test_P78285_results_within_tolerance(f_path):
+
+	# test tolerance; need to allow for some difference due to floating point differences
+	tol = 1e-5
+
+	# expected values from https://colab.research.google.com/github/KULL-Centre/_2024_cagiada_stability/blob/main/stab_ESM_IF.ipynb
+	# calculated on March 19, 2025 by Dan Nissley using AF2 input structure AF-P78285-F1-model_v4.pdb
+	ref_likelihood_sum = 108.69234741592663 # kcal/mol
+	ref_dG_predicted   = 11.934800287565977 # kcal/mol
+
+	# extract predicted values from the new run of the test protein
+	new_likelihood_sum, new_dG_predicted = read_values_from_file(f_path)
+
+	# check assertions
+	assert abs(ref_likelihood_sum - new_likelihood_sum) < tol, "Reference and calculated likelihood sums do not match"
+	assert abs(ref_dG_predicted - new_dG_predicted) < tol, "Reference and calculated ΔG do not match"
+
 # function to check CUDA memory being used by script
 def print_gpu_memory_usage():
+
 	allocated = torch.cuda.memory_allocated()
-	reserved = torch.cuda.memory_reserved()
+	reserved  = torch.cuda.memory_reserved()
 	print(f"GPU Memory Allocated: {allocated/1e6:.2f} MB")
 	print(f"GPU Memory Reserved:  {reserved/1e6:.2f} MB")
 
@@ -134,16 +164,15 @@ def main():
 
 	# check if CUDA is available
 	if torch.cuda.is_available():
-		print("CUDA is available!")
+		print("CUDA is available")
 		# Print the current device index
 		device_index = torch.cuda.current_device()
 		print("Current GPU device index:", device_index)
 		# Print the name of the GPU
 		print("GPU Name:", torch.cuda.get_device_name(device_index))
 	else:
-		print("CUDA is not available.")
-
-	#sys.exit()
+		print("CUDA is not available; this script will take a few days to run. Exiting")
+		sys.exit()
 
 	# parse command-line arguments
 	parser = argparse.ArgumentParser(description="Run stability predictions using ESM inverse folding.")
@@ -161,7 +190,7 @@ def main():
 	nodes_df = pd.read_csv(args.input_node_file)
 
 	# testing purposes only
-	nodes_df = nodes_df.head(100)
+	nodes_df = nodes_df.head(20)
 
 	# all protein structure predictions from EBI for S288C contain a single chain with name A
 	chainID = "A"
@@ -169,10 +198,13 @@ def main():
 	# run calculations in series; need to make this parallel at some point
 	nrows = len(nodes_df)
 	count = 1
-	count_check = list(np.arange(1, 100, 10))
+	count_check = list(np.arange(0, nrows+1, 10))
 
-	# run a few tests to make sure results match expectation 
-	# from https://github.com/KULL-Centre/_2024_cagiada_stability/tree/main
+	# run a test to make sure results match expectation
+	# run on the default protein P78285 from Cagiada Google Colab notebook
+	predict_dG(cagiada("test/P78285/AF-P78285-F1-model_v4.pdb", chainID, "AF-P78285-F1-model_v4"), args.output_dir, model, alphabet)
+	torch.cuda.empty_cache()
+	test_P78285_results_within_tolerance(os.path.join(args.output_dir, "AF-P78285-F1-model_v4-cagiada-dG.csv"))
 
 	# run predictions in series using CUDA
 	start = datetime.now()
