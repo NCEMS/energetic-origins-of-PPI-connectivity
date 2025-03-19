@@ -13,3 +13,4 @@ This pipeline uses Snakemake to integrate pipeline steps, currently amounts to:
 To be added:
 
 1. Incorporate DeepTMHMM calculations to identify transmembrane and secreted proteins. Transmembrane proteins should probably not have their disorder scores calculated, and signal peptides should be omitted from disorder calculations (per email from Jon S. on March 17, 2025)
+2. Having some trouble with metapredict install from environment.yml file; not sure exactly what is going on

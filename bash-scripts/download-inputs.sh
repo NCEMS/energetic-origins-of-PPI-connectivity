@@ -9,6 +9,9 @@ DIR="data-files"
 # make sure it exists
 mkdir -p "$DIR"
 
+# also create directory for processed data (not being used right now!)
+mkdir -p processed-data
+
 # files to download
 URLS=(
 	"http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz"

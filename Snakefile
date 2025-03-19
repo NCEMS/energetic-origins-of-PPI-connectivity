@@ -5,16 +5,15 @@ rule all:
 
 rule download_inputs:
 	output:
-		"data-files/.download_complete"
+		"data-files/orf_trans.fasta",
+		"data-files/YEAST_559292_idmapping.dat"
 	shell:
 		"""
 		bash bash-scripts/download-inputs.sh
-		touch {output}
 		"""
 
 rule network_analysis:
 	input:
-		dependency      = "data-files/.download_complete",
 		fasta           = "data-files/orf_trans.fasta",
 		edges           = "data-files/The_Yeast_Interactome_edges.csv"
 	params:
