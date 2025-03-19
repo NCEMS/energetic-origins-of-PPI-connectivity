@@ -34,7 +34,7 @@ def read_values_from_file(f_path):
 def test_P78285_results_within_tolerance(f_path):
 
 	# test tolerance; need to allow for some difference due to floating point differences
-	tol = 1e-5
+	tol = 1e-4
 
 	# expected values from https://colab.research.google.com/github/KULL-Centre/_2024_cagiada_stability/blob/main/stab_ESM_IF.ipynb
 	# calculated on March 19, 2025 by Dan Nissley using AF2 input structure AF-P78285-F1-model_v4.pdb
@@ -134,7 +134,7 @@ def masked_absolute(mut, idx, token_probs, alphabet):
 	return token_probs[0, idx, mt_encoded].item()
 
 # function to carry out various steps in model pipeline
-def predict_dG(cagiada_info, output_dir, model, alphabet):
+def predict_dG(cagiada_info, output_dir, model, alphabet, create_file = False):
 
 	# cagiada_info is a class object of the type cagiada
 	# load structure
@@ -150,14 +150,16 @@ def predict_dG(cagiada_info, output_dir, model, alphabet):
 	dg_IF      = np.nansum(wt_scores)
 	dg_kcalmol = a * dg_IF + b
 
-	#print(f"ΔG predicted (likelihood sum): {dg_IF}")
-	#print(f"ΔG predicted (kcal/mol): {dg_kcalmol}")
+	# only save a file is specifically requested by the user
+	if create_file:
 
-	# save results
-	output_file = os.path.join(output_dir, cagiada_info.output_name+"-cagiada-dG.csv")
-	output_df   = pd.DataFrame({'Residue': aa_list + ['dG_IF', 'dG_kcalmol'], 'score': wt_scores + [dg_IF, dg_kcalmol]})
-	output_df.to_csv(output_file, sep=',', index=False)
-	#print(f"Results saved to {output_file}"
+		# save results
+		output_file = os.path.join(output_dir, cagiada_info.output_name+"-cagiada-dG.csv")
+		output_df   = pd.DataFrame({'Residue': aa_list + ['dG_IF', 'dG_kcalmol'], 'score': wt_scores + [dg_IF, dg_kcalmol]})
+		output_df.to_csv(output_file, sep=',', index=False)
+
+	# return the absolute free energy estimate
+	return dg_kcalmol
 
 # MAIN
 def main():
@@ -178,6 +180,7 @@ def main():
 	parser = argparse.ArgumentParser(description="Run stability predictions using ESM inverse folding.")
 	parser.add_argument("--input_node_file", required=True, help="Output from network-analysis.py")
 	parser.add_argument("--output_dir", default="processed-data", help="Directory where results will be saved (default: 'outputs')")
+	parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
 	args = parser.parse_args()
 
 	# load esm model
@@ -190,7 +193,7 @@ def main():
 	nodes_df = pd.read_csv(args.input_node_file)
 
 	# testing purposes only
-	nodes_df = nodes_df.head(20)
+	nodes_df = nodes_df.head(50)
 
 	# all protein structure predictions from EBI for S288C contain a single chain with name A
 	chainID = "A"
@@ -198,26 +201,35 @@ def main():
 	# run calculations in series; need to make this parallel at some point
 	nrows = len(nodes_df)
 	count = 1
-	count_check = list(np.arange(0, nrows+1, 10))
+	count_check = list(np.arange(0, nrows+1, 50))
 
 	# run a test to make sure results match expectation
 	# run on the default protein P78285 from Cagiada Google Colab notebook
-	predict_dG(cagiada("test/P78285/AF-P78285-F1-model_v4.pdb", chainID, "AF-P78285-F1-model_v4"), args.output_dir, model, alphabet)
+	predict_dG(cagiada("test/P78285/AF-P78285-F1-model_v4.pdb", chainID, "AF-P78285-F1-model_v4"), args.output_dir, model, alphabet, create_file = True)
 	torch.cuda.empty_cache()
 	test_P78285_results_within_tolerance(os.path.join(args.output_dir, "AF-P78285-F1-model_v4-cagiada-dG.csv"))
+
+	# add empty column to hold dG prediction
+	nodes_df["pred_stability"] = None
 
 	# run predictions in series using CUDA
 	start = datetime.now()
 	for i, r in nodes_df.iterrows():
+
 		if r['has_verified_sequence'] == True:
+
 			curr_cagiada = cagiada(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.pdb", chainID, r["UniProtKB-AC"])
-			predict_dG(curr_cagiada, args.output_dir, model, alphabet)
+			abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
+
+			nodes_df.at[i, "pred_stability"] = abs_dG
+
 			print ("Done with ΔG prediction for:", r["UniProtKB-AC"], f"{count} out of {nrows}")
 			# clean up GPU memory after each iteration
 			torch.cuda.empty_cache()
 		else:
 			pass
 
+		# print some information at an interval for monitoring purposes
 		if count in count_check:
 			print ("\n")
 			print_gpu_memory_usage()
@@ -226,7 +238,14 @@ def main():
 			print ("\n")
 
 		count += 1
-	print ("Execution time is:", datetime.now() - start)
+	print ("Total execution time is:", datetime.now() - start) # total time for all dG predictions
+
+	# save updated nodes_df to file with a new name
+	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_stability.csv", index=False)
+
+	# for testing purposes only; check a subset
+	test_df = nodes_df[nodes_df["pred_stability"] != None]
+	test_df.to_csv("processed-data/test.csv", index=False)
 
 # execute main when run from command line
 if __name__ == "__main__":

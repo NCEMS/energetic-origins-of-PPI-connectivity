@@ -4,7 +4,7 @@
 #             for analysis in Python with NetworkX. The xgmml file format was not working for me. 
 
 # set the download directory
-DIR="data-files"
+DIR=$1
 
 # make sure it exists
 mkdir -p "$DIR"
@@ -80,5 +80,8 @@ done
 
 # unpack the PDB files from AF2
 gunzip data-files/*gz
+
+# remove the .cif files, we will not need them
+rm $DIR/*cif
 
 echo "All files downloaded and saved to $DIR with custom filenames."
