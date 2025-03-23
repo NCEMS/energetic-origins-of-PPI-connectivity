@@ -33,7 +33,8 @@ rule create_fasta:
 rule network_analysis:
     input:
         fasta = f"{DATA_DIR}/orf_trans.fasta",
-        edges = f"{DATA_DIR}/The_Yeast_Interactome_edges.csv"
+        edges = f"{DATA_DIR}/The_Yeast_Interactome_edges.csv",
+        preds = "DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line"
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir = PROCESSED_DIR
@@ -43,7 +44,7 @@ rule network_analysis:
         """
         conda run -n network-analysis python python-scripts/network-analysis.py \
         --edges {input.edges} --fasta {input.fasta} --output_prefix {params.output_prefix} \
-        --output_dir {params.output_dir}
+        --output_dir {params.output_dir} --seq_preds {input.preds}
         """
 
 rule cagiada_stability:
