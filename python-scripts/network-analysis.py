@@ -18,7 +18,7 @@ def fraction_disordered(predictions):
 	per_residue_disorder_cutoff = 0.5
 
 	# handle cases when no metapredict prediction is obtained
-	if predictions is None:  
+	if predictions is None:
 		return None
 
 	# otherwise return fraction of residues with score > >0.5
@@ -55,11 +55,88 @@ def process_nodes(edges_df, s288c_seqs):
 	# return the updated DataFrame
 	return nodes_df
 
+# takes list of lines output by DeepTMHMM and returns results as a dictionary
+def parse_model_output(lines):
+
+	parsed = {}
+	i = 0
+
+	expected_labels = ["TM", "SP", "GLOB", "SP+TM", "BETA"]
+
+	while i < len(lines):
+
+		header = lines[i].strip()
+		seq = lines[i+1].strip()
+		mask = lines[i+2].strip()
+		i += 3
+
+		# Extract gene_id and classification (e.g., SP, TM, GLOB)
+		parts = header[1:].split('|')
+		gene_id = parts[0].strip()
+		class_label = parts[1].strip() if len(parts) > 1 else "UNKNOWN"
+		if class_label not in expected_labels:
+			print ("The classification of this protein took on an unexpected label:", gene_id, class_label)
+			sys.exit()
+
+		parsed[gene_id] = {'class'   : class_label,
+                	           'sequence': seq,
+                        	   'mask'    : mask}
+
+	return parsed
+
+# add DeepTMHMM information to nodes_df
+def apply_model_results(df, model_output_dict):
+
+	def extract_mask(gene_id):
+		return model_output_dict.get(gene_id, {}).get('mask', None)
+
+	def trim_sequence(gene_id):
+
+		data = model_output_dict.get(gene_id)
+		if not data:
+			return None
+		#if data['class'] == "TM":
+		#	return None
+		#elif data['class'] == "SP+TM":
+		#	return None
+		elif data["class"] in ["TM", "SP+TM", "BETA"]:
+			return None
+		elif data['class'] == "SP":
+			# Remove the signal peptide: keep only residues where mask != 'S'
+			trimmed = ''.join([
+				aa for aa, m in zip(data['sequence'], data['mask']) if m != 'S'
+			])
+		else:
+			# GLOB or other cases, return original sequence
+			trimmed =  data['sequence']
+
+		return trimmed.rstrip('*')
+
+	df['mask'] = df['node'].apply(extract_mask)
+	df['trimmed_sequence'] = df['node'].apply(trim_sequence)
+	return df
+
+# function to carry out various steps of adding DeepTMHMM information to DataFrame
+def add_DeepTMHMM(df, path_to_3line_file):
+
+	# read in 3line file as a list of lines
+	with open(path_to_3line_file) as f:
+		lines = f.readlines()
+
+	# parse the list of lines
+	model_output_dict = parse_model_output(lines)
+
+	# add information to the DataFrame
+	df = apply_model_results(df, model_output_dict)
+
+	return df
+
 # function to run metapredict on node sequences
 def predict_disorder(nodes_df):
 
 	# create dictionary in format needed by metapredict
-	map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["sequence"]) if v is not None}
+	#map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if v is not None}
+	map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if pd.notnull(v)}
 
 	# run metapredict
 	disorder_predictions = meta.predict_disorder(map_nodes_to_seq)
@@ -108,6 +185,7 @@ def main():
 	parser.add_argument("--fasta", default="data-files/orf_trans.fasta", help="Path to the yeast protein FASTA file")
 	parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
 	parser.add_argument("--output_dir", default="processed-data", help="Output directory")
+	parser.add_argument("--seq_preds", default="DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line", help="Path to 3line format prediction file from DeepTMHMM")
 	#parser.add_argument("--disprot", required=True, help="Path to the DisProt TSV file")
 	args       = parser.parse_args()
 
@@ -115,6 +193,9 @@ def main():
 	s288c_seqs = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
 	edges_df   = pd.read_csv(args.edges)
 	nodes_df   = process_nodes(edges_df, s288c_seqs)
+
+	# use DeepTMHMM results to update sequences used by metapredict
+	nodes_df   = add_DeepTMHMM(nodes_df, args.seq_preds)
 
 	# predict disorder using metapredict
 	nodes_df   = predict_disorder(nodes_df)
