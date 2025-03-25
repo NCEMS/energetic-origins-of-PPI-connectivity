@@ -1,4 +1,4 @@
-import sys
+import os, sys
 import argparse
 from Bio import SeqIO
 import networkx as nx
@@ -37,7 +37,7 @@ def process_nodes(edges_df, s288c_seqs):
 	#nodes_df["primary_node"] = nodes_df["node"].apply(extract_primary_name)
 
 	# remove rows in which "node" is a semi-colon separated list
-	nodes_df = nodes_df[~nodes_df["node"].str.contains(";", na=False)]
+	#nodes_df = nodes_df[~nodes_df["node"].str.contains(";", na=False)]
 
 	# use "node" as keys to check for sequences
 	nodes_df['has_verified_sequence'] = nodes_df['node'].isin(s288c_seqs.keys())
@@ -51,6 +51,15 @@ def process_nodes(edges_df, s288c_seqs):
 	cross_df     = pd.read_csv("data-files/YEAST_559292_idmapping.dat", names=column_names, sep="\t")
 	cross_df     = cross_df[cross_df["ID_type"] == "Gene_OrderedLocusName"]
 	nodes_df     = nodes_df.merge(cross_df[["UniProtKB-AC", "ID"]], left_on="node", right_on="ID", how="left")
+
+	# locate and add structures to dataframe
+	# Create the structure_path column
+	nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(lambda id: f"data-files/AF-{id}-F1-model_v4.pdb")
+	#nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(lambda id: f"data-files/AF-{id}-F1-model_v4.pdb" if id is not None else None)
+
+	# create the structure_exists column by checking if the file actually exists
+	nodes_df["structure_exists"] = nodes_df["structure_path"].apply(lambda path: 1 if os.path.exists(path) else 0)
+	nodes_df.loc[nodes_df["structure_exists"] == 0, "structure_path"] = None
 
 	# return the updated DataFrame
 	return nodes_df
@@ -203,7 +212,6 @@ def main():
 
 	# use DeepTMHMM results to update sequences used by metapredict
 	nodes_df   = add_DeepTMHMM(nodes_df, args.seq_preds)
-	#nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_temp.csv", index=False)
 
 	# predict disorder using metapredict
 	nodes_df   = predict_disorder(nodes_df)
@@ -219,7 +227,7 @@ def main():
 	nodes_df   = nodes_df.fillna("None")
 
 	# create a DataFrame with a random set of 20 rows for testing purposes
-	nodes_df   = nodes_df.sample(n=100, random_state=1991)
+	#nodes_df   = nodes_df.sample(n=100, random_state=1991)
 
 	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation.csv", index=False, na_rep=None)
 
