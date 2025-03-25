@@ -27,7 +27,7 @@ FIXED/DONE issues
 * Incorporate DeepTMHMM predictions into the pipeline 
 * Add test that makes sure sequence in nodes_df is the same length as the sequence in the AF2 model used to predict stability
 
-Know issues:
+Known issues:
 
 1. (Cagiada stability) Predictions on multi-domain proteins or proteins with complex folding kinetics show an absolute stability overestimated compared to the real one.
 2. (Cagiada stability) Predictions are limited to proteins with 1023 residues (Max protein size for the ESM-IF language model)
