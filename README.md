@@ -23,6 +23,7 @@ FIXED/DONE issues
 
 * Having some trouble with metapredict install from environment.yml file; not sure exactly what is going on (fixed, just syntax problems) (FIXED, pip syntax issue)
 * Add test for cagaida_stability.py; make sure prediction for test protein matches results from author's Google Colab
+* Incorporte DeepTMHMM predictions into the pipeline
 
 Know issues:
 

@@ -217,6 +217,10 @@ def main():
 	nodes_df   = nodes_df.drop(columns=["disorder_predictions"])
 	nodes_df   = nodes_df.replace("", "None")
 	nodes_df   = nodes_df.fillna("None")
+
+	# create a DataFrame with a random set of 20 rows for testing purposes
+	nodes_df   = nodes_df.sample(n=20, random_state=1991)
+
 	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation.csv", index=False, na_rep=None)
 
 	# print a "DONE" statement with info about output locations

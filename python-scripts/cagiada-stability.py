@@ -48,6 +48,16 @@ def test_P78285_results_within_tolerance(f_path):
 	assert abs(ref_likelihood_sum - new_likelihood_sum) < tol, "Reference and calculated likelihood sums do not match"
 	assert abs(ref_dG_predicted - new_dG_predicted) < tol, "Reference and calculated ΔG do not match"
 
+# test that sequences match between structure used for dG prediction and sequence used for all other predictions (e.g., metapredict)
+def test_sequences_match(AF2_fasta_path, seq2):
+
+	with open(AF2_fasta_path, "r") as f:
+		temp = f.readlines()
+
+	seq1 = temp[1].strip()
+
+	assert seq1 == seq2
+
 # function to check CUDA memory being used by script
 def print_gpu_memory_usage():
 
@@ -214,13 +224,19 @@ def main():
 		if r['has_verified_sequence'] == True and r['DeepTMHMM_class'] == "GLOB":
 
 			curr_cagiada = cagiada(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.pdb", chainID, r["UniProtKB-AC"])
-			abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
 
+			# test that the sequences between the orf_trans.fasta file from SGD and AF2 structures from EBI match
+			test_sequences_match(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.fasta", r["sequence"])
+
+			# generate the prediction and add it to the DataFrame
+			abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
 			nodes_df.at[i, "cagiada_stability"] = abs_dG
 
-			print ("Done with ΔG prediction for:", r["UniProtKB-AC"])
 			# clean up GPU memory after each iteration
 			torch.cuda.empty_cache()
+
+			print ("Done with ΔG prediction for:", r["UniProtKB-AC"])
+
 		else:
 			pass
 
