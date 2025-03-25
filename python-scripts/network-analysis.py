@@ -45,7 +45,7 @@ def process_nodes(edges_df, s288c_seqs):
 	# grab sequences from s288c_seqs and add as a column in the DataFrame
 	nodes_df["sequence"] = nodes_df["node"].apply(lambda x: str(s288c_seqs[x].seq).rstrip("*") if x in s288c_seqs else None)
 
-	# add additional useful node label information from UniProt (required by Cagiada stability analyses 
+	# add additional useful node label information from UniProt (required by Cagiada stability analyses
 	# to find the correct AF2 structure prediction to use for a given gene name)
 	column_names = ["UniProtKB-AC", "ID_type", "ID"]
 	cross_df     = pd.read_csv("data-files/YEAST_559292_idmapping.dat", names=column_names, sep="\t")
@@ -112,8 +112,14 @@ def apply_model_results(df, model_output_dict):
 
 		return trimmed.rstrip('*')
 
+	def extract_class(gene_id):
+		return model_output_dict.get(gene_id, {}).get("class", None)
+
+	# use apply with functions to update the input df
 	df['mask'] = df['node'].apply(extract_mask)
 	df['trimmed_sequence'] = df['node'].apply(trim_sequence)
+	df['DeepTMHMM_class'] = df['node'].apply(extract_class)
+
 	return df
 
 # function to carry out various steps of adding DeepTMHMM information to DataFrame
@@ -136,7 +142,8 @@ def predict_disorder(nodes_df):
 
 	# create dictionary in format needed by metapredict
 	#map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if v is not None}
-	map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if pd.notnull(v)}
+	#map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if pd.notnull(v)}
+	map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"])if pd.notnull(v) and v.strip() != ""}
 
 	# run metapredict
 	disorder_predictions = meta.predict_disorder(map_nodes_to_seq)
@@ -196,6 +203,7 @@ def main():
 
 	# use DeepTMHMM results to update sequences used by metapredict
 	nodes_df   = add_DeepTMHMM(nodes_df, args.seq_preds)
+	#nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_temp.csv", index=False)
 
 	# predict disorder using metapredict
 	nodes_df   = predict_disorder(nodes_df)
@@ -203,18 +211,18 @@ def main():
 	# compute network centrality measures
 	nodes_df   = compute_centrality(edges_df, nodes_df)
 
-	# add some additional identifier information; UniProtID == SGD ID == "standard gene name"
-
 	# save outputs
 	edges_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_edges.csv", columns=["source", "target"], index=False)
-	nodes_df.drop(columns=["disorder_predictions"]).to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation.csv", index=False)
 
-	# print a "DONE" statement
-	print(f"Processing complete. Output saved to {args.output_dir}")
+	nodes_df   = nodes_df.drop(columns=["disorder_predictions"])
+	nodes_df   = nodes_df.replace("", "None")
+	nodes_df   = nodes_df.fillna("None")
+	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation.csv", index=False, na_rep=None)
+
+	# print a "DONE" statement with info about output locations
+	print(f"Processing complete. Output saved to {args.output_dir}/{args.output_prefix}*")
 
 # entry point
 if __name__ == "__main__":
 
-	# run the main function
 	main()
-

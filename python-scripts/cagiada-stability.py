@@ -189,19 +189,14 @@ def main():
 	model.to("cuda")
 	model.eval().cuda().requires_grad_(False)
 
-	# load network node information and prepare set of commands to be run with multiprocessing
+	# load network node information and prepare set of commands to be run
 	nodes_df = pd.read_csv(args.input_node_file)
 
 	# testing purposes only
-	nodes_df = nodes_df.head(50)
+	#nodes_df = nodes_df.head(50)
 
 	# all protein structure predictions from EBI for S288C contain a single chain with name A
 	chainID = "A"
-
-	# run calculations in series; need to make this parallel at some point
-	nrows = len(nodes_df)
-	count = 1
-	count_check = list(np.arange(0, nrows+1, 50))
 
 	# run a test to make sure results match expectation
 	# run on the default protein P78285 from Cagiada Google Colab notebook
@@ -210,44 +205,30 @@ def main():
 	test_P78285_results_within_tolerance(os.path.join(args.output_dir, "AF-P78285-F1-model_v4-cagiada-dG.csv"))
 
 	# add empty column to hold dG prediction
-	nodes_df["pred_stability"] = None
+	nodes_df["cagiada_stability"] = "None"
 
 	# run predictions in series using CUDA
 	start = datetime.now()
 	for i, r in nodes_df.iterrows():
 
-		if r['has_verified_sequence'] == True:
+		if r['has_verified_sequence'] == True and r['DeepTMHMM_class'] == "GLOB":
 
 			curr_cagiada = cagiada(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.pdb", chainID, r["UniProtKB-AC"])
 			abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
 
-			nodes_df.at[i, "pred_stability"] = abs_dG
+			nodes_df.at[i, "cagiada_stability"] = abs_dG
 
-			print ("Done with ΔG prediction for:", r["UniProtKB-AC"], f"{count} out of {nrows}")
+			print ("Done with ΔG prediction for:", r["UniProtKB-AC"])
 			# clean up GPU memory after each iteration
 			torch.cuda.empty_cache()
 		else:
 			pass
 
-		# print some information at an interval for monitoring purposes
-		if count in count_check:
-			print ("\n")
-			print_gpu_memory_usage()
-			print ("\n")
-			print ("Execution time is:", datetime.now() - start)
-			print ("\n")
-
-		count += 1
 	print ("Total execution time is:", datetime.now() - start) # total time for all dG predictions
 
 	# save updated nodes_df to file with a new name
-	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_stability.csv", index=False)
-
-	# for testing purposes only; check a subset
-	test_df = nodes_df[nodes_df["pred_stability"] != None]
-	test_df.to_csv("processed-data/test.csv", index=False)
+	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_and_stability.csv", index=False)
 
 # execute main when run from command line
 if __name__ == "__main__":
 	main()
-

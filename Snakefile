@@ -1,4 +1,4 @@
-# Define global variables for generalization
+# global variables
 OUTPUT_PREFIX = "0_"
 DATA_DIR = "data-files"
 PROCESSED_DIR = "processed-data"
@@ -7,7 +7,7 @@ rule all:
     input:
         f"{DATA_DIR}/.all_fasta_created",
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv",
-        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_stability.csv"
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv"
 
 rule download_inputs:
     params:
@@ -53,7 +53,7 @@ rule cagiada_stability:
     params:
         output_dir = PROCESSED_DIR
     output:
-        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_stability.csv"
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv"
     shell:
         """
         conda run -n cagiada-stability python python-scripts/cagiada-stability.py \
