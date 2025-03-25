@@ -13,17 +13,19 @@ The current version of this pipeline is designed to run in the "Jupyter Lab PyTo
 3. Add network centrality metric information
 4. Run Cagiada stability as requested for proteins and add to network nodes
 
-To be added:
+To do:
 
-1. Incorporate test that makes sure sequence in nodes_df is the same length as the sequence in the AF2 model used to predict stability (have FASTA files, just need to add the check)
+0. Run full analysis on subset of ~20 proteins/nodes and check manually for consistency
 2. Run cagiada_stability predictions for all proteins in nodes_df
+3. Add CentralityCosDist to list of network calculations. Python implementation appears to be available here: https://github.com/nilesh-iiita/CentralityCosDist
 3. Need to handle ambiguous node names of the form "gene1;gene2;gene3" that appear in The_Yeast_Interactome files
 
 FIXED/DONE issues
 
 * Having some trouble with metapredict install from environment.yml file; not sure exactly what is going on (fixed, just syntax problems) (FIXED, pip syntax issue)
 * Add test for cagaida_stability.py; make sure prediction for test protein matches results from author's Google Colab
-* Incorporte DeepTMHMM predictions into the pipeline
+* Incorporate DeepTMHMM predictions into the pipeline 
+* Add test that makes sure sequence in nodes_df is the same length as the sequence in the AF2 model used to predict stability
 
 Know issues:
 
