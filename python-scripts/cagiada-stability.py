@@ -221,12 +221,12 @@ def main():
 	start = datetime.now()
 	for i, r in nodes_df.iterrows():
 
-		if r['has_verified_sequence'] == True and r['DeepTMHMM_class'] == "GLOB":
+		if r['has_verified_sequence'] == True and r['DeepTMHMM_class'] == "GLOB" and r['structure_exists'] == 1:
 
-			curr_cagiada = cagiada(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.pdb", chainID, r["UniProtKB-AC"])
+			curr_cagiada = cagiada(r['structure_path'], chainID, r["UniProtKB-AC"])
 
 			# test that the sequences between the orf_trans.fasta file from SGD and AF2 structures from EBI match
-			test_sequences_match(f"data-files/AF-{r['UniProtKB-AC']}-F1-model_v4.fasta", r["sequence"])
+			test_sequences_match(r['structure_path'].split('.pdb')[0]+'.fasta', r["sequence"])
 
 			# generate the prediction and add it to the DataFrame
 			abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
