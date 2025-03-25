@@ -1,2 +1,3 @@
-#snakemake --cores 1
+#!/bin/bash
+
 snakemake --cores 16 --use-conda
