@@ -242,8 +242,11 @@ def main():
 
 	print ("Total execution time is:", datetime.now() - start) # total time for all dG predictions
 
+	nodes_df   = nodes_df.replace("", "None")
+	nodes_df   = nodes_df.fillna("None")
+
 	# save updated nodes_df to file with a new name
-	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_and_stability.csv", index=False)
+	nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_and_stability.csv", index=False, na_rep=None)
 
 # execute main when run from command line
 if __name__ == "__main__":
