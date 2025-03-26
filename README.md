@@ -30,6 +30,7 @@ The current version of this pipeline is designed to run in the "Jupyter Lab PyTo
 
 To do:
 
+-1. Add typing checks to the code with the typing library
 0. Compare P20484,YKL021C sequences between AF2 and SGD ref, appears to be source of error in cagiada_stability
 1. Run cagiada_stability predictions for all proteins in nodes_df
 2. Add DisProt-based cutoff for determining which proteins are/are not disordered

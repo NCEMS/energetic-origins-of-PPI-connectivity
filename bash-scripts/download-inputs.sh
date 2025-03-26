@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # NOTE WELL - the Yeast Interactome dataset must be downloaded in .cys format and then exported as an edge graph
-#             for analysis in Python with NetworkX. The xgmml file format was not working for me. 
+#             for analysis in Python with NetworkX. The xgmml file format was not working for me.
 
 # set the download directory
 DIR=$1
