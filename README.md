@@ -15,10 +15,11 @@ The current version of this pipeline is designed to run in the "Jupyter Lab PyTo
 
 To do:
 
-0. Run full analysis on subset of ~20 proteins/nodes and check manually for consistency
-2. Run cagiada_stability predictions for all proteins in nodes_df
-3. Add CentralityCosDist to list of network calculations. Python implementation appears to be available here: https://github.com/nilesh-iiita/CentralityCosDist
-3. Need to handle ambiguous node names of the form "gene1;gene2;gene3" that appear in The_Yeast_Interactome files
+0. Compare P20484,YKL021C sequences between AF2 and SGD ref, appears to be source of error in cagiada_stability
+1. Run cagiada_stability predictions for all proteins in nodes_df
+2. Add DisProt-based cutoff for determining which proteins are/are not disordered
+2. Add CentralityCosDist to list of network calculations. Python implementation appears to be available here: https://github.com/nilesh-iiita/CentralityCosDist
+3. Need to handle ambiguous node names of the form "gene1;gene2;gene3" that appear in The_Yeast_Interactome files (currently left in but not annotated)
 
 FIXED/DONE issues
 

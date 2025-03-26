@@ -56,7 +56,10 @@ def test_sequences_match(AF2_fasta_path, seq2):
 
 	seq1 = temp[1].strip()
 
-	assert seq1 == seq2
+	if seq1 == seq2:
+		return True
+	else:
+		return "Sequence mismatch"
 
 # function to check CUDA memory being used by script
 def print_gpu_memory_usage():
@@ -226,11 +229,16 @@ def main():
 			curr_cagiada = cagiada(r['structure_path'], chainID, r["UniProtKB-AC"])
 
 			# test that the sequences between the orf_trans.fasta file from SGD and AF2 structures from EBI match
-			test_sequences_match(r['structure_path'].split('.pdb')[0]+'.fasta', r["sequence"])
+			seq_match = test_sequences_match(r['structure_path'].split('.pdb')[0]+'.fasta', r["sequence"])
 
-			# generate the prediction and add it to the DataFrame
-			abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
-			nodes_df.at[i, "cagiada_stability"] = abs_dG
+			if seq_match:
+
+				# generate the prediction and add it to the DataFrame
+				abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
+				nodes_df.at[i, "cagiada_stability"] = abs_dG
+
+			else:
+				nodes_df.at[i, "cagiada_stability"] = seq_match
 
 			# clean up GPU memory after each iteration
 			torch.cuda.empty_cache()
