@@ -1,14 +1,17 @@
 # global variables
 OUTPUT_PREFIX = "0_"
-DATA_DIR = "data-files"
-PROCESSED_DIR = "processed-data"
+DATA_DIR      = "/home/jovyan/data-store/home/shared/NCEMS/working-groups/energetic-origins/data-files"
+PROCESSED_DIR = "/home/jovyan/data-store/home/shared/NCEMS/working-groups/energetic-origins/processed-data"
 
+# rule that sets overall outputs required by this pipeline
 rule all:
     input:
         f"{DATA_DIR}/.all_fasta_created",
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv",
-        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv"
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv",
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}_annotated_network_summary.csv"
 
+# download all inputs required (other than The Yeast Interactome files)
 rule download_inputs:
     params:
         fDir = DATA_DIR
@@ -20,6 +23,7 @@ rule download_inputs:
         bash bash-scripts/download-inputs.sh {params.fDir}
         """
 
+# extract SEQRES records from AF2 PDB files
 rule create_fasta:
     params:
         fDir = DATA_DIR
@@ -30,6 +34,8 @@ rule create_fasta:
         bash bash-scripts/extract-seqres.sh {params.fDir}
         """
 
+# annotate network with centrality metrics, IDR information (metapredict v3)
+# and use DeepTMHMM to annotate membrane proteins, signal peptides, etc. 
 rule network_analysis:
     input:
         fasta = f"{DATA_DIR}/orf_trans.fasta",
@@ -43,19 +49,43 @@ rule network_analysis:
     shell:
         """
         conda run -n network-analysis python python-scripts/network-analysis.py \
-        --edges {input.edges} --fasta {input.fasta} --output_prefix {params.output_prefix} \
-        --output_dir {params.output_dir} --seq_preds {input.preds}
+        --edges         {input.edges} \
+        --fasta         {input.fasta} \
+        --output_prefix {params.output_prefix} \
+        --output_dir    {params.output_dir} \
+        --seq_preds     {input.preds}
         """
 
+# add stability predictions to nodes
 rule cagiada_stability:
     input:
         input_node_file = f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv"
     params:
+        output_prefix = OUTPUT_PREFIX,
         output_dir = PROCESSED_DIR
     output:
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv"
     shell:
         """
         conda run -n cagiada-stability python python-scripts/cagiada-stability.py \
-        --input_node_file {input.input_node_file} --output_dir {params.output_dir}
+        --input_node_file {input.input_node_file} \
+        --output_dir      {params.output_dir} \
+        --output_prefix   {params.output_prefix}
+        """
+
+# profile the output DataFrame
+rule profile_output:
+    input:
+        input_annotated_network = f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = PROCESSED_DIR
+    output:
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}annotated_network_summary.csv"
+    shell:
+        """
+        conda run -n network-analysis python python-scripts/profile-output.py \
+        --input_annotated_network {input.input_annotated_network} \
+        --output_prefix           {params.output_prefix} \
+        --output_dir              {params.output_dir}
         """
