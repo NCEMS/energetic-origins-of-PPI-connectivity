@@ -10,7 +10,10 @@ To run this code on CyVerse, follow the steps below.
 
 * Log into CyVerse and navigate to the [Discovery Environment](de.cyverse.org)
 * On the Apps tab, select "Jupyter Lab PyTorch GPU". An instance with at least 8 CPUs and 64 GB of memory alongside the GPU is suggested.
-* Once you instance has launched, open a Terminal and navigate to the directory `/home/jovyan/data-store/` 
+* Once you instance has launched, open a Terminal and navigate to the directory `/home/jovyan/data-store/` and run the command `git clone https://github.com/NCEMS/energetic-origins-of-PPI-connectivity.git` to clone the repo. (Note well - you will need to setup an SSH key to enable pulling code from this private repo).
+* Once the code is downloaded, navigate into the repo directory and run the command `./bash-scripts/env-setup.sh` to build the necessary environments for the pipeline
+* After the environments have been constructured, run the command `conda activate snakemake` followed by the command `./snakemake.command` to execute the pipeline
+  * You can examine the file `Snakefile` to view a summary of the steps performed during the run. 
 
 ### USAGE
 
