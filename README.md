@@ -1,6 +1,18 @@
-Code and some data-files for network analyses and protein stability predictions. 
+### DESCRIPTION
 
-The file data-files/The_Yeast_Interactome.cys was downloaded from [this site](http://yeast-interactome.biochem.mpg.de:3838/interactome/session/f06cae8f2dbb9777aacde99863e20b61/download/downloadCyto?w=) and converted to edge and node graphs (as found in data-files/) using Cytoscape to export the data. 
+Code and some data files for annotating a network with information about protein stability and network centrality metrics. 
+
+The file data-files/The_Yeast_Interactome.cys was downloaded from [here](http://yeast-interactome.biochem.mpg.de:3838/interactome/session/f06cae8f2dbb9777aacde99863e20b61/download/downloadCyto?w=) and converted to edge and node graphs (as found in data-files/) using Cytoscape to export the data in format readable by the Python module NetworkX. 
+
+### SETUP
+
+To run this code on CyVerse, follow the steps below. 
+
+* Log into CyVerse and navigate to the [Discovery Environment](de.cyverse.org)
+* On the Apps tab, select "Jupyter Lab PyTorch GPU". An instance with at least 8 CPUs and 64 GB of memory alongside the GPU is suggested.
+* Once you instance has launched, open a Terminal and navigate to the directory `/home/jovyan/data-store/` 
+
+### USAGE
 
 This pipeline uses Snakemake to integrate pipeline steps, currently amounts to:
 
