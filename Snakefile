@@ -9,7 +9,7 @@ rule all:
         f"{DATA_DIR}/.all_fasta_created",
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv",
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv",
-        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}_annotated_network_summary.csv"
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}annotated_network_summary.csv"
 
 # download all inputs required (other than The Yeast Interactome files)
 rule download_inputs:

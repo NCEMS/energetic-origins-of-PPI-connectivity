@@ -24,6 +24,32 @@ def fraction_disordered(predictions):
 	# otherwise return fraction of residues with score > >0.5
 	return (predictions > per_residue_disorder_cutoff).sum() / len(predictions)
 
+# function to count qualifying contiguous runs
+def count_IDRs(arr, threshold=0.5, min_length=30):
+
+	# catch instances of NaN in the array/values
+	if arr is None or isinstance(arr, float) and np.isnan(arr):
+		return 0
+
+	# create a boolean array: True where value >= threshold
+	mask = arr >= threshold
+	count = 0
+	current_run = 0
+
+	for val in mask:
+		if val:
+			current_run += 1
+		else:
+			if current_run >= min_length:
+				count += 1
+			current_run = 0
+
+	# check if the last run reached the threshold
+	if current_run >= min_length:
+		count += 1
+
+	return count
+
 # function to process nodes
 def process_nodes(edges_df, s288c_seqs):
 
@@ -215,6 +241,7 @@ def main():
 
 	# predict disorder using metapredict
 	nodes_df   = predict_disorder(nodes_df)
+	nodes_df["IDR_count"] = nodes_df["disorder_predictions"].apply(count_IDRs)
 
 	# compute network centrality measures
 	nodes_df   = compute_centrality(edges_df, nodes_df)
