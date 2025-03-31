@@ -8,8 +8,8 @@ rule all:
     input:
         f"{DATA_DIR}/.all_fasta_created",
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv",
-        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv",
-        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}annotated_network_summary.csv"
+        #f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv",
+        #f"{PROCESSED_DIR}/{OUTPUT_PREFIX}annotated_network_summary.csv"
 
 # download all inputs required (other than The Yeast Interactome files)
 rule download_inputs:
@@ -40,10 +40,12 @@ rule network_analysis:
     input:
         fasta = f"{DATA_DIR}/orf_trans.fasta",
         edges = f"{DATA_DIR}/The_Yeast_Interactome_edges.csv",
-        preds = "DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line"
+        preds = "DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line",
+        mappi = f"{DATA_DIR}/YEAST_559292_idmapping.dat"
     params:
         output_prefix = OUTPUT_PREFIX,
-        output_dir = PROCESSED_DIR
+        output_dir    = PROCESSED_DIR,
+        structure_dir = DATA_DIR
     output:
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv"
     shell:
@@ -53,6 +55,8 @@ rule network_analysis:
         --fasta         {input.fasta} \
         --output_prefix {params.output_prefix} \
         --output_dir    {params.output_dir} \
+        --ID_mappings   {input.mappi} \
+        --structure_dir {params.structure_dir} \
         --seq_preds     {input.preds}
         """
 
