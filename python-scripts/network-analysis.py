@@ -51,7 +51,7 @@ def count_IDRs(arr, threshold=0.5, min_length=30):
 	return count
 
 # function to process nodes
-def process_nodes(edges_df, s288c_seqs):
+def process_nodes(edges_df, s288c_seqs, ID_mappings_path, structure_dir):
 
 	# load nodes as a DataFrame
 	nodes_df = pd.DataFrame(pd.unique(edges_df[['source', 'target']].values.ravel()), columns=["node"])
@@ -74,13 +74,13 @@ def process_nodes(edges_df, s288c_seqs):
 	# add additional useful node label information from UniProt (required by Cagiada stability analyses
 	# to find the correct AF2 structure prediction to use for a given gene name)
 	column_names = ["UniProtKB-AC", "ID_type", "ID"]
-	cross_df     = pd.read_csv("data-files/YEAST_559292_idmapping.dat", names=column_names, sep="\t")
+	cross_df     = pd.read_csv(ID_mappings_path, names=column_names, sep="\t")
 	cross_df     = cross_df[cross_df["ID_type"] == "Gene_OrderedLocusName"]
 	nodes_df     = nodes_df.merge(cross_df[["UniProtKB-AC", "ID"]], left_on="node", right_on="ID", how="left")
 
 	# locate and add structures to dataframe
 	# Create the structure_path column
-	nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(lambda id: f"data-files/AF-{id}-F1-model_v4.pdb")
+	nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb")
 	#nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(lambda id: f"data-files/AF-{id}-F1-model_v4.pdb" if id is not None else None)
 
 	# create the structure_exists column by checking if the file actually exists
@@ -225,16 +225,18 @@ def main():
 	parser     = argparse.ArgumentParser(description="Process Yeast interactome network.")
 	parser.add_argument("--edges", default="data-files/The_Yeast_Interactome_edges.csv", help="Path to the edges CSV file")
 	parser.add_argument("--fasta", default="data-files/orf_trans.fasta", help="Path to the yeast protein FASTA file")
+	parser.add_argument("--structure_dir", default="data-files/", help="Path to the directory containing AF2 structures for structure predictions")
 	parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
 	parser.add_argument("--output_dir", default="processed-data", help="Output directory")
 	parser.add_argument("--seq_preds", default="DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line", help="Path to 3line format prediction file from DeepTMHMM")
+	parser.add_argument("--ID_mappings", default="data-files/YEAST_559292_idmapping.dat", help="Path to the UniProt ID mappings to be used")
 	#parser.add_argument("--disprot", required=True, help="Path to the DisProt TSV file")
 	args       = parser.parse_args()
 
 	# load input data
 	s288c_seqs = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
 	edges_df   = pd.read_csv(args.edges)
-	nodes_df   = process_nodes(edges_df, s288c_seqs)
+	nodes_df   = process_nodes(edges_df, s288c_seqs, args.ID_mappings, args.structure_dir)
 
 	# use DeepTMHMM results to update sequences used by metapredict
 	nodes_df   = add_DeepTMHMM(nodes_df, args.seq_preds)
