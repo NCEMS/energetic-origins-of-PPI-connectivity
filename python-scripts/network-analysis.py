@@ -4,39 +4,71 @@ from Bio import SeqIO
 import networkx as nx
 import pandas as pd
 import metapredict as meta
+import numpy as np
 import typing
+from typing import Optional
+from typing import Union
+from typing import List
 
 
-# function to extract primary name for a node
-def extract_primary_name(node):
+def extract_primary_name(node: str) -> str:
+    """
+    Returns the first name from a semi-colon delimited list
 
-    # Take the first part of the name before the semi-colon
+    Args:
+        node (str): the original name of the node, possibly a semi-colon delimited str
+
+    Returns:
+        str: the first name from the semi-colon delimited list
+    """
+
     return node.split(";")[0]
 
 
-# function to compute the fraction of residues > 0.5
-def fraction_disordered(predictions):
+def fraction_disordered(predictions: np.ndarray) -> Optional[float]:
+    """
+    Returns the fraction of residues above the disorder threshold of 0.5
+
+    Args:
+        predictions (np.ndarray): Array of prediction values, one per residue in the protein
+
+    Returns:
+        float or None: proportion of residues in the protein that are predicted to be disordered or None if no prediction was made for this protein
+    """
 
     # this is the threshold mentioned in https://www.biorxiv.org/content/10.1101/2024.11.05.622168v1
     per_residue_disorder_cutoff = 0.5
 
-    # handle cases when no metapredict prediction is obtained
     if predictions is None:
         return None
 
-    # otherwise return fraction of residues with score > >0.5
     return (predictions > per_residue_disorder_cutoff).sum() / len(predictions)
 
 
-# function to count qualifying contiguous runs
-def count_IDRs(arr, threshold=0.5, min_length=30):
+def count_IDRs(
+    arr: Union[np.ndarray[np.float64], float, None],
+    threshold: float = 0.5,
+    min_length: int = 30,
+) -> int:
+    """
+    Counts regions in an array where values are > threshold
+    for at least min_length consecutive positions
+
+    Args:
+        arr (np.ndarray or float or None): The input array or a NaN placeholder.
+        threshold (float): The threshold value to define a residue as disordered
+        min_length (int): Minimum number of residues a region must be to count towards total
+
+    Returns:
+        int: Number of regions satisfying the threshold and length criteria
+    """
 
     # catch instances of NaN in the array/values
     if arr is None or isinstance(arr, float) and np.isnan(arr):
         return 0
 
-    # create a boolean array: True where value >= threshold
-    mask = arr >= threshold
+    # create a boolean array: True where value > threshold
+    mask = arr > threshold
     count = 0
     current_run = 0
 
@@ -55,23 +87,39 @@ def count_IDRs(arr, threshold=0.5, min_length=30):
     return count
 
 
-# function to process nodes
-def process_nodes(edges_df, s288c_seqs, ID_mappings_path, structure_dir):
+def process_nodes(
+    edges_df: pd.DataFrame,
+    s288c_seqs: dict[str, str],
+    ID_mappings_path: str,
+    structure_dir: str,
+) -> pd.DataFrame:
+    """
+    Creates nodes DataFrame with node names, sequences, UniProt ID mappings, and paths to structures
+
+    Args:
+        edges_df (pd.DataFrame):
+        s288c_seqs (dict[str, str]): dictionary mapping yeast gene identifiers to protein sequence
+        ID_mappings_path (str): file path to the file containing ID mappings from SGD yeast gene IDs to UniProt IDs
+        structure_dir (str): file path to the directory containing AlphaFold2 structure predictions
+
+    Returns:
+        pd.DataFrame: the initial nodes_df with certain annotations
+    """
 
     # load nodes as a DataFrame
     nodes_df = pd.DataFrame(
         pd.unique(edges_df[["source", "target"]].values.ravel()), columns=["node"]
     )
-
+    """
     # check to see which nodes have a sequence in s288c_seqs
-    # nodes_df['has_verified_sequence'] = nodes_df['node'].isin(s288c_seqs.keys())
+    nodes_df['has_verified_sequence'] = nodes_df['node'].isin(s288c_seqs.keys())
 
     # define "primary_node" as the first gene name within semi-colon delimited lists
-    # nodes_df["primary_node"] = nodes_df["node"].apply(extract_primary_name)
+    nodes_df["primary_node"] = nodes_df["node"].apply(extract_primary_name)
 
     # remove rows in which "node" is a semi-colon separated list
-    # nodes_df = nodes_df[~nodes_df["node"].str.contains(";", na=False)]
-
+    nodes_df = nodes_df[~nodes_df["node"].str.contains(";", na=False)]
+    """
     # use "node" as keys to check for sequences
     nodes_df["has_verified_sequence"] = nodes_df["node"].isin(s288c_seqs.keys())
 
@@ -90,11 +138,9 @@ def process_nodes(edges_df, s288c_seqs, ID_mappings_path, structure_dir):
     )
 
     # locate and add structures to dataframe
-    # Create the structure_path column
     nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(
         lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb"
     )
-    # nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(lambda id: f"data-files/AF-{id}-F1-model_v4.pdb" if id is not None else None)
 
     # create the structure_exists column by checking if the file actually exists
     nodes_df["structure_exists"] = nodes_df["structure_path"].apply(
@@ -102,12 +148,21 @@ def process_nodes(edges_df, s288c_seqs, ID_mappings_path, structure_dir):
     )
     nodes_df.loc[nodes_df["structure_exists"] == 0, "structure_path"] = None
 
-    # return the updated DataFrame
     return nodes_df
 
 
-# takes list of lines output by DeepTMHMM and returns results as a dictionary
-def parse_model_output(lines):
+def parse_model_output(lines: List[str]) -> dict[str, dict[str, str, str]]:
+    """
+    Takes list of lines output by DeepTMHMM and converts it to a dictionary
+
+    Args:
+        lines (List[str]): list of lines read in from a file
+
+
+    Returns:
+        dict[str, dict[str, str, str]]: dictionary; keys are gene IDs, values are dictionaries containing class_label, sequence, and a mask based on the DeepTMHMM output
+
+    """
 
     parsed = {}
     i = 0
@@ -138,13 +193,24 @@ def parse_model_output(lines):
     return parsed
 
 
-# add DeepTMHMM information to nodes_df
-def apply_model_results(df, model_output_dict):
+def apply_model_results(
+    df: pd.DataFrame, model_output_dict: dict[str, dict[str, str, str]]
+) -> pd.DataFrame:
+    """
+    Adds DeepTMHMM information to nodes_df
 
-    def extract_mask(gene_id):
+    Args:
+        df (pd.DataFrame): input nodes_df to be annotated
+        model_output_dict (dict[str, dict[str, str, str]]): dictionary; output from parse_model_output
+
+    Returns:
+        pd.DataFrame: df annotated with DeepTMHMM information
+    """
+
+    def extract_mask(gene_id: str) -> dict[str, str]:
         return model_output_dict.get(gene_id, {}).get("mask", None)
 
-    def trim_sequence(gene_id):
+    def trim_sequence(gene_id: str) -> Optional[str]:
 
         data = model_output_dict.get(gene_id)
         if not data:
@@ -166,7 +232,7 @@ def apply_model_results(df, model_output_dict):
 
         return trimmed.rstrip("*")
 
-    def extract_class(gene_id):
+    def extract_class(gene_id: str) -> dict[str, str]:
         return model_output_dict.get(gene_id, {}).get("class", None)
 
     # use apply with functions to update the input df
@@ -177,9 +243,17 @@ def apply_model_results(df, model_output_dict):
     return df
 
 
-# function to carry out various steps of adding DeepTMHMM information to DataFrame
-def add_DeepTMHMM(df, path_to_3line_file):
+def add_DeepTMHMM(df: pd.DataFrame, path_to_3line_file: str) -> pd.DataFrame:
+    """
+    Carries out steps to add DeepTMHMM information to df
 
+    Args:
+        df (pd.DataFrame): input nodes_df to be annotated
+        path_to_3line_file (str): file path to DeepTMHMM output
+
+    Returns:
+        pd.DataFrame
+    """
     # read in 3line file as a list of lines
     with open(path_to_3line_file) as f:
         lines = f.readlines()
@@ -193,12 +267,20 @@ def add_DeepTMHMM(df, path_to_3line_file):
     return df
 
 
-# function to run metapredict on node sequences
-def predict_disorder(nodes_df):
+def predict_disorder(
+    nodes_df: pd.DataFrame, disorder_threshold: float = 0.5
+) -> pd.DataFrame:
+    """
+    Run metapredict on node protein sequences and add output to DataFrame
+
+    Args:
+        nodes_df (pd.DataFrame): input DataFrame to be annotated with IDR information
+
+    Returns:
+        pd.DataFrame
+    """
 
     # create dictionary in format needed by metapredict
-    # map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if v is not None}
-    # map_nodes_to_seq = {k: v for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"]) if pd.notnull(v)}
     map_nodes_to_seq = {
         k: v
         for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"])
@@ -220,7 +302,7 @@ def predict_disorder(nodes_df):
 
     # add binary classification of protein as disordered/not disordered
     nodes_df["is_disordered"] = nodes_df["disorder_fraction"].apply(
-        lambda x: 1 if x >= 0.50 else 0
+        lambda x: 1 if x > disorder_threshold else 0
     )
 
     # return the updated DataFrame
@@ -228,7 +310,17 @@ def predict_disorder(nodes_df):
 
 
 # function to compute network centrality measures
-def compute_centrality(edges_df, nodes_df):
+def compute_centrality(edges_df: pd.DataFrame, nodes_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compute network centrality measures on network
+
+    Args:
+        edges_df (pd.DataFrame): network edges
+        nodes_df (pd.DataFrame): network nodes
+
+    Returns:
+        pd.DataFrame
+    """
 
     # make networkx style graph
     interactome_graph = nx.from_pandas_edgelist(edges_df, "source", "target")
@@ -254,10 +346,32 @@ def compute_centrality(edges_df, nodes_df):
     return nodes_df
 
 
-# main function
+def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
+    """
+    Function that reads in a pre-processed annotation file from UniProt and adds selected information it to nodes_df
+
+    Args:
+        nodes_df (pd.DataFrame): nodes DataFrame so far; must contain mapped UniProt IDs for this to work (added by process_nodes)
+        uniprot_data (str): path to the pre-processed UniProt information for the organism currently under study
+
+    Returns:
+        pd.DataFrame
+    """
+
+    uniprot_df = pd.read_csv(uniprot_data)
+
+    to_add = ["ProteinName", "GO_terms", "Comments"]
+
+    return nodes_df.merge(
+        uniprot_df[to_add],
+        left_on="UniProtKB-AC",
+        right_on="PrimaryAccession",
+        how="left",
+    ).drop(columns=["PrimaryAccession"])
+
+
 def main():
 
-    # setup arguments from the command line
     parser = argparse.ArgumentParser(description="Process Yeast interactome network.")
     parser.add_argument(
         "--edges",
@@ -288,6 +402,11 @@ def main():
         default="data-files/YEAST_559292_idmapping.dat",
         help="Path to the UniProt ID mappings to be used",
     )
+    parser.add_argument(
+        "--uniprot_data",
+        default="processed-data/uniprot_sprot-s288c.csv",
+        help="Path to the UniProt data to be used for annotation",
+    )
     # parser.add_argument("--disprot", required=True, help="Path to the DisProt TSV file")
     args = parser.parse_args()
 
@@ -305,6 +424,9 @@ def main():
 
     # compute network centrality measures
     nodes_df = compute_centrality(edges_df, nodes_df)
+
+    # insert information from UniProt
+    nodes_df = add_UniProt_info(nodes_df, args.uniprot_data)
 
     # save outputs
     edges_df.to_csv(
