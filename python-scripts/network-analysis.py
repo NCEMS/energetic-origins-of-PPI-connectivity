@@ -360,7 +360,7 @@ def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
 
     uniprot_df = pd.read_csv(uniprot_data)
 
-    to_add = ["ProteinName", "GO_terms", "Comments"]
+    to_add = ["PrimaryAccession", "ProteinName", "GO_terms", "localization_keywords", "parsed_functions"]
 
     return nodes_df.merge(
         uniprot_df[to_add],
@@ -437,6 +437,7 @@ def main():
 
     nodes_df = nodes_df.drop(columns=["disorder_predictions"])
     nodes_df = nodes_df.replace("", "None")
+    nodes_df = nodes_df.replace([], "None")
     nodes_df = nodes_df.fillna("None")
 
     # create a DataFrame with a random set of 20 rows for testing purposes

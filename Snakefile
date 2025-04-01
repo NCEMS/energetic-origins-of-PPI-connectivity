@@ -34,6 +34,25 @@ rule create_fasta:
         bash bash-scripts/extract-seqres.sh {params.fDir}
         """
 
+# parse information from UniProt
+rule parse_uniprot:
+    params:
+        uniprot_db = f"{DATA_DIR}/uniprot_sprot.dat"
+    output:
+        f"{PROCESSED_DIR}/uniprot_sprot.csv"
+    shell:
+        """
+        conda run -n network-analysis python python-scripts/parse-uniprot.py \
+        --input_file
+        --output_file output
+        --organism "Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker's yeast)."
+        """
+
+python python-scripts/parse-uniprot.py \
+--input_file data-files/uniprot_sprot.dat \
+--output_file processed-data/uniprot_sprot-s288c.csv \
+--organism "Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker's yeast)."
+
 # annotate network with centrality metrics, IDR information (metapredict v3)
 # and use DeepTMHMM to annotate membrane proteins, signal peptides, etc. 
 rule network_analysis:
