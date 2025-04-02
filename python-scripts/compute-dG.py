@@ -7,6 +7,9 @@ import pandas as pd
 import argparse
 import esm
 import pytest
+import typing
+import pint
+import pint_pandas
 from datetime import datetime
 from esm.inverse_folding.util import (
     load_structure,
@@ -233,20 +236,70 @@ def predict_dG(cagiada_info, output_dir, model, alphabet, create_file=False):
     return dg_kcalmol
 
 
+def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float):
+    """
+    Compute the stability of a protein from chain length and temperature alone using Eq. 1 from Ghosh and Dill Biophys. J. 2010 equation
+
+    Args:
+        nodes_df (pd.DataFrame): output from network-analysis.py loaded as a pd.DataFrame
+        T (float): temperature, units of Kelvin
+
+    Returns:
+        pd.DataFrame
+    """
+
+    # setup Pint and register with pandas
+    ureg = pint.UnitRegistry()
+    Q_ = ureg.Quantity
+    pint_pandas.PintType.ureg = ureg
+
+    # add units to input temperature
+    T = Q_(T, "kelvin")
+
+    # get required information
+    dG_df = nodes_df[["node", "trimmed_sequence"]].copy()
+
+    # add protein length
+    dG_df["L"] = dG_df["trimmed_sequence"].str.len()
+
+    # define constants
+    T_h = Q_(373.5, "kelvin")
+    T_s = Q_(385.0, "kelvin")
+
+    # compute ΔH(L)
+    dG_df["dH"] = dG_df["L"].apply(lambda L: Q_(-5.03 * L - 41.6, "kilojoule / mole"))
+
+    # compute ΔC_p(L)*[T - T_h]
+    dG_df["dCp"] = dG_df["L"].apply(
+        lambda L: Q_(-0.062 * L + 0.53, "kilojoule / mole / kelvin")
+    )
+
+    # compute ΔS(L)
+    dG_df["dS"] = dG_df["L"].apply(
+        lambda L: Q_(-16.8 * L - 85.0, "joule / mole / kelvin").to(
+            "kilojoule / mole / kelvin"
+        )
+    )
+
+    # compute ΔG
+    dG = dG_df.apply(
+        lambda row: (
+            row["dH"]
+            + row["dCp"] * (T - T_h)
+            - T * row["dS"]
+            - T * row["dCp"] * np.log(T.magnitude / T_s.magnitude)
+        ).to("kilocalorie / mole"),
+        axis=1,
+    )
+    dG_df["dG"] = dG
+
+    nodes_df = pd.merge(nodes_df, dG_df, on="node", how="left")
+
+    return nodes_df
+
+
 # MAIN
 def main():
-
-    # check if CUDA is available
-    if torch.cuda.is_available():
-        print("CUDA is available")
-        # Print the current device index
-        device_index = torch.cuda.current_device()
-        print("Current GPU device index:", device_index)
-        # Print the name of the GPU
-        print("GPU Name:", torch.cuda.get_device_name(device_index))
-    else:
-        print("CUDA is not available; this script will take a few days to run. Exiting")
-        sys.exit()
 
     # parse command-line arguments
     parser = argparse.ArgumentParser(
@@ -261,16 +314,55 @@ def main():
         help="Directory where results will be saved (default: 'outputs')",
     )
     parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
+    parser.add_argument(
+        "--do_cagiada",
+        default=False,
+        help="Iff True, perform GPU-dependent Cagiada stability calculation",
+    )
+    parser.add_argument(
+        "--temperature",
+        default=303.15,
+        type=float,
+        help="Temperature in kelvin for Ghosh and Dill equation",
+    )
+
     args = parser.parse_args()
+
+    # load network node information
+    nodes_df = pd.read_csv(args.input_node_file)
+
+    # compute protein dG with Ghosh & Dill equation
+    nodes_df = compute_Ghosh_Dill_dG(nodes_df, args.temperature)
+
+    # if Cagiada stability calculations are not specifically requested, do not run them!
+    if args.do_cagiada != True:
+        # save updated nodes_df to file with a new name
+        nodes_df.to_csv(
+            f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_and_stability.csv",
+            index=False,
+            na_rep=None,
+        )
+        # print a message and exit
+        print("Cagiada stability calculations *not* requested; exiting.")
+        return
+
+    # check if CUDA is available
+    if torch.cuda.is_available():
+        print("CUDA is available")
+        # Print the current device index
+        device_index = torch.cuda.current_device()
+        print("Current GPU device index:", device_index)
+        # Print the name of the GPU
+        print("GPU Name:", torch.cuda.get_device_name(device_index))
+    else:
+        print("CUDA is not available; this script will take a few days to run. Exiting")
+        sys.exit()
 
     # load esm model
     IF_model_name = "data-files/esm_if1_gvp4_t16_142M_UR50.pt"
     model, alphabet = esm.pretrained.load_model_and_alphabet(IF_model_name)
     model.to("cuda")
     model.eval().cuda().requires_grad_(False)
-
-    # load network node information and prepare set of commands to be run
-    nodes_df = pd.read_csv(args.input_node_file)
 
     # testing purposes only
     # nodes_df = nodes_df.head(50)

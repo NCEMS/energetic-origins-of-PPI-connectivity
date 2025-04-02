@@ -10,6 +10,7 @@ dependencies:
   - numpy=1.26.4
   - scipy
   - pandas
+  - pint
   - pip
   - pip:
       - --extra-index-url https://download.pytorch.org/whl/cu121
@@ -21,3 +22,4 @@ dependencies:
       - torch-scatter==2.1.2
       - fair-esm
       - pytest
+      - pint_pandas
