@@ -1,0 +1,10 @@
+name: centrality-cos-dist
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.0
+  - numpy
+  - networkx
+  - pandas
+  - scikit-learn

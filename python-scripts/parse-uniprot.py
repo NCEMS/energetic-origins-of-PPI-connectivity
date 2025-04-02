@@ -84,7 +84,7 @@ def parse_ptm(ptm_strings: List[str]) -> List[str]:
       2. Splits the string on "PTM:".
       3. Retains the text before the first "PTM:" (if any) as a separate PTM entry.
       4. Strips whitespace and trailing periods.
-    
+
     Example:
       Input: [
         "Extensively O-glycosylated by PMT1 and PMT2. {ECO:...}. PTM: The GPI-anchor is attached ..."
@@ -97,20 +97,20 @@ def parse_ptm(ptm_strings: List[str]) -> List[str]:
     ptms = []
     for raw in ptm_strings:
         # Remove everything in curly braces
-        raw_no_citations = re.sub(r'\{.*?\}', '', raw)
+        raw_no_citations = re.sub(r"\{.*?\}", "", raw)
 
         # Split on "PTM:"
         parts = raw_no_citations.split("PTM:")
 
         # The first part is text before the first PTM (if any)
         # Keep it if it's not empty after stripping
-        first_part = parts[0].strip().rstrip('.')
+        first_part = parts[0].strip().rstrip(".")
         if first_part:
             ptms.append(first_part)
 
         # Each subsequent part is text after a PTM:
         for p in parts[1:]:
-            cleaned = p.strip().rstrip('.')
+            cleaned = p.strip().rstrip(".")
             if cleaned:
                 ptms.append(cleaned)
 
@@ -142,6 +142,9 @@ def extract_block(comments: List[str], header: str) -> List[str]:
         "ALTERNATIVE PRODUCTS",
         "BIOTECHNOLOGY",
         "CAUTION",
+        "BIOPHYSICOCHEMICAL PROPERTIES:",
+        "COFACTOR:",
+        "CATALYTIC ACTIVITY:",
     ]
     i = 0
     while i < len(comments):
@@ -213,7 +216,7 @@ def extract_data(input_file: str, organism: str) -> List[dict]:
                         "Function": functions,
                         "parsed_functions": parsed_functions,
                         "PTMs": ptms,
-                        "parsed_PTMs": parsed_ptms
+                        "parsed_PTMs": parsed_ptms,
                     }
                 )
 

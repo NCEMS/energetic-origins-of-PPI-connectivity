@@ -43,8 +43,8 @@ rule parse_uniprot:
     shell:
         """
         conda run -n network-analysis python python-scripts/parse-uniprot.py \
-        --input_file
-        --output_file output
+        --input_file params.uniprot_db
+        --output_file f"{PROCESSED_DIR}/uniprot_sprot.csv"
         --organism "Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker's yeast)."
         """
 
@@ -80,7 +80,7 @@ rule network_analysis:
         """
 
 # add stability predictions to nodes
-rule cagiada_stability:
+rule compute_dG:
     input:
         input_node_file = f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv"
     params:
@@ -90,7 +90,7 @@ rule cagiada_stability:
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv"
     shell:
         """
-        conda run -n cagiada-stability python python-scripts/cagiada-stability.py \
+        conda run -n cagiada-stability python python-scripts/compute-dG.py \
         --input_node_file {input.input_node_file} \
         --output_dir      {params.output_dir} \
         --output_prefix   {params.output_prefix}
