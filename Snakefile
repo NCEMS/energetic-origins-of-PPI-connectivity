@@ -6,10 +6,11 @@ PROCESSED_DIR = "/home/jovyan/data-store/home/shared/NCEMS/working-groups/energe
 # rule that sets overall outputs required by this pipeline
 rule all:
     input:
+        f"{DATA_DIR}/uniprot_sprot.dat",
         f"{DATA_DIR}/.all_fasta_created",
         f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation.csv",
-        #f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv",
-        #f"{PROCESSED_DIR}/{OUTPUT_PREFIX}annotated_network_summary.csv"
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}network_nodes_with_annotation_and_stability.csv",
+        f"{PROCESSED_DIR}/{OUTPUT_PREFIX}annotated_network_summary.csv"
 
 # download all inputs required (other than The Yeast Interactome files)
 rule download_inputs:
@@ -17,7 +18,9 @@ rule download_inputs:
         fDir = DATA_DIR
     output:
         f"{DATA_DIR}/orf_trans.fasta",
-        f"{DATA_DIR}/YEAST_559292_idmapping.dat"
+        f"{DATA_DIR}/YEAST_559292_idmapping.dat",
+        f"{DATA_DIR}/SGD_features.tab",
+        f"{DATA_DIR}/uniprot_sprot.dat"
     shell:
         """
         bash bash-scripts/download-inputs.sh {params.fDir}
@@ -39,19 +42,14 @@ rule parse_uniprot:
     params:
         uniprot_db = f"{DATA_DIR}/uniprot_sprot.dat"
     output:
-        f"{PROCESSED_DIR}/uniprot_sprot.csv"
+        f"{PROCESSED_DIR}/uniprot_sprot-s288c.csv"
     shell:
         """
         conda run -n network-analysis python python-scripts/parse-uniprot.py \
         --input_file params.uniprot_db
-        --output_file f"{PROCESSED_DIR}/uniprot_sprot.csv"
+        --output_file f"{PROCESSED_DIR}/uniprot_sprot-s288c.csv"
         --organism "Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker's yeast)."
         """
-
-python python-scripts/parse-uniprot.py \
---input_file data-files/uniprot_sprot.dat \
---output_file processed-data/uniprot_sprot-s288c.csv \
---organism "Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker's yeast)."
 
 # annotate network with centrality metrics, IDR information (metapredict v3)
 # and use DeepTMHMM to annotate membrane proteins, signal peptides, etc. 
@@ -60,7 +58,8 @@ rule network_analysis:
         fasta = f"{DATA_DIR}/orf_trans.fasta",
         edges = f"{DATA_DIR}/The_Yeast_Interactome_edges.csv",
         preds = "DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line",
-        mappi = f"{DATA_DIR}/YEAST_559292_idmapping.dat"
+        mappi = f"{DATA_DIR}/YEAST_559292_idmapping.dat",
+        unipr = f"{PROCESSED_DIR}/uniprot_sprot-s288c.csv"
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = PROCESSED_DIR,
@@ -76,7 +75,8 @@ rule network_analysis:
         --output_dir    {params.output_dir} \
         --ID_mappings   {input.mappi} \
         --structure_dir {params.structure_dir} \
-        --seq_preds     {input.preds}
+        --seq_preds     {input.preds} \
+        --uniprot_data  {input.unipr}
         """
 
 # add stability predictions to nodes
@@ -93,7 +93,9 @@ rule compute_dG:
         conda run -n cagiada-stability python python-scripts/compute-dG.py \
         --input_node_file {input.input_node_file} \
         --output_dir      {params.output_dir} \
-        --output_prefix   {params.output_prefix}
+        --output_prefix   {params.output_prefix} \
+        --do_cagiada      False \
+        --temperature     303.15
         """
 
 # profile the output DataFrame

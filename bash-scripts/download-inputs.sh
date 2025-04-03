@@ -19,7 +19,7 @@ URLS=(
 	"https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000002311_559292_YEAST_v4.tar"
 	"https://sid.erda.dk/share_redirect/eIZVVNEd8B"
 	"https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz"
-        "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz"
+        "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
 )
 
 # define local files names (must match order of URLs)
@@ -29,7 +29,7 @@ FILENAMES=(
 	"UP000002311_559292_YEAST_v4.tar"
 	"esm_if1_gvp4_t16_142M_UR50.pt"
 	"YEAST_559292_idmapping.dat.gz"
-        "uniprot_sprot.xml.gz"
+        "uniprot_sprot.dat.gz"
 )
 
 # function to download a file
