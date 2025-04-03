@@ -303,7 +303,7 @@ def main():
 
     # parse command-line arguments
     parser = argparse.ArgumentParser(
-        description="Run stability predictions using ESM inverse folding."
+        description="Run stability predictions using ESM inverse folding and/or Ghosh & Dill 2010 Eq. 1."
     )
     parser.add_argument(
         "--input_node_file", required=True, help="Output from network-analysis.py"
