@@ -328,6 +328,9 @@ def main():
 
     args = parser.parse_args()
 
+    if args.do_cagiada == "True":
+        args.do_cagiada = True
+
     # load network node information
     nodes_df = pd.read_csv(args.input_node_file)
 

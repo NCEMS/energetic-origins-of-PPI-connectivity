@@ -533,6 +533,27 @@ def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
         how="left",
     ).drop(columns=["PrimaryAccession"])
 
+def gen_fasta(nodes_df:pd.DataFrame, out_file_path) -> None:
+
+    """
+    Takes in the nodes_df, which must contain "trimmed_sequence" column, and saves a fasta file with sequences on which to run predictions
+
+    Args:
+        nodes_df (pd.DataFrame): DataFrame containing trimmed_sequence information to be written to fasta format
+        out_file_path (str): path to the fasta file to be written
+
+    Returns:
+        None, but writes a file to out_file_path
+    """
+
+    id_column = "node"
+    seq_column = "trimmed_sequence"
+
+    with open(out_file_path, "w") as f:
+        for _, row in nodes_df.iterrows():
+            seq = row[seq_column]
+            if seq != "None":
+                f.write(f">{row[id_column]}\n{sequence}\n")
 
 def main():
 
@@ -605,6 +626,9 @@ def main():
     nodes_df = nodes_df.replace("", "None")
     nodes_df = nodes_df.replace([], "None")
     nodes_df = nodes_df.fillna("None")
+
+    # output .fasta file with trimmed_sequences for IDR property predictions with SPARROW & ALBATROSS
+    gen_fasta(nodes_df, f"{args.output_dir}/{args.output_prefix}trimmed_sequence.fasta")
 
     # create a DataFrame with a random set of 20 rows for testing purposes
     # nodes_df   = nodes_df.sample(n=100, random_state=1991)
