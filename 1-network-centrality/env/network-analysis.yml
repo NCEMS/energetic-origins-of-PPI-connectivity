@@ -14,5 +14,3 @@ dependencies:
   - pytorch
   - scikit-learn
   - pytest
-  - pip:
-      - metapredict

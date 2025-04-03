@@ -15,7 +15,6 @@ mkdir -p "$DIR"
 # files to download
 URLS=(
 	"http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz"
-	"http://sgd-archive.yeastgenome.org/curation/chromosomal_feature/SGD_features.tab"
 	"https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000002311_559292_YEAST_v4.tar"
 	"https://sid.erda.dk/share_redirect/eIZVVNEd8B"
 	"https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz"
@@ -25,7 +24,6 @@ URLS=(
 # define local files names (must match order of URLs)
 FILENAMES=(
 	"orf_trans.fasta.gz"
-	"SGD_features.tab"
 	"UP000002311_559292_YEAST_v4.tar"
 	"esm_if1_gvp4_t16_142M_UR50.pt"
 	"YEAST_559292_idmapping.dat.gz"

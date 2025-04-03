@@ -1,8 +1,6 @@
 cyverse-access-token
 */.snakemake
-tmp/
-processed-data/*
 
 # ignore everything in data-files except Yeast Interactome files
 0-download-inputs/data-files/*
-!data-files/The_Yeast_Interactome*
+!0-download-inputs/data-files/The_Yeast_Interactome*

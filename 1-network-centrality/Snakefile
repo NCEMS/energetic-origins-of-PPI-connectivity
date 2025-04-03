@@ -1,0 +1,25 @@
+DATA_DIR      = "../0-download-inputs/data-files"
+OUTPUT_PREFIX = "0_"
+OUTPUT_DIR    = "processed-data"
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}nodes-centrality.csv"
+
+rule network_centrality:
+    input:
+        edges = f"{DATA_DIR}/The_Yeast_Interactome_edges.csv",
+    conda:
+        "env/network-analysis.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = OUTPUT_DIR,
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}nodes-centrality.csv"
+    shell:
+        """
+        python python-scripts/network-centrality.py \
+        --edges         {input.edges} \
+        --output_prefix {params.output_prefix} \
+        --output_dir    {params.output_dir}
+        """
