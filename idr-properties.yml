@@ -1,0 +1,11 @@
+name: idr-properties
+channels:
+  - bioconda
+dependencies:
+  - python=3.8
+  - setuptools>=61
+  - pandas
+  - pip
+  - pip:
+    - biopython
+    - git+https://github.com/idptools/sparrow.git
