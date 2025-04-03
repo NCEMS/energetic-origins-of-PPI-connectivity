@@ -1,0 +1,32 @@
+# global variables
+DATA_DIR = "data-files"
+
+# overall required outputs for this pipeline
+rule all:
+    input:
+        f"{DATA_DIR}/.all_files_downloaded",
+        f"{DATA_DIR}/.all_fasta_created"
+
+# download required input files
+rule download_inputs:
+    params:
+        fDir = DATA_DIR
+    output:
+        f"{DATA_DIR}/.all_files_downloaded"
+    shell:
+        """
+        bash bash-scripts/download-inputs.sh {params.fDir}
+        """
+
+# extract FASTA from AF2 SEQRES records
+rule create_fasta:
+    input:
+        f"{DATA_DIR}/.all_files_downloaded"
+    params:
+        fDir = DATA_DIR
+    output:
+        f"{DATA_DIR}/.all_fasta_created"
+    shell:
+        """
+        bash bash-scripts/extract-seqres.sh {params.fDir}
+        """

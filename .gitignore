@@ -1,9 +1,8 @@
-jupyter/.ipynb_checkpoints
-*tar.gz
 cyverse-access-token
-.snakemake
+*/.snakemake
 tmp/
 processed-data/*
+
 # ignore everything in data-files except Yeast Interactome files
-data-files/*
+0-download-inputs/data-files/*
 !data-files/The_Yeast_Interactome*
