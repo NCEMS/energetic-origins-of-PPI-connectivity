@@ -359,7 +359,7 @@ def compute_centrality(
         nodes_df,
         output_dir,
         output_prefix,
-        ["node"]+list(centrality_measures.keys()),
+        ["node"] + list(centrality_measures.keys()),
         seeds=seeds,
     )
 
@@ -460,7 +460,8 @@ def test_CentralityCosDist():
         "AT5G08670",
     ]
     nodes = pd.read_csv("test/network/data-files/Network_Centrality.csv")
-    metrics_list = ["node",
+    metrics_list = [
+        "node",
         "Information_centrality",
         "Degree_centrality",
         "Betweenness_centrality",
@@ -533,8 +534,8 @@ def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
         how="left",
     ).drop(columns=["PrimaryAccession"])
 
-def gen_fasta(nodes_df:pd.DataFrame, out_file_path) -> None:
 
+def gen_fasta(nodes_df: pd.DataFrame, out_file_path) -> None:
     """
     Takes in the nodes_df, which must contain "trimmed_sequence" column, and saves a fasta file with sequences on which to run predictions
 
@@ -554,6 +555,7 @@ def gen_fasta(nodes_df:pd.DataFrame, out_file_path) -> None:
             seq = row[seq_column]
             if seq != "None":
                 f.write(f">{row[id_column]}\n{sequence}\n")
+
 
 def main():
 
