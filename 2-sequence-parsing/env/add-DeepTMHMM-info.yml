@@ -1,0 +1,6 @@
+name: add-sequence-info
+channels:
+  - conda-forge
+dependencies:
+  - pandas
+  - pytest

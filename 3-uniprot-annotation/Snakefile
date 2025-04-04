@@ -1,0 +1,52 @@
+DATA_DIR1     = "../2-sequence-parsing/processed-data"
+DATA_DIR2     = "../0-download-inputs/data-files" 
+OUTPUT_PREFIX = "0"
+OUTPUT_DIR    = "processed-data"
+ORGANISM      = "Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker's yeast)."
+ORGANISM_TAG  = "s288c"
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{ORGANISM_TAG}-uniprot_sprot.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt.csv"
+
+rule parse_uniprot:
+    input:
+        uniprot = f"{DATA_DIR2}/uniprot_sprot.dat"
+    conda:
+        "env/parse-uniprot.yml"
+    params:
+        output_dir   = OUTPUT_DIR,
+        organism     = ORGANISM,
+        output_file  = f"{OUTPUT_DIR}/{ORGANISM_TAG}-uniprot_sprot.csv"
+    output:
+        f"{OUTPUT_DIR}/{ORGANISM_TAG}-uniprot_sprot.csv"
+    shell:
+        """
+        python python-scripts/parse-uniprot.py \
+        --input_file    {input.uniprot} \
+        --output_file   {params.output_file} \
+        --organism      "{params.organism}"
+        """
+
+rule add_uniprot_info:
+    input:
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv",
+        unipr = f"{OUTPUT_DIR}/{ORGANISM_TAG}-uniprot_sprot.csv"
+    conda:
+        "env/add-uniprot-info.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt.csv"
+    shell:
+        """
+        python python-scripts/add-UniProt-info.py \
+        --nodes         {input.nodes} \
+        --uniprot       {input.unipr} \
+        --output_prefix {params.output_prefix} \
+        --output_dir    {params.output_dir} \
+        --organism_tag  {params.organism_tag}
+        """

@@ -1,0 +1,52 @@
+DATA_DIR1     = "../1-network-centrality/processed-data"
+DATA_DIR2     = "../0-download-inputs/data-files" 
+OUTPUT_PREFIX = "0"
+OUTPUT_DIR    = "processed-data"
+ORGANISM_TAG  = "s288c"
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"
+
+rule add_sequences:
+    input:
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv",
+        fasta = f"{DATA_DIR2}/orf_trans.fasta"
+    conda:
+        "env/add-sequence-info.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = OUTPUT_DIR
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"
+    shell:
+        """
+        python python-scripts/add-sequence-info.py \
+        --nodes         {input.nodes} \
+        --fasta         {input.fasta} \
+        --output_prefix {params.output_prefix} \
+        --output_dir    {params.output_dir} \
+        --organism_tag  {ORGANISM_TAG}
+        """
+
+rule add_DeepTMHMM:
+    input:
+        nodes = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv",
+        preds = "DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line"
+    conda:
+        "env/add-DeepTMHMM-info.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = OUTPUT_DIR
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"
+    shell:
+        """
+        python python-scripts/add-DeepTMHMM-info.py \
+        --nodes         {input.nodes} \
+        --DeepTMHMM     {input.preds} \
+        --output_prefix {params.output_prefix} \
+        --output_dir    {params.output_dir} \
+        --organism_tag  {ORGANISM_TAG}
+        """
