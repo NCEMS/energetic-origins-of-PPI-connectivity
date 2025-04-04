@@ -1,10 +1,11 @@
 DATA_DIR      = "../0-download-inputs/data-files"
-OUTPUT_PREFIX = "0_"
+OUTPUT_PREFIX = "0"
 OUTPUT_DIR    = "processed-data"
+ORGANISM_TAG  = "s288c"
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}nodes-centrality.csv"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
 
 rule network_centrality:
     input:
@@ -15,11 +16,12 @@ rule network_centrality:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = OUTPUT_DIR,
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}nodes-centrality.csv"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
     shell:
         """
         python python-scripts/network-centrality.py \
         --edges         {input.edges} \
         --output_prefix {params.output_prefix} \
-        --output_dir    {params.output_dir}
+        --output_dir    {params.output_dir} \
+        --organism_tag  {ORGANISM_TAG}
         """

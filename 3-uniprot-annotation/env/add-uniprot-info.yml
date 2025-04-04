@@ -1,0 +1,6 @@
+name: parse-uniprot
+channels:
+  - conda-forge
+dependencies:
+  - pandas
+  - pytest

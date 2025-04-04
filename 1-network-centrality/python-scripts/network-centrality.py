@@ -1,4 +1,5 @@
 import os, sys
+
 sys.path.append("python-scripts/CentralityCosDist")
 from centralitycosdist import CentralityCosDist
 import argparse
@@ -92,7 +93,7 @@ def add_CentralityCosDist(
     centralities_df = nodes_df[metrics_list]
     centralities_df = centralities_df.rename(columns={"node": "ID"})
     centralities_df.to_csv(
-        f"{output_dir}/{output_prefix}CentralityCosDist_input.csv", index=False
+        f"{output_dir}/{output_prefix}-CentralityCosDist-input.csv", index=False
     )
 
     # get seeds information
@@ -111,7 +112,7 @@ def add_CentralityCosDist(
 
     # setup the algrithm
     algorithm = CentralityCosDist(
-        Centrality_file=f"{output_dir}/{output_prefix}CentralityCosDist_input.csv"
+        Centrality_file=f"{output_dir}/{output_prefix}-CentralityCosDist-input.csv"
     )
 
     # run the algorithm
@@ -213,6 +214,9 @@ def main():
     parser.add_argument(
         "--output_dir", default="processed-data", help="Output directory"
     )
+    parser.add_argument(
+        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
+    )
     args = parser.parse_args()
 
     # load input data
@@ -230,7 +234,7 @@ def main():
 
     # save the output to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}nodes-centrality.csv",
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality.csv",
         index=False,
         na_rep=None,
     )

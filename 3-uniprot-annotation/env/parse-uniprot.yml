@@ -1,0 +1,8 @@
+name: parse-uniprot
+channels:
+  - Bioconda
+  - conda-forge
+dependencies:
+  - pandas
+  - biopython
+  - pytest
