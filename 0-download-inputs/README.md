@@ -18,4 +18,4 @@ This pipeline handles the downloading of required files to `data-files/`:
 * YEAST_559292_idmapping.dat - Uniprot ID mapping file for yeast
 * uniprot_sprot.dat - UniProt database 2025_01
 
-*Note*: This pipeline will add approximately X GB of data to the `data-files/` directory.
+*Note*: This pipeline will add approximately 7.3 GB of data to the `data-files/` directory.

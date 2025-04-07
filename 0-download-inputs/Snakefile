@@ -1,5 +1,12 @@
+from pathlib import Path
+
+LOCAL_CONFIG = config["download_inputs"]
+
 # global variables
-DATA_DIR = config["data_dir"]
+DATA_DIR          = str(config["data_dir"])
+SCRIPTS_DIR       = str(Path(workflow.basedir) / "bash-scripts")
+DOWNLOAD_SCRIPT   = f"{SCRIPTS_DIR}/download-inputs.sh"
+EXTRACTSEQ_SCRIPT = f"{SCRIPTS_DIR}/extract-seqres.sh"
 
 # overall required outputs for this pipeline
 rule all:
@@ -9,24 +16,20 @@ rule all:
 
 # download required input files
 rule download_inputs:
+    input:
     params:
-        fDir = DATA_DIR
+        script     = DOWNLOAD_SCRIPT,
+        target_dir = DATA_DIR
     output:
         f"{DATA_DIR}/.all_files_downloaded"
     shell:
-        """
-        bash bash-scripts/download-inputs.sh {params.fDir}
-        """
+        "bash {params.script} {params.target_dir}"
 
 # extract FASTA from AF2 SEQRES records
 rule create_fasta:
     input:
         f"{DATA_DIR}/.all_files_downloaded"
-    params:
-        fDir = DATA_DIR
     output:
         f"{DATA_DIR}/.all_fasta_created"
     shell:
-        """
-        bash bash-scripts/extract-seqres.sh {params.fDir}
-        """
+        f"bash {EXTRACTSEQ_SCRIPT} {DATA_DIR}"

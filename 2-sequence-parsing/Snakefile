@@ -1,10 +1,14 @@
+from pathlib import Path
+
 LOCAL_CONFIG  = config["sequence_parsing"]
+
+WORK_DIR      = Path(workflow.basedir)
 DATA_DIR1     = LOCAL_CONFIG["input_dir"]
 DATA_DIR2     = config["data_dir"]
 OUTPUT_PREFIX = config["output_prefix"]
-OUTPUT_DIR    = LOCAL_CONFIG["output_dir"]
+OUTPUT_DIR    = str(WORK_DIR / LOCAL_CONFIG["output_dir"])
 ORGANISM_TAG  = config["organism_label"]
-MAP_FILE      = LOCAL_CONFIG["map_file"]
+MAP_FILE      = str(Path(DATA_DIR1) / LOCAL_CONFIG["map_file"])
 
 rule all:
     input:
@@ -16,7 +20,7 @@ rule add_sequences:
         nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv",
         fasta = f"{DATA_DIR2}/orf_trans.fasta"
     conda:
-        "env/add-sequence-info.yml"
+        f"{WORK_DIR}/env/add-sequence-info.yml"
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = OUTPUT_DIR,
@@ -25,8 +29,8 @@ rule add_sequences:
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"
     shell:
-        """
-        python python-scripts/add-sequence-info.py \
+        f"""
+        python {WORK_DIR}/python-scripts/add-sequence-info.py \
         --nodes         {input.nodes} \
         --fasta         {input.fasta} \
         --output_prefix {params.output_prefix} \
@@ -40,7 +44,7 @@ rule add_DeepTMHMM:
         nodes = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv",
         preds = "DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line"
     conda:
-        "env/add-DeepTMHMM-info.yml"
+        f"{WORK_DIR}/env/add-DeepTMHMM-info.yml"
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = OUTPUT_DIR,
@@ -48,8 +52,8 @@ rule add_DeepTMHMM:
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"
     shell:
-        """
-        python python-scripts/add-DeepTMHMM-info.py \
+        f"""
+        python {WORK_DIR}/python-scripts/add-DeepTMHMM-info.py \
         --nodes         {input.nodes} \
         --DeepTMHMM     {input.preds} \
         --output_prefix {params.output_prefix} \
