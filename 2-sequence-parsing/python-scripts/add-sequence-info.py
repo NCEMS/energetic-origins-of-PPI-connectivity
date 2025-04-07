@@ -26,6 +26,31 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
 
     return nodes_df
 
+def add_mappings(nodes_df: pd.DataFrame, map_file: str) -> pd.DataFrame:
+
+    """
+    Add UniProtKB-AC identifiers to each node as possible
+
+    Args:
+        nodes_df (pd.DataFrame): current nodes_df to be updated
+        map_file (str): path to the *_idmapping.dat file to be used (e.g., YEAST_559292_idmapping.dat)
+
+    Returns:
+        Updated nodes_df (pd.DataFrame) containing mapped names in column 'UniProtKB-AC'
+    """
+
+    # read in the mapping file as a pd.DataFrame
+    column_names = ["UniProtKB-AC", "ID_type", "ID"]
+    cross_df = pd.read_csv(map_file, names=column_names, sep="\t")
+    cross_df = cross_df[cross_df["ID_type"] == "Gene_OrderedLocusName"]
+
+    # add information to nodes_df with a left merge
+    nodes_df = nodes_df.merge(
+        cross_df[["UniProtKB-AC", "ID"]], left_on="node", right_on="ID", how="left"
+    )
+
+    return nodes_df
+
 
 def main():
 
@@ -51,6 +76,11 @@ def main():
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
+        "--id_mappings",
+        default="../0-download-inputs/data-files/YEAST_559292_idmapping.dat",
+        help="File containing UniProt ID mappings to current identifier",
+    )
+    parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
     args = parser.parse_args()
@@ -60,6 +90,9 @@ def main():
 
     # insert sequence information into nodes_df
     nodes_df = add_sequences(nodes_df, args.fasta)
+
+    # add UniProt IDs
+    nodes_df = add_mappings(nodes_df, args.id_mappings)
 
     # replace missing values/nan with "None"
     nodes_df = nodes_df.replace("", "None")

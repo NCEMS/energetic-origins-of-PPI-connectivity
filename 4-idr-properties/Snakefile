@@ -1,0 +1,59 @@
+DATA_DIR1      = "../3-uniprot-annotation/processed-data"
+OUTPUT_PREFIX  = "0"
+OUTPUT_DIR     = "processed-data"
+ORGANISM_TAG   = "s288c"
+MIN_IDR_LENGTH = 30
+DISORDER_AA    = 0.5
+DISORDER_PROT  = 0.5
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.csv"
+        #f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider.csv"
+
+rule predict_IDRs:
+    input:
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt.csv"
+    conda:
+        "env/metapredict.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = OUTPUT_DIR,
+        organism_tag   = ORGANISM_TAG,
+        min_idr_length = MIN_IDR_LENGTH,
+        disorder_aa    = DISORDER_AA,
+        disorder_prot  = DISORDER_PROT
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv"
+    shell:
+        """
+        python python-scripts/add-idr-predictions.py \
+        --nodes                   {input.nodes} \
+        --output_dir              {params.output_dir} \
+        --output_prefix           {params.output_prefix} \
+        --organism_tag            {params.organism_tag} \
+        --min_idr_length          {params.min_idr_length} \
+        --disorder_threshold_aa   {params.disorder_aa} \
+        --disorder_threshold_prot {params.disorder_prot}
+        """
+
+rule run_albatross:
+    input:
+        nodes = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv"
+    conda:
+        "env/albatross.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = OUTPUT_DIR,
+        organism_tag   = ORGANISM_TAG
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.csv"
+    shell:
+        """
+        python python-scripts/run-albatross.py \
+        --nodes         {input.nodes} \
+        --output_dir    {params.output_dir} \
+        --output_prefix {params.output_prefix} \
+        --organism_tag  {params.organism_tag}
+        """

@@ -1,0 +1,16 @@
+name: metapredict
+channels:
+  - conda-forge
+  - pytorch
+
+dependencies:
+  - python=3.11 
+  - numpy
+  - pandas
+  - pytorch 
+  - scipy 
+  - cython 
+  - matplotlib
+  - pip
+  - pip:
+    - metapredict

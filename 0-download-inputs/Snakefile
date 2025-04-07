@@ -1,5 +1,5 @@
 # global variables
-DATA_DIR = "data-files"
+DATA_DIR = config["data_dir"]
 
 # overall required outputs for this pipeline
 rule all:
