@@ -11,5 +11,3 @@ Execute this portion of the pipeline by running the command
 `snakemake --use-conda`
 
 Note: This code should be considered experimental; it requires additional manual checking by comparison to UniProt database entries
-
-Snakemake pipeline currently fails during add-uniprot-info.py step, something weird going on to be debugged.

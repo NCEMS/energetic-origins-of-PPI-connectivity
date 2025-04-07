@@ -1,8 +1,10 @@
-DATA_DIR1     = "../1-network-centrality/processed-data"
-DATA_DIR2     = "../0-download-inputs/data-files" 
-OUTPUT_PREFIX = "0"
-OUTPUT_DIR    = "processed-data"
-ORGANISM_TAG  = "s288c"
+LOCAL_CONFIG  = config["sequence_parsing"]
+DATA_DIR1     = LOCAL_CONFIG["input_dir"]
+DATA_DIR2     = config["data_dir"]
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_DIR    = LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG  = config["organism_label"]
+MAP_FILE      = LOCAL_CONFIG["map_file"]
 
 rule all:
     input:
@@ -17,7 +19,9 @@ rule add_sequences:
         "env/add-sequence-info.yml"
     params:
         output_prefix = OUTPUT_PREFIX,
-        output_dir    = OUTPUT_DIR
+        output_dir    = OUTPUT_DIR,
+        id_mappings   = {MAP_FILE},
+        organism_tag  = {ORGANISM_TAG}
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"
     shell:
@@ -27,7 +31,8 @@ rule add_sequences:
         --fasta         {input.fasta} \
         --output_prefix {params.output_prefix} \
         --output_dir    {params.output_dir} \
-        --organism_tag  {ORGANISM_TAG}
+        --organism_tag  {params.organism_tag} \
+        --id_mappings   {params.id_mappings}
         """
 
 rule add_DeepTMHMM:
@@ -38,7 +43,8 @@ rule add_DeepTMHMM:
         "env/add-DeepTMHMM-info.yml"
     params:
         output_prefix = OUTPUT_PREFIX,
-        output_dir    = OUTPUT_DIR
+        output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"
     shell:
@@ -48,5 +54,5 @@ rule add_DeepTMHMM:
         --DeepTMHMM     {input.preds} \
         --output_prefix {params.output_prefix} \
         --output_dir    {params.output_dir} \
-        --organism_tag  {ORGANISM_TAG}
+        --organism_tag  {params.organism_tag}
         """

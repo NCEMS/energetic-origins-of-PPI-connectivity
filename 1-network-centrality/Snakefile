@@ -1,7 +1,8 @@
-DATA_DIR      = "../0-download-inputs/data-files"
-OUTPUT_PREFIX = "0"
-OUTPUT_DIR    = "processed-data"
-ORGANISM_TAG  = "s288c"
+LOCAL_CONFIG  = config["network_centrality"]
+OUTPUT_DIR    = LOCAL_CONFIG["output_dir"]
+DATA_DIR      = config["data_dir"]
+OUTPUT_PREFIX = config["output_prefix"]
+ORGANISM_TAG  = config["organism_label"]
 
 rule all:
     input:
@@ -15,6 +16,7 @@ rule network_centrality:
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
     shell:
@@ -23,5 +25,5 @@ rule network_centrality:
         --edges         {input.edges} \
         --output_prefix {params.output_prefix} \
         --output_dir    {params.output_dir} \
-        --organism_tag  {ORGANISM_TAG}
+        --organism_tag  {params.organism_tag}
         """
