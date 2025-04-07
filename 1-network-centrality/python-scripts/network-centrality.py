@@ -1,7 +1,7 @@
 import os, sys
-
-sys.path.append("python-scripts/CentralityCosDist")
-from centralitycosdist import CentralityCosDist
+from pathlib import Path
+#sys.path.append("python-scripts/CentralityCosDist")
+#from centralitycosdist import CentralityCosDist
 import argparse
 import networkx as nx
 import pandas as pd
@@ -217,7 +217,14 @@ def main():
     parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
+    parser.add_argument(
+        "--CosDistPath", default="1-network-centrality/python-scripts/CentralityCosDist"
+    )
     args = parser.parse_args()
+
+    # load CentralityCosDist functionality
+    sys.path.append(args.CosDistPath)
+    from centralitycosdist import CentralityCosDist
 
     # load input data
     edges_df = pd.read_csv(args.edges)
