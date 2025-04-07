@@ -12,6 +12,8 @@ CONFIG_FILE=$1
 STAGES=("0-download-inputs"
          "1-network-centrality"
          "2-sequence-parsing"
+         "3-uniprot-annotation"
+         "4-idr-properties"
        )
 
 #STAGES=("0-download-inputs")

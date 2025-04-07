@@ -4,31 +4,35 @@ LOCAL_CONFIG  = config["network_centrality"]
 
 # global variables
 WORK_DIR      = Path(workflow.basedir)
-OUTPUT_DIR    = str(WORK_DIR / LOCAL_CONFIG["output_dir"])
-DATA_DIR      = config["data_dir"]
+DATA_DIR      = WORK_DIR / config["data_dir"]
 OUTPUT_PREFIX = config["output_prefix"]
 ORGANISM_TAG  = config["organism_label"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
+EDGES         = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv")
 
 rule network_centrality:
     input:
-        edges = f"{DATA_DIR}/The_Yeast_Interactome_edges.csv",
+        edges = str(EDGES)
     conda:
-        f"{WORK_DIR}/env/network-analysis.yml"
+        str(WORK_DIR / "env/network-analysis.yml")
     params:
         output_prefix = OUTPUT_PREFIX,
-        output_dir    = OUTPUT_DIR,
-        organism_tag  = ORGANISM_TAG
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+        test_dir      = str(TEST_DIR)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/network-centrality.py \
-        --edges         {input.edges} \
-        --output_prefix {params.output_prefix} \
-        --output_dir    {params.output_dir} \
-        --organism_tag  {params.organism_tag}
+        --edges         {{input.edges}} \
+        --output_prefix {{params.output_prefix}} \
+        --output_dir    {{params.output_dir}} \
+        --organism_tag  {{params.organism_tag}} \
+        --test_dir      {{params.test_dir}}
         """

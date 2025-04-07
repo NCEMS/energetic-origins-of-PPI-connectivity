@@ -1,7 +1,5 @@
 import os, sys
 from pathlib import Path
-#sys.path.append("python-scripts/CentralityCosDist")
-#from centralitycosdist import CentralityCosDist
 import argparse
 import networkx as nx
 import pandas as pd
@@ -16,6 +14,8 @@ def compute_centrality(
     nodes_df: pd.DataFrame,
     output_dir: str,
     output_prefix: str,
+    test_dir: str,
+    CosDistPath: str,
     seeds: Optional[List] = None,
 ) -> pd.DataFrame:
     """
@@ -26,6 +26,8 @@ def compute_centrality(
         nodes_df (pd.DataFrame): network nodes
         output_dir (str): output directory, used by add_CentralityCosDist
         output_prefix (str): output file prefix, used by add_CentralityCosDist
+        test_dir (str): path to directory with data required to test CentralityCosDist performance
+        CosDistPath (str): path to CentralityCosDist code
 
     Returns:
         pd.DataFrame
@@ -52,12 +54,13 @@ def compute_centrality(
         nodes_df[key] = nodes_df["node"].map(values)
 
     # compute CentralityCosDist; requires a file in a very specific format
-    test_CentralityCosDist()
+    test_CentralityCosDist(test_dir, CosDistPath)
     nodes_df = add_CentralityCosDist(
         nodes_df,
         output_dir,
         output_prefix,
         ["node"] + list(centrality_measures.keys()),
+        CosDistPath,
         seeds=seeds,
     )
 
@@ -70,6 +73,7 @@ def add_CentralityCosDist(
     output_dir: str,
     output_prefix: str,
     metrics_list: List[str],
+    CosDistPath: str,
     seeds: Optional[List] = None,
 ) -> pd.DataFrame:
     """
@@ -80,6 +84,7 @@ def add_CentralityCosDist(
         output_dir (str): path to output data directory
         output_prefix (str): prefix to be appended to output file
         metrics_list (List[str]): list of the metric names to be extracted from nodes_df for cosine distance calculation
+        CosDistPath (str): path to CentralityCosDist code
         seeds (Optional[List]): either a list of nodes to treat as seeds or None; if None, all nodes will be treated as seeds
 
     Returns:
@@ -89,6 +94,9 @@ def add_CentralityCosDist(
                * the leftmost column will be treated as a unique identifier for nodes in the network; seeds must be cross-referenceable with this node list
                * all other columns in the DataFrame will be treated as centrality metrics and used in the cosine distance calculation
     """
+    # load CentralityCosDist functionality
+    sys.path.append(CosDistPath)
+    from centralitycosdist import CentralityCosDist
 
     centralities_df = nodes_df[metrics_list]
     centralities_df = centralities_df.rename(columns={"node": "ID"})
@@ -133,13 +141,14 @@ def add_CentralityCosDist(
     return nodes_df
 
 
-def test_CentralityCosDist():
+def test_CentralityCosDist(test_dir: str, CosDistPath: str):
     """
     Function to test whether or not results from CentralityCosDist match expectations
     Expected results are based on https://nilesh-iiita.github.io/CentralityCosDist/notebooks.html
 
     Args:
-        None
+        test_dir (str): Path to directory containing input data required for the test
+        CosDistPath (str): Path to CentralityCosDist code
 
     Returns:
         None
@@ -157,7 +166,7 @@ def test_CentralityCosDist():
         "ATCG00480",
         "AT5G08670",
     ]
-    nodes = pd.read_csv("test/inputs/Network_Centrality.csv")
+    nodes = pd.read_csv(f"{test_dir}/inputs/Network_Centrality.csv")
     metrics_list = [
         "node",
         "Information_centrality",
@@ -170,7 +179,7 @@ def test_CentralityCosDist():
         "Page_rank",
     ]
     result = add_CentralityCosDist(
-        nodes, "test/outputs", "test_", metrics_list, seeds=seeds
+        nodes, f"{test_dir}/outputs", "test_", metrics_list, CosDistPath, seeds=seeds
     )
 
     # expected scores from the CentralityCosDist documentation
@@ -218,13 +227,20 @@ def main():
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
     parser.add_argument(
-        "--CosDistPath", default="1-network-centrality/python-scripts/CentralityCosDist"
+        "--CosDistPath",
+        default="1-network-centrality/python-scripts/CentralityCosDist",
+        help="Path to directory containing CentralityCosDist code",
+    )
+    parser.add_argument(
+        "--test_dir",
+        default="test",
+        help="Path to directory with data required to run tests for this program",
     )
     args = parser.parse_args()
 
     # load CentralityCosDist functionality
-    sys.path.append(args.CosDistPath)
-    from centralitycosdist import CentralityCosDist
+    #sys.path.append(args.CosDistPath)
+    #from centralitycosdist import CentralityCosDist
 
     # load input data
     edges_df = pd.read_csv(args.edges)
@@ -236,7 +252,7 @@ def main():
 
     # compute network centrality measures
     nodes_df = compute_centrality(
-        edges_df, nodes_df, args.output_dir, args.output_prefix
+        edges_df, nodes_df, args.output_dir, args.output_prefix, args.test_dir, args.CosDistPath
     )
 
     # save the output to file
