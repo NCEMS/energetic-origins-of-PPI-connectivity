@@ -6,8 +6,6 @@ Read in the file `uniprot_sprot.dat` and parse it to extract:
 * Function annotations
 * Post-translational modifications
 
-Execute this portion of the pipeline by running the command
+To run this pipeline step in isolation, run the command `snakemake --use-conda` from the `3-uniprot-annotation` directory.
 
-`snakemake --use-conda`
-
-Note: This code should be considered experimental; it requires additional manual checking by comparison to UniProt database entries
+*N.B.*: This code should be considered experimental; it requires additional manual checking by comparison to UniProt database entries
