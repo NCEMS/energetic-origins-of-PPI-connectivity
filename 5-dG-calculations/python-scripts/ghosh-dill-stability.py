@@ -2,6 +2,7 @@ import pandas as pd
 import pint
 import pint_pandas
 import argparse
+import numpy as np
 
 def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float):
     """
@@ -89,12 +90,12 @@ def main():
         help="Organism label for this run")
     args = parser.parse_args()
 
-    nodes_df = pd.read_csv(args.nodes)
+    nodes_df = pd.read_pickle(args.nodes)
 
     nodes_df = compute_Ghosh_Dill_dG(nodes_df, args.temperature)
 
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider-ghosh-dill.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
     )
 
 if __name__ == "__main__":

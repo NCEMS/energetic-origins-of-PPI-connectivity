@@ -232,30 +232,19 @@ def main():
         description="Run stability predictions using ESM inverse folding and/or Ghosh & Dill 2010 Eq. 1."
     )
     parser.add_argument(
-        "--input_node_file", required=True, help="Output from network-analysis.py"
+        "--nodes", required=True, help="Output from network-analysis.py"
     )
     parser.add_argument(
         "--output_dir",
         default="processed-data",
         help="Directory where results will be saved (default: 'outputs')",
     )
-    parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
-    parser.add_argument(
-        "--do_cagiada",
-        default=False,
-        help="Iff True, perform GPU-dependent Cagiada stability calculation",
-    )
-    parser.add_argument(
-        "--temperature",
-        default=303.15,
-        type=float,
-        help="Temperature in kelvin for Ghosh and Dill equation",
-    )
+    parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
 
     args = parser.parse_args()
 
     # load network node information
-    nodes_df = pd.read_csv(args.input_node_file)
+    nodes_df = pd.read_pickel(args.nodes)
 
     # check if CUDA is available
     if torch.cuda.is_available():
