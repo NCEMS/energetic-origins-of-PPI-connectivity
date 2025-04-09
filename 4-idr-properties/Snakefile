@@ -13,8 +13,9 @@ DISORDER_PROT  = LOCAL_CONFIG["disorder_prot_cut"]
 
 rule all:
     input:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv"),
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.pkl"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider.pkl")
 
 rule predict_IDRs:
     input:
@@ -29,7 +30,7 @@ rule predict_IDRs:
         disorder_aa    = DISORDER_RESI,
         disorder_prot  = DISORDER_PROT
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-idr-predictions.py \
@@ -44,7 +45,7 @@ rule predict_IDRs:
 
 rule run_albatross:
     input:
-        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv")
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl")
     conda:
         "env/albatross.yml"
     params:
@@ -52,10 +53,30 @@ rule run_albatross:
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.pkl")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-albatross.py \
+        --nodes         {{input.nodes}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}}
+        """
+
+rule run_cider:
+    input:
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.pkl")
+    conda:
+        "env/cider.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = str(OUTPUT_DIR),
+        organism_tag   = ORGANISM_TAG
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/run-cider.py \
         --nodes         {{input.nodes}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \

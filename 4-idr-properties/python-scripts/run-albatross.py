@@ -10,7 +10,15 @@ import numpy as np
 
 
 def run_albatross(row: pd.Series) -> Optional[Dict[int, Dict[str, float]]]:
-    """ """
+    """
+    Compute IDR ensemble properties
+
+    Args:
+        row (pd.Series): a row from a pd.DataFrame containing "IDR_sequences"
+
+    Returns:
+        A nested dict or None. Iff dict, keys are integers corresponding to IDR indices and values are dict keyed on property name with properties as values
+    """
 
     idr_dict = row.get("IDR_sequences")
 
@@ -62,7 +70,7 @@ def run_albatross(row: pd.Series) -> Optional[Dict[int, Dict[str, float]]]:
 def main():
 
     parser = argparse.ArgumentParser(
-        description="Annotate proteins with IDR properties"
+        description="Annotate proteins with IDR ensemble properties"
     )
     # parser.add_argument("--input_fasta", help="Path to input fasta file")
     parser.add_argument(
@@ -75,18 +83,14 @@ def main():
     args = parser.parse_args()
 
     # read in the nodes_df generated so far during the pipeline
-    nodes_df = pd.read_csv(args.nodes)
+    nodes_df = pd.read_pickle(args.nodes)
 
     # run albatross
     # nodes_df = run_albatross(nodes_df)
     nodes_df["albatross"] = nodes_df.apply(run_albatross, axis=1)
 
-    # run CIDER via SPARROW
-    # run_cider()
-
-    nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.csv",
-        index=False,
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.pkl"
     )
 
 

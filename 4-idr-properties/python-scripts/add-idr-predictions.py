@@ -206,7 +206,6 @@ def main():
     )
 
     # count the number of IDRs in each protein
-    # nodes_df["IDR_count"] = nodes_df["disorder_predictions"].apply(count_IDRs())
     nodes_df["IDR_count"] = nodes_df["disorder_predictions"].apply(
         lambda x: count_IDRs(
             x, threshold=args.disorder_threshold_aa, min_length=args.min_idr_length
@@ -214,7 +213,6 @@ def main():
     )
 
     # extract_IDR_seqs(row: pd.Series, threshold: float = 0.5, min_length: int = 30 )
-    # nodes_df["idr_sequences"] = nodes_df.apply(extract_IDR_seqs
     nodes_df["IDR_sequences"] = nodes_df.apply(
         lambda row: extract_IDR_seqs(
             row, threshold=args.disorder_threshold_aa, min_length=args.min_idr_length
@@ -223,9 +221,8 @@ def main():
     )
 
     # write the output file
-    nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.csv",
-        index=False,
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl"
     )
 
 

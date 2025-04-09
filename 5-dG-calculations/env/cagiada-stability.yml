@@ -10,7 +10,6 @@ dependencies:
   - numpy=1.26.4
   - scipy
   - pandas
-  - pint
   - pip
   - pip:
       - --extra-index-url https://download.pytorch.org/whl/cu121
