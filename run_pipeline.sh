@@ -15,6 +15,7 @@ STAGES=("0-download-inputs"
          "3-uniprot-annotation"
          "4-idr-properties"
          "5-dG-calculations"
+         "6-flatten"
        )
 
 #STAGES=("0-download-inputs")

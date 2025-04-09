@@ -286,9 +286,6 @@ def main():
         os.path.join(args.output_dir, "AF-P78285-F1-model_v4-cagiada-dG.csv")
     )
 
-    # add empty column to hold dG prediction
-    nodes_df["cagiada_stability"] = "None"
-
     # run predictions in series using CUDA
     start = datetime.now()
     for i, r in nodes_df.iterrows():
@@ -310,10 +307,10 @@ def main():
 
                 # generate the prediction and add it to the DataFrame
                 abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
-                nodes_df.at[i, "cagiada_stability"] = abs_dG
+                nodes_df.at[i, "cagiada-dG"] = abs_dG
 
             else:
-                nodes_df.at[i, "cagiada_stability"] = seq_match
+                nodes_df.at[i, "cagiada-dG"] = seq_match
 
             # clean up GPU memory after each iteration
             torch.cuda.empty_cache()
