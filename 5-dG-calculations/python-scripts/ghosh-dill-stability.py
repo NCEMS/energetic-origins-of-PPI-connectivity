@@ -59,7 +59,7 @@ def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float):
         ).to("kilocalorie / mole"),
         axis=1,
     )
-    dG_df["dG"] = dG
+    dG_df["Ghosh-Dill-dG"] = dG
 
     nodes_df = pd.merge(nodes_df, dG_df, on="node", how="left")
 
@@ -93,6 +93,8 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
 
     nodes_df = compute_Ghosh_Dill_dG(nodes_df, args.temperature)
+
+    nodes_df["cagiada-dG"] = None
 
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
