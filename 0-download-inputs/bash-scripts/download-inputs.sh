@@ -79,7 +79,7 @@ for i in "${!URLS[@]}"; do
 done
 
 # unpack the PDB files from AF2
-gunzip data-files/*gz
+gunzip $DIR/*gz
 
 # remove the .cif files, we will not need them
 rm $DIR/*cif
