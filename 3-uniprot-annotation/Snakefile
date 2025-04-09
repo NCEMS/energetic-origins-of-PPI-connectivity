@@ -48,7 +48,7 @@ rule add_uniprot_info:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt.csv")
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/add-UniProt-info.py \
+        python {WORK_DIR}/python-scripts/add-uniprot-info.py \
         --nodes         {{input.nodes}} \
         --uniprot       {{input.unipr}} \
         --output_prefix {{params.output_prefix}} \

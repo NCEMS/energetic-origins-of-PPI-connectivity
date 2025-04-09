@@ -9,6 +9,8 @@ OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
 TEMPERATURE   = LOCAL_CONFIG["temperature"]
 RUN_CAGIADA   = LOCAL_CONFIG["run_cagiada"]
+STRUCTURE_DIR = Path(LOCAL_CONFIG["structure_dir"])
+ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
 
 rule all:
     input:
@@ -34,11 +36,11 @@ rule ghosh_dill_stability:
     shell:
         f"""
         python {WORK_DIR}/python-scripts/ghosh-dill-stability.py \
-        --nodes                   {{input.nodes}} \
-        --output_dir              {{params.output_dir}} \
-        --output_prefix           {{params.output_prefix}} \
-        --organism_tag            {{params.organism_tag}} \
-        --temperature             {{params.temperature}}
+        --nodes         {{input.nodes}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}} \
+        --temperature   {{params.temperature}}
         """
 
 if RUN_CAGIADA:
@@ -50,15 +52,20 @@ if RUN_CAGIADA:
         params:
             output_prefix  = OUTPUT_PREFIX,
             output_dir     = str(OUTPUT_DIR),
-            organism_tag   = ORGANISM_TAG
+            organism_tag   = ORGANISM_TAG,
+            structure_dir  = STRUCTURE_DIR,
+            ESM_model      = ESM_MODEL
+ 
         output:
             str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
         shell:
             f"""
             python {WORK_DIR}/python-scripts/cagiada-stability.py \
-            --nodes                   {{input.nodes}} \
-            --output_dir              {{params.output_dir}} \
-            --output_prefix           {{params.output_prefix}} \
-            --organism_tag            {{params.organism_tag}}
+            --nodes          {{input.nodes}} \
+            --output_dir     {{params.output_dir}} \
+            --output_prefix  {{params.output_prefix}} \
+            --organism_tag   {{params.organism_tag}} \
+            --structure_dir  {{params.structure_dir}} \
+            --ESM_model      {{params.ESM_model}}         
             """
     

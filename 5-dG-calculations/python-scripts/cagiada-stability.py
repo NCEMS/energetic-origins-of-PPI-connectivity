@@ -225,6 +225,31 @@ def predict_dG(cagiada_info, output_dir, model, alphabet, create_file=False):
     # return the absolute free energy estimate
     return dg_kcalmol
 
+
+def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame:
+    """
+    Adds information to nodes_df regarding if a structure exists for a node and, if so, its path
+
+    Args:
+        nodes_df (pd.DataFrame): DataFrame to which structure information will be added
+        structure_dir (str): path to the directory containing AlphaFold2 structures
+
+    Returns:
+        Updated nodes_df with structure_path and structure_exists columns inserted
+    """
+
+    # locate and add structures to dataframe
+    nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(
+        lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb"
+    )
+
+    # create the structure_exists column by checking if the file actually exists
+    nodes_df["structure_exists"] = nodes_df["structure_path"].apply(
+        lambda path: 1 if os.path.exists(path) else None
+    )
+
+    return nodes_df
+
 def main():
 
     # parse command-line arguments
@@ -240,6 +265,8 @@ def main():
         help="Directory where results will be saved (default: 'outputs')",
     )
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
+    parser.add_argument("--ESM_model", default="0-download-inputs/data-files/esm_if1_gvp4_t16_142M_UR50.pt", help="Path to the ESM-IF model to be used")
+    parser.add_argument("--structure_dir", default="0-download-inputs/data-files", help="Path to directory containing AF2 structures for predictions")
 
     args = parser.parse_args()
 
@@ -259,13 +286,13 @@ def main():
         sys.exit()
 
     # load esm model
-    IF_model_name = "data-files/esm_if1_gvp4_t16_142M_UR50.pt"
+    IF_model_name = args.ESM_model
     model, alphabet = esm.pretrained.load_model_and_alphabet(IF_model_name)
     model.to("cuda")
     model.eval().cuda().requires_grad_(False)
 
     # testing purposes only
-    # nodes_df = nodes_df.head(50)
+    nodes_df = nodes_df.head(10)
 
     # all protein structure predictions from EBI for S288C contain a single chain with name A
     chainID = "A"
@@ -285,6 +312,9 @@ def main():
     test_P78285_results_within_tolerance(
         os.path.join(args.output_dir, "AF-P78285-F1-model_v4-cagiada-dG.csv")
     )
+
+    # locate structures and add relevant information to the pd.DataFrame
+    nodes_df = locate_structures(nodes_df, args.structure_dir)
 
     # run predictions in series using CUDA
     start = datetime.now()
