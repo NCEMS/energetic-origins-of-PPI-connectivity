@@ -73,8 +73,8 @@ rule prepare_SignalP_sequences:
         str(WORK_DIR / "env/prepare-SignalP-fasta.yml")
     params:
         output_dir    = str(OUTPUT_DIR),
-        output_prefix = OUTPUT_PREFIX,
-        organism_tag  = ORGANISM_TAG
+        organism_tag  = ORGANISM_TAG,
+        output_fasta  = SIGNALP_FASTA
     output:
         str(SIGNALP_FASTA)
     shell:
@@ -82,6 +82,6 @@ rule prepare_SignalP_sequences:
         python {WORK_DIR}/python-scripts/prepare-SignalP-fasta.py \
         --nodes         {{input.nodes}} \
         --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --organism_tag  {{params.organism_tag}}
+        --organism_tag  {{params.organism_tag}} \
+        --output_fasta  {{params.output_fasta}}
         """

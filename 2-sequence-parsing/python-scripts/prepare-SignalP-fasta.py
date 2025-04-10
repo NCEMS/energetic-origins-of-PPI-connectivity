@@ -14,7 +14,12 @@ def write_SignalP_fasta(nodes_df: pd.DataFrame, DeepTMHMM_classes_to_use: List[s
         output_file (str): path to the output file to be written by the function
     """
 
-    
+    with open(output_file, "w") as f:
+        for _, row in df.iterrows():
+            if row["DeepTMHMM_class"] in DeepTMHMM_classes_to_use:
+                f.write(f">{row['node']}\n{row['sequence']}\n")
+
+    return
 
 def main():
 
@@ -34,13 +39,22 @@ def main():
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
+        "--output_fasta",
+        help="Path to the fasta file to be written"
+    )
+    parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
     args = parser.parse_args()
 
+    # create a list of the DeepTMHMM output tags indicating proteins on which SignalP will be run
     DeepTMHMM_classes_to_use = ["SP"]
 
-    write_SignalP_fasta(nodes_df, DeepTMHMM_classes_to_use)
+    # read in the nodes information
+    nodes_df = pd.read_csv(args.nodes)
+
+    # create the fasta file needed as input for SignalP
+    write_SignalP_fasta(nodes_df, DeepTMHMM_classes_to_use, args.output_fasta)
 
 if __name__ == "__main__":
     main()
