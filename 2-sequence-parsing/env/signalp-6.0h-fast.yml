@@ -1,0 +1,8 @@
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - -e /home/jovyan/data-store/home/shared/NCEMS/working-groups/energetic-origins/signalp6_fast/signalp-6-package
