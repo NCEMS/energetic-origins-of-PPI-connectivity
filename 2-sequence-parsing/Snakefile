@@ -10,11 +10,15 @@ OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
 MAP_FILE      = DATA_DIR2 / LOCAL_CONFIG["map_file"]
 FASTA         = DATA_DIR2 / LOCAL_CONFIG["fasta"]
+SIGNALP_FASTA = WORK_DIR / LOCAL_CONFIG["signalp_fasta"]
+SIGNALP_DIR   = WORK_DIR / LOCAL_CONFIG["signalp_dir"]
+ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"),
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
+        str(SIGNALP_FASTA)
 
 rule add_sequences:
     input:
@@ -59,5 +63,25 @@ rule add_DeepTMHMM:
         --DeepTMHMM     {{input.preds}} \
         --output_prefix {{params.output_prefix}} \
         --output_dir    {{params.output_dir}} \
+        --organism_tag  {{params.organism_tag}}
+        """
+
+rule prepare_SignalP_sequences:
+    input:
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv")
+    conda:
+        str(WORK_DIR / "env/prepare-SignalP-fasta.yml")
+    params:
+        output_dir    = str(OUTPUT_DIR),
+        output_prefix = OUTPUT_PREFIX,
+        organism_tag  = ORGANISM_TAG
+    output:
+        str(SIGNALP_FASTA)
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/prepare-SignalP-fasta.py \
+        --nodes         {{input.nodes}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
         --organism_tag  {{params.organism_tag}}
         """
