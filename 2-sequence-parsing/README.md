@@ -1,7 +1,6 @@
 ### Add sequence information and DeepTMHMM annotations to nodes
 
-Add sequence information from `orf_trans.fasta` and DeepTMHMM annotations for each sequence. 
-
-To run this pipeline step in isolation, run the command `snakemake --use-conda` from the `2-sequence-parsing` directory.
-
-*N.B.*: signal sequences are currently cleaved based on DeepTMHMM predictions. This part of the code will be updated to include cleavage sites based on SignalP results ASAP. 
+(1) Add sequence information for genes as possible
+(2) Add DeepTMHMM predictions for each sequence
+(3) Predict signal peptide cleavage sites with SignalP
+(4) Add updated sequence information in "trimmed_sequence" column of the nodes_df
