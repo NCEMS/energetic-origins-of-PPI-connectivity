@@ -1,0 +1,1360 @@
+{
+  "INFO": {
+    "failedjobs": 0,
+    "size": 84
+  },
+  "CSV_FILE": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/prediction_results.txt",
+  "MATURE_FILE": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/processed_entries.fasta",
+  "GFF_FILE": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output.gff3",
+  "ZIP_FILE": "",
+  "SEQUENCES": {
+    "YBR286W": {
+      "Name": "YBR286W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR286W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.7502,
+        0.2498
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YEL060C": {
+      "Name": "YEL060C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YEL060C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.3829,
+        0.6171
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 28 and 29. Probability 0.573688"
+    },
+    "YLR250W": {
+      "Name": "YLR250W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR250W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.945705"
+    },
+    "YDR144C": {
+      "Name": "YDR144C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR144C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.971935"
+    },
+    "YJL171C": {
+      "Name": "YJL171C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJL171C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.974661"
+    },
+    "YMR008C": {
+      "Name": "YMR008C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR008C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.978864"
+    },
+    "YIL156W-B": {
+      "Name": "YIL156W-B",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YIL156W_B_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0005,
+        0.9995
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.975323"
+    },
+    "YDR057W": {
+      "Name": "YDR057W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR057W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.2069,
+        0.793
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.430557"
+    },
+    "YDR304C": {
+      "Name": "YDR304C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR304C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.980651"
+    },
+    "YPL123C": {
+      "Name": "YPL123C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YPL123C_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.994,
+        0.006
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YDR055W": {
+      "Name": "YDR055W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR055W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.983100"
+    },
+    "YBR014C": {
+      "Name": "YBR014C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR014C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.446,
+        0.5539
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 32 and 33. Probability 0.516366"
+    },
+    "YPR037C": {
+      "Name": "YPR037C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YPR037C_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.8933,
+        0.1067
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YMR214W": {
+      "Name": "YMR214W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR214W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 21 and 22. Probability 0.978700"
+    },
+    "YLR104W": {
+      "Name": "YLR104W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR104W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 24 and 25. Probability 0.971973"
+    },
+    "YGR189C": {
+      "Name": "YGR189C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YGR189C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.005,
+        0.995
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.933827"
+    },
+    "YBR067C": {
+      "Name": "YBR067C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR067C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.983550"
+    },
+    "YEL040W": {
+      "Name": "YEL040W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YEL040W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.969241"
+    },
+    "YBR078W": {
+      "Name": "YBR078W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR078W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.977014"
+    },
+    "YDR261C": {
+      "Name": "YDR261C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR261C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.980853"
+    },
+    "YMR215W": {
+      "Name": "YMR215W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR215W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 21 and 22. Probability 0.971432"
+    },
+    "YMR307W": {
+      "Name": "YMR307W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR307W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.980224"
+    },
+    "YOL030W": {
+      "Name": "YOL030W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOL030W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.001,
+        0.999
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.974003"
+    },
+    "YPL154C": {
+      "Name": "YPL154C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YPL154C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.971788"
+    },
+    "YKL073W": {
+      "Name": "YKL073W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YKL073W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.6724,
+        0.3276
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YMR202W": {
+      "Name": "YMR202W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR202W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.9994,
+        0.0007
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YBR093C": {
+      "Name": "YBR093C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR093C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 17 and 18. Probability 0.976150"
+    },
+    "YBR092C": {
+      "Name": "YBR092C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR092C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 17 and 18. Probability 0.979708"
+    },
+    "YMR297W": {
+      "Name": "YMR297W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR297W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.704592"
+    },
+    "YLR299W": {
+      "Name": "YLR299W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR299W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 32 and 33. Probability 0.978588"
+    },
+    "YHR138C": {
+      "Name": "YHR138C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YHR138C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.980441"
+    },
+    "YBR162C": {
+      "Name": "YBR162C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR162C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.979828"
+    },
+    "YCL043C": {
+      "Name": "YCL043C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YCL043C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.979118"
+    },
+    "YNL160W": {
+      "Name": "YNL160W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNL160W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0006,
+        0.9994
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.966745"
+    },
+    "YDL010W": {
+      "Name": "YDL010W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDL010W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.419,
+        0.581
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 31 and 32. Probability 0.251874"
+    },
+    "YDL046W": {
+      "Name": "YDL046W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDL046W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 21 and 22. Probability 0.976530"
+    },
+    "YKR042W": {
+      "Name": "YKR042W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YKR042W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 17 and 18. Probability 0.980733"
+    },
+    "YBR229C": {
+      "Name": "YBR229C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YBR229C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.982126"
+    },
+    "YKL164C": {
+      "Name": "YKL164C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YKL164C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.981804"
+    },
+    "YDR077W": {
+      "Name": "YDR077W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR077W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9995
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.976284"
+    },
+    "YDR221W": {
+      "Name": "YDR221W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR221W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.953639"
+    },
+    "YLR385C": {
+      "Name": "YLR385C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR385C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.974661"
+    },
+    "YJL139C": {
+      "Name": "YJL139C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJL139C_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.9788,
+        0.0212
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YDR349C": {
+      "Name": "YDR349C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDR349C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.970040"
+    },
+    "YJR131W": {
+      "Name": "YJR131W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJR131W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.8892,
+        0.1108
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YER011W": {
+      "Name": "YER011W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YER011W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.981264"
+    },
+    "YER150W": {
+      "Name": "YER150W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YER150W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0006,
+        0.9994
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.950298"
+    },
+    "YJL034W": {
+      "Name": "YJL034W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJL034W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.9905,
+        0.0095
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YLR110C": {
+      "Name": "YLR110C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR110C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9996
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.969536"
+    },
+    "YML130C": {
+      "Name": "YML130C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YML130C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.981287"
+    },
+    "YIL015W": {
+      "Name": "YIL015W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YIL015W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 24 and 25. Probability 0.980075"
+    },
+    "YGL228W": {
+      "Name": "YGL228W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YGL228W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0156,
+        0.9843
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.701385"
+    },
+    "YGL028C": {
+      "Name": "YGL028C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YGL028C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0004,
+        0.9995
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.907279"
+    },
+    "YGR282C": {
+      "Name": "YGR282C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YGR282C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.975666"
+    },
+    "YLR390W-A": {
+      "Name": "YLR390W-A",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR390W_A_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.976716"
+    },
+    "YHR132C": {
+      "Name": "YHR132C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YHR132C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 24 and 25. Probability 0.970647"
+    },
+    "YHR202W": {
+      "Name": "YHR202W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YHR202W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.984917"
+    },
+    "YIL123W": {
+      "Name": "YIL123W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YIL123W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0007,
+        0.9993
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.957262"
+    },
+    "YJL078C": {
+      "Name": "YJL078C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJL078C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.977581"
+    },
+    "YJL079C": {
+      "Name": "YJL079C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJL079C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.977267"
+    },
+    "YKL096W-A": {
+      "Name": "YKL096W-A",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YKL096W_A_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.974535"
+    },
+    "YKR013W": {
+      "Name": "YKR013W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YKR013W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0015,
+        0.9985
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.902531"
+    },
+    "YCR068W": {
+      "Name": "YCR068W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YCR068W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        1.0,
+        0.0
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YLR120C": {
+      "Name": "YLR120C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR120C_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.7887,
+        0.2113
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YLR194C": {
+      "Name": "YLR194C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR194C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0006,
+        0.9994
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 17 and 18. Probability 0.962805"
+    },
+    "YLR300W": {
+      "Name": "YLR300W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YLR300W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 24 and 25. Probability 0.769628"
+    },
+    "YNL190W": {
+      "Name": "YNL190W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNL190W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.980658"
+    },
+    "YMR200W": {
+      "Name": "YMR200W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR200W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.9942,
+        0.0058
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    },
+    "YMR251W-A": {
+      "Name": "YMR251W-A",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YMR251W_A_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0145,
+        0.9855
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.967143"
+    },
+    "YNL066W": {
+      "Name": "YNL066W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNL066W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.978416"
+    },
+    "YOL031C": {
+      "Name": "YOL031C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOL031C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0053,
+        0.9947
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.835035"
+    },
+    "YNL322C": {
+      "Name": "YNL322C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNL322C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0005,
+        0.9994
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 26 and 27. Probability 0.967121"
+    },
+    "YOL088C": {
+      "Name": "YOL088C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOL088C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 24 and 25. Probability 0.833036"
+    },
+    "YNL327W": {
+      "Name": "YNL327W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNL327W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0003,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.979036"
+    },
+    "YNR044W": {
+      "Name": "YNR044W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNR044W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 24 and 25. Probability 0.978506"
+    },
+    "YNR067C": {
+      "Name": "YNR067C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YNR067C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0016,
+        0.9984
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 16 and 17. Probability 0.955649"
+    },
+    "YOL052C-A": {
+      "Name": "YOL052C-A",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOL052C_A_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0111,
+        0.9888
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 22 and 23. Probability 0.962781"
+    },
+    "YOR288C": {
+      "Name": "YOR288C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOR288C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 21 and 22. Probability 0.977924"
+    },
+    "YOR336W": {
+      "Name": "YOR336W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOR336W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.801643"
+    },
+    "YPL163C": {
+      "Name": "YPL163C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YPL163C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9997
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 19 and 20. Probability 0.973688"
+    },
+    "YJL159W": {
+      "Name": "YJL159W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YJL159W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0005,
+        0.9995
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 18 and 19. Probability 0.981983"
+    },
+    "YKL096W": {
+      "Name": "YKL096W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YKL096W_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0002,
+        0.9998
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 20 and 21. Probability 0.980135"
+    },
+    "YOL155C": {
+      "Name": "YOL155C",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YOL155C_plot.txt",
+      "Prediction": "Signal Peptide (Sec/SPI)",
+      "Likelihood": [
+        0.0011,
+        0.9989
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": "Cleavage site between pos. 23 and 24. Probability 0.974364"
+    },
+    "YDL237W": {
+      "Name": "YDL237W",
+      "Plot_eps": "",
+      "Plot_png": "",
+      "Plot_txt": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/output_YDL237W_plot.txt",
+      "Prediction": "Other",
+      "Likelihood": [
+        0.9631,
+        0.0369
+      ],
+      "Protein_types": [
+        "Other",
+        "Signal Peptide (Sec/SPI)"
+      ],
+      "CS_pos": ""
+    }
+  },
+  "FORMAT": "txt",
+  "ORG": "eukarya",
+  "MODE": "fast",
+  "REGION_GFF_FILE": "/home/jovyan/data-store/energetic-origins-of-PPI-connectivity/2-sequence-parsing/processed-data/signalP/region_output.gff3"
+}
