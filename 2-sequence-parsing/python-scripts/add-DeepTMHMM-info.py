@@ -111,7 +111,7 @@ def apply_model_results(
 
     # use apply with functions to update the input df
     df["mask"] = df["node"].apply(extract_mask)
-    df["trimmed_sequence"] = df["node"].apply(trim_sequence)
+    df["DeepTMHMM_trimmed_sequence"] = df["node"].apply(trim_sequence)
     df["DeepTMHMM_class"] = df["node"].apply(extract_class)
 
     return df
