@@ -10,16 +10,19 @@ OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
 MAP_FILE      = DATA_DIR2 / LOCAL_CONFIG["map_file"]
 FASTA         = DATA_DIR2 / LOCAL_CONFIG["fasta"]
-SIGNALP_FASTA = WORK_DIR / LOCAL_CONFIG["signalp_fasta"]
+SIGNALP_FASTA = OUTPUT_DIR / str(OUTPUT_PREFIX + "-" + ORGANISM_TAG + LOCAL_CONFIG["signalp_fasta_suffix"])
 SIGNALP_DIR   = WORK_DIR / LOCAL_CONFIG["signalp_dir"]
+SIGNALP_PATH1 = LOCAL_CONFIG["signalp_path"]
+SIGNALP_PATH2 = WORK_DIR / "python-scripts"
 ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
-        str(SIGNALP_FASTA)
-
+        str(SIGNALP_FASTA),
+        str(OUTPUT_DIR / "prediction_results.txt")
+        
 rule add_sequences:
     input:
         nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"),
@@ -72,7 +75,7 @@ rule prepare_SignalP_sequences:
     conda:
         str(WORK_DIR / "env/prepare-SignalP-fasta.yml")
     params:
-        output_dir    = str(OUTPUT_DIR),
+        output_dir    = str(OUTPUT_DIR / "signalP"),
         organism_tag  = ORGANISM_TAG,
         output_fasta  = SIGNALP_FASTA
     output:
@@ -84,4 +87,22 @@ rule prepare_SignalP_sequences:
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}} \
         --output_fasta  {{params.output_fasta}}
+        """
+
+rule run_SignalP:
+    input:
+        fasta = str(SIGNALP_FASTA)
+    conda:
+        str(WORK_DIR / "env/signalp_fast.yml")
+    params:
+        fasta_file    = input.fasta,
+        organism_type = ORGANISM_TYPE,
+        output_dir    = str(OUTPUT_DIR),
+        output_format = "txt",
+        run_mode      = "fast"
+    output:
+        str(OUTPUT_DIR / "prediction_results.txt")
+    shell:
+        f"""
+        signalp6 --fastafile {{input.fasta}} --organism {ORGANISM_TYPE} --output_dir {{params.output_dir}} --format {{params.output_format}} --mode {{params.run_mode}}
         """

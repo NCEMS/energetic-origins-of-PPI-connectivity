@@ -12,10 +12,13 @@ def write_SignalP_fasta(nodes_df: pd.DataFrame, DeepTMHMM_classes_to_use: List[s
         nodes_df (pd.DataFrame): the input nodes_df; must contain sequence information
         DeepTMHMM_classes_to_use (List[str]): list of the DeepTMHMM classes on which SignalP predictions will be run
         output_file (str): path to the output file to be written by the function
+
+    Returns:
+        Nothing, but writes a file to the path output_file
     """
 
     with open(output_file, "w") as f:
-        for _, row in df.iterrows():
+        for _, row in nodes_df.iterrows():
             if row["DeepTMHMM_class"] in DeepTMHMM_classes_to_use:
                 f.write(f">{row['node']}\n{row['sequence']}\n")
 
