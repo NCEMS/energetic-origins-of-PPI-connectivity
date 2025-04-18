@@ -4,6 +4,7 @@ cyverse-access-token
 */.snakemake
 .snakemake
 2-sequence-parsing/python-scripts/signalp6_fast
+2-sequence-parsing/processed-data/signalP
 
 # ignore everything in data-files except Yeast Interactome files
 0-download-inputs/data-files/*
