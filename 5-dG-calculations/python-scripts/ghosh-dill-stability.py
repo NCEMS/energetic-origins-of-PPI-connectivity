@@ -25,10 +25,10 @@ def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float):
     T = Q_(T, "kelvin")
 
     # get required information
-    dG_df = nodes_df[["node", "trimmed_sequence"]].copy()
+    dG_df = nodes_df[["node", "DeepTMHMM_trimmed_sequence"]].copy()
 
     # add protein length
-    dG_df["L"] = dG_df["trimmed_sequence"].str.len()
+    dG_df["L"] = dG_df["DeepTMHMM_trimmed_sequence"].str.len()
 
     # define constants
     T_h = Q_(373.5, "kelvin")

@@ -47,7 +47,9 @@ TO DO: Add information centrality calculations; Add *weighted* k-shell decomposi
 
 Adds sequence information as possible to each node as well as DeepTMHMM annotations (predicts if proteins are TM, secreted, globular, etc.)
 
-TO DO: Add SignalP6.0 identification of cleavage sites for signal peptides. For proteins with a cleaved signal peptide, predict structure with AF2 absent the signal peptide
+Adds SignalP6.0 identification of cleavage sites for signal peptides
+
+TO DO: Add AF2 re-prediction of proteins without signal sequence as needed
 
 #### Step 3 - Add UniProt & GO annotations
 
