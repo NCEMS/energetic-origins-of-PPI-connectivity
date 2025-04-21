@@ -16,12 +16,6 @@ STAGES=("0-download-inputs"
          "2-sequence-parsing"
        )
 
-#STAGES=("0-download-inputs"
-#        "1-network-centrality"
-#       )
-
-#STAGES=("0-download-inputs")
-
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
     snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 4 --use-conda || exit 1
