@@ -3,7 +3,6 @@ conda update -n base -c defaults conda
 
 # create environment for running the snakemake pipeline
 conda create --name snakemake -c bioconda -y snakemake
-conda init
 
 # setup gocommands
 GOCMD_VER=$(curl -L -s https://raw.githubusercontent.com/cyverse/gocommands/main/VERSION.txt); \

@@ -16,6 +16,10 @@ STAGES=("0-download-inputs"
          "2-sequence-parsing"
        )
 
+#STAGES=("0-download-inputs"
+#        "1-network-centrality"
+#       )
+
 #STAGES=("0-download-inputs")
 
 for STAGE in "${STAGES[@]}"; do
