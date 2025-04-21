@@ -25,7 +25,7 @@ def predict_disorder(
     # create dictionary in format needed by metapredict
     map_nodes_to_seq = {
         k: v
-        for k, v in zip(nodes_df["node"], nodes_df["trimmed_sequence"])
+        for k, v in zip(nodes_df["node"], nodes_df["DeepTMHMM_trimmed_sequence"])
         if pd.notnull(v) and v.strip() != ""
     }
 
@@ -127,7 +127,7 @@ def extract_IDR_seqs(
         Updated nodes_df (pd.DataFrame) with IDR sequences in a dictionary
     """
 
-    sequence = row["trimmed_sequence"]
+    sequence = row["DeepTMHMM_trimmed_sequence"]
 
     if sequence is None or pd.isna(sequence):
         return None

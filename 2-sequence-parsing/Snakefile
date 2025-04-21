@@ -97,29 +97,37 @@ rule run_SignalP:
     params:
         fasta_file    = input.fasta,
         organism_type = ORGANISM_TYPE,
-        output_dir    = str(OUTPUT_DIR / "signalP"),
+        output_dir1   = str(OUTPUT_DIR / "signalP"),
+        output_dir2   = str(OUTPUT_DIR), 
         output_format = "txt",
         run_mode      = "fast"
     output:
-        str(OUTPUT_DIR / "signalP" / "prediction_results.txt")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"
     shell:
         f"""
-        signalp6 --fastafile {{input.fasta}} --organism {ORGANISM_TYPE} --output_dir {{params.output_dir}} --format {{params.output_format}} --mode {{params.run_mode}}
+        signalp6 --fastafile {{input.fasta}} --organism {ORGANISM_TYPE} --output_dir {{params.output_dir1}} --format {{params.output_format}} --mode {{params.run_mode}}
+        mv {{params.output_dir1}}/prediction_results.txt {{params.output_dir2}}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"
+        rm -r {{params.output_dir1}}
         """
 
 rule SignalP_trim:
     input:
-        str(OUTPUT_DIR / "signalP" / "prediction_results.txt")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"
     conda:
         str(WORK_DIR / "env/signalp_trim.yml")
     params:
-        --nodes
-        --output_dir
-        --organism_tag
-        --output_fasta
+        nodes         = nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv")
+        output_dir    = str(OUTPUT_DIR)
+        output_prefix = OUTPUT_PREFIX
+        organism_tag  = ORGANISM_TAG
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv")
     shell:
         f"""
-        python {WORK_DIR}
+        python {WORK_DIR}/python-scripts/parse-sequences-by-SignalP-output.py \
+        --nodes               {{params.nodes}} \
+        --output_dir          {{params.output_dir}} \
+        --output_prefix       {{params.output_prefix}} \
+        --organism_tag        {{params.organism_tag}} \
+        --signalP_predictions {{input}}
         """
