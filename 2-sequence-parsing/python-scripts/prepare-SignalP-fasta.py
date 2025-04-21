@@ -51,7 +51,7 @@ def main():
     args = parser.parse_args()
 
     # create a list of the DeepTMHMM output tags indicating proteins on which SignalP will be run
-    DeepTMHMM_classes_to_use = ["SP"]
+    DeepTMHMM_classes_to_use = ["SP", "TM", "GLOB", "BETA", "SP+TM"]
 
     # read in the nodes information
     nodes_df = pd.read_csv(args.nodes)

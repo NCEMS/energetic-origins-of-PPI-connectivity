@@ -107,7 +107,7 @@ rule run_SignalP:
     shell:
         f"""
         signalp6 --fastafile {{input.fasta}} --organism {ORGANISM_TYPE} --output_dir {{params.output_dir1}} --format {{params.output_format}} --mode {{params.run_mode}}
-        mv {{params.output_dir1}}/prediction_results.txt {{params.output_dir2}}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"
+        mv {{params.output_dir1}}/prediction_results.txt {{params.output_dir2}}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt
         rm -r {{params.output_dir1}}
         """
 
