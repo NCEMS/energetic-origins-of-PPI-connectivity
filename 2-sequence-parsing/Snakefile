@@ -21,7 +21,8 @@ rule all:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
         str(SIGNALP_FASTA),
-        str(OUTPUT_DIR / "signalP" / "prediction_results.txt")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv")
         
 rule add_sequences:
     input:
@@ -102,7 +103,7 @@ rule run_SignalP:
         output_format = "txt",
         run_mode      = "fast"
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt")
     shell:
         f"""
         signalp6 --fastafile {{input.fasta}} --organism {ORGANISM_TYPE} --output_dir {{params.output_dir1}} --format {{params.output_format}} --mode {{params.run_mode}}
@@ -112,13 +113,13 @@ rule run_SignalP:
 
 rule SignalP_trim:
     input:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt")
     conda:
         str(WORK_DIR / "env/signalp_trim.yml")
     params:
-        nodes         = nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv")
-        output_dir    = str(OUTPUT_DIR)
-        output_prefix = OUTPUT_PREFIX
+        nodes         = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
+        output_dir    = str(OUTPUT_DIR),
+        output_prefix = OUTPUT_PREFIX,
         organism_tag  = ORGANISM_TAG
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv")
