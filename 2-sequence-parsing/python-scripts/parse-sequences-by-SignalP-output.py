@@ -22,13 +22,15 @@ def add_signalP_seq(nodes_df: pd.DataFrame, signalP_predictions: str) -> pd.Data
     preds = pd.read_csv(signalP_predictions, sep="\t", skiprows=1)
     preds.columns = [col.lstrip("# ").strip() for col in preds.columns]
 
+    # extract the start of the cleavage site
     preds["cleavage_site_start"] = preds["CS Position"].str.extract(r'CS pos: (\d+)-')[0].astype("Int64")
 
+    # add this information to nodes_df
     nodes_df["cleavage_site_start"] = nodes_df["node"].map(preds.set_index("ID")["cleavage_site_start"])
 
-
+    # trim the sequences and insert into nodes_df
     nodes_df["signalP_trimmed_sequence"] = nodes_df.apply(
-        lambda row: row["sequence"][row["cleavage_site_start"]:] if pd.notna(row["cleavage_site_start"]) else pd.NA,
+        lambda row: row["sequence"][row["cleavage_site_start"]:] if pd.notna(row["cleavage_site_start"]) else row["sequence"],
         axis=1
     )
 

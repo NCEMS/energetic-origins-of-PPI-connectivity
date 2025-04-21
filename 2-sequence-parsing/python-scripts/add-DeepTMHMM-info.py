@@ -93,16 +93,15 @@ def apply_model_results(
         data = model_output_dict.get(gene_id)
         if not data:
             return None
-        elif data["class"] in ["TM", "SP+TM", "BETA"]:
-            return None
-        elif data["class"] == "SP":
-            # remove the signal peptide: keep only residues where mask != 'S'
-            trimmed = "".join(
-                [aa for aa, m in zip(data["sequence"], data["mask"]) if m != "S"]
-            )
+
+        sequence = data["sequence"]
+        mask = data["mask"]
+        class_label = data["class"]
+
+        if class_label == "SP":
+            trimmed = "".join([aa for aa, m in zip(sequence, mask) if m != "S"])
         else:
-            # GLOB or other cases, return original sequence
-            trimmed = data["sequence"]
+            trimmed = sequence
 
         return trimmed.rstrip("*")
 
