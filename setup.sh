@@ -15,4 +15,4 @@ gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/
 cp 2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/models/distilled_model_signalp6.pt 2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/signalp/model_weights/
 
 # activate the snakemake pipeline
-conda activate snakemake
+#conda activate snakemake

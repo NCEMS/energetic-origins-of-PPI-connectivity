@@ -29,7 +29,7 @@ rule predict_IDRs:
         organism_tag   = ORGANISM_TAG,
         min_idr_length = MIN_IDR_LENGTH,
         disorder_aa    = DISORDER_RESI,
-        disorder_prot  = DISORDER_PROT
+        disorder_prot  = DISORDER_PROT,
         seq_column     = SEQ_COLUMN
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl")
