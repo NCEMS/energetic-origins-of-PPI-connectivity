@@ -50,7 +50,7 @@ def run_cider(row: pd.Series) -> Optional[Dict[int, Dict[str, float]]]:
             continue
 
     return result if result else None
-    
+
 
 def main():
 

@@ -314,7 +314,7 @@ def main():
     )
 
     # locate structures and add relevant information to the pd.DataFrame
-    nodes_df = locate_structures(nodes_df, args.structure_dir)
+    nodes_df = locate_structure(nodes_df, args.structure_dir)
 
     # run predictions in series using CUDA
     start = datetime.now()
