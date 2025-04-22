@@ -8,8 +8,9 @@ OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 MIN_IDR_LENGTH = LOCAL_CONFIG["min_idr_length"]
-DISORDER_RESI    = LOCAL_CONFIG["disorder_resi_cut"]
+DISORDER_RESI  = LOCAL_CONFIG["disorder_resi_cut"]
 DISORDER_PROT  = LOCAL_CONFIG["disorder_prot_cut"]
+SEQ_COLUMN     = LOCAL_CONFIG["seq_column"] 
 
 rule all:
     input:
@@ -29,6 +30,7 @@ rule predict_IDRs:
         min_idr_length = MIN_IDR_LENGTH,
         disorder_aa    = DISORDER_RESI,
         disorder_prot  = DISORDER_PROT
+        seq_column     = SEQ_COLUMN
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl")
     shell:
@@ -40,7 +42,8 @@ rule predict_IDRs:
         --organism_tag            {{params.organism_tag}} \
         --min_idr_length          {{params.min_idr_length}} \
         --disorder_threshold_aa   {{params.disorder_aa}} \
-        --disorder_threshold_prot {{params.disorder_prot}}
+        --disorder_threshold_prot {{params.disorder_prot}} \
+        --seq_column_to_use       {{params.seq_column}}
         """
 
 rule run_albatross:
