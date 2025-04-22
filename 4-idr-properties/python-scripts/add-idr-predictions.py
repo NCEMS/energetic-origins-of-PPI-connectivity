@@ -9,13 +9,14 @@ import argparse
 
 
 def predict_disorder(
-    nodes_df: pd.DataFrame, disorder_threshold: float = 0.5
+    nodes_df: pd.DataFrame, seq_column, disorder_threshold: float = 0.5
 ) -> pd.DataFrame:
     """
     Predict IDRs with metapredict and add output to nodes_df pd.DataFrame
 
     Args:
         nodes_df (pd.DataFrame): input DataFrame to be annotated with IDR information
+        seq_column (str): name of the column from which sequence information will be extracted for IDR predictions with metapredict
         disorder_threshold (float): cutoff for when a PROTEIN is considered to be disordered
 
     Returns:
@@ -25,7 +26,7 @@ def predict_disorder(
     # create dictionary in format needed by metapredict
     map_nodes_to_seq = {
         k: v
-        for k, v in zip(nodes_df["node"], nodes_df["DeepTMHMM_trimmed_sequence"])
+        for k, v in zip(nodes_df["node"], nodes_df[seq_column])
         if pd.notnull(v) and v.strip() != ""
     }
 
@@ -114,14 +115,16 @@ def count_IDRs(
 
 
 def extract_IDR_seqs(
-    row: pd.Series, threshold: float = 0.5, min_length: int = 30
+    row: pd.Series, seq_column: str, threshold: float = 0.5, min_length: int = 30
 ) -> Optional[Dict[int, str]]:
     """
     Adds IDR sequences to input nodes_df as a Dict with keys as integers and values as sequence strings
 
     Args:
         row (pd.Series): input row from nodes_df
+        seq_column (str): name of the column in nodes_df from which sequence information will be extracted
         threshold (float): cutoff above which a residue is considered to be disordered
+        min_length (int): minimum length of an IDR for it to be considered
 
     Returns:
         Updated nodes_df (pd.DataFrame) with IDR sequences in a dictionary
@@ -195,6 +198,12 @@ def main():
         type=float,
         help="The cutoff above which a PROTEIN is considered to be disordered",
     )
+    parser.add_argument(
+        "--seq_column_to_use",
+        default="signalP_trimmed_sequence",
+        type=str,
+        help="Column within nodes_df from which sequences for IDR predictions will be drawn",
+    )
     args = parser.parse_args()
 
     # read in the previous step's nodes_df
@@ -202,7 +211,7 @@ def main():
 
     # use metapredict to predict IDRs
     nodes_df = predict_disorder(
-        nodes_df, disorder_threshold=args.disorder_threshold_prot
+        nodes_df, args.seq_column_to_use, disorder_threshold=args.disorder_threshold_prot
     )
 
     # count the number of IDRs in each protein
@@ -215,7 +224,7 @@ def main():
     # extract_IDR_seqs(row: pd.Series, threshold: float = 0.5, min_length: int = 30 )
     nodes_df["IDR_sequences"] = nodes_df.apply(
         lambda row: extract_IDR_seqs(
-            row, threshold=args.disorder_threshold_aa, min_length=args.min_idr_length
+            row, args.seq_column_to_use, threshold=args.disorder_threshold_aa, min_length=args.min_idr_length
         ),
         axis=1,
     )
