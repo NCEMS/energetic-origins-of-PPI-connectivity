@@ -143,7 +143,7 @@ def main():
     # parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--nodes", required=True, help="Output from network-analysis.py"
+        "--nodes", required=True
     )
     parser.add_argument(
         "--output_dir",

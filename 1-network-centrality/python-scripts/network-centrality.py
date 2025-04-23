@@ -48,8 +48,20 @@ def compute_centrality(
         "closeness_centrality": nx.closeness_centrality(interactome_graph),
         "load_centrality": nx.load_centrality(interactome_graph),
         "pagerank": nx.pagerank(interactome_graph),
-        "information_centrality": compute_information_centrality(interactome_graph)
     }
+
+    # this version of centrality_measure contains information centrality, which currently fails as the graph is not connected...
+    #centrality_measures = {
+    #    "degree_centrality": nx.degree_centrality(interactome_graph),
+    #    "betweenness_centrality": nx.betweenness_centrality(interactome_graph),
+    #    "eigenvector_centrality": nx.eigenvector_centrality(
+    #        interactome_graph, max_iter=1000
+    #    ),
+    #    "closeness_centrality": nx.closeness_centrality(interactome_graph),
+    #    "load_centrality": nx.load_centrality(interactome_graph),
+    #    "pagerank": nx.pagerank(interactome_graph),
+    #    "information_centrality": nx.information_centrality(interactome_graph)
+    #}
 
     # add per-node information to the DataFrame
     for key, values in centrality_measures.items():
@@ -68,42 +80,6 @@ def compute_centrality(
 
     # return the updated DataFrame
     return nodes_df
-
-
-def compute_information_centrality(G: nx.Graph) -> Dict[str, float]:
-    """
-    Computes information centrality by computing resistance distances between node pairs using the pseudoinverse of the Laplacian matrix.
-
-    Args:
-        G (nx.Graph): the input graph as a NetworkX Graph object
-
-    Returns:
-        The information centrality as a Dict with node names as keys and values as information centrality
-    """
-
-    if not nx.is_connected(G):
-        raise ValueError("Graph must be connected to compute information centrality.")
-
-    L = nx.laplacian_matrix(G).astype(float).toarray()
-    L_pinv = np.linalg.pinv(L)
-    nodes = list(G.nodes())
-    n = len(nodes)
-    info_centrality = {}
-
-    for vi in range(n):
-        r_total = 0
-        for vj in range(n):
-            if vi != vj:
-                r = (
-                    L_pinv[vi, vi]
-                    + L_pinv[vj, vj]
-                    - 2 * L_pinv[vi, vj]
-                )
-                r_total += r
-        node = nodes[vi]
-        info_centrality[node] = 1 / r_total if r_total != 0 else 0
-
-    return info_centrality
 
 
 def add_CentralityCosDist(
