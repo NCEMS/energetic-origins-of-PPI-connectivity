@@ -130,7 +130,7 @@ def extract_IDR_seqs(
         Updated nodes_df (pd.DataFrame) with IDR sequences in a dictionary
     """
 
-    sequence = row["DeepTMHMM_trimmed_sequence"]
+    sequence = row[seq_column]
 
     if sequence is None or pd.isna(sequence):
         return None
@@ -231,7 +231,7 @@ def main():
 
     # write the output file
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs.pkl"
     )
 
 

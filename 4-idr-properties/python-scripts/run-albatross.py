@@ -90,7 +90,7 @@ def main():
     nodes_df["albatross"] = nodes_df.apply(run_albatross, axis=1)
 
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross.pkl"
     )
 
 

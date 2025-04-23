@@ -76,7 +76,7 @@ def main():
 
     # Save updated DataFrame
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl"
     )
 
 if __name__ == "__main__":
