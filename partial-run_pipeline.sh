@@ -19,6 +19,7 @@ CONFIG_FILE=$1
 STAGES=(
         "3-uniprot-annotation"
         "4-idr-properties"
+        "5-dG-calculations"
        )
 
 for STAGE in "${STAGES[@]}"; do

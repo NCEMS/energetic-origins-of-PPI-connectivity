@@ -1,0 +1,9 @@
+name: cagiada-stability
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - biopython
+  - numpy=1.26.4
+  - pandas

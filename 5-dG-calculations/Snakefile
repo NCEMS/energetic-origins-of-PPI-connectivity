@@ -11,6 +11,7 @@ TEMPERATURE   = LOCAL_CONFIG["temperature"]
 RUN_CAGIADA   = LOCAL_CONFIG["run_cagiada"]
 STRUCTURE_DIR = Path(LOCAL_CONFIG["structure_dir"])
 ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
+SEQ_COLUMN    = LOCAL_CONFIG["seq_column"]
 
 rule all:
     input:
@@ -30,7 +31,8 @@ rule ghosh_dill_stability:
         output_prefix  = OUTPUT_PREFIX,
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG,
-        temperature    = TEMPERATURE
+        temperature    = TEMPERATURE,
+        seq_column     = SEQ_COLUMN
     output:
         nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
     shell:
@@ -40,7 +42,8 @@ rule ghosh_dill_stability:
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
         --organism_tag  {{params.organism_tag}} \
-        --temperature   {{params.temperature}}
+        --temperature   {{params.temperature}} \
+        --seq_column_to_use {{params.seq_column}}
         """
 
 if RUN_CAGIADA:
