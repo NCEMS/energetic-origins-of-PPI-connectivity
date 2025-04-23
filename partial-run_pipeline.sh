@@ -11,9 +11,14 @@ CONFIG_FILE=$1
 #        "6-flatten")
 
 
-STAGES=("0-download-inputs"
-         "1-network-centrality"
-         "2-sequence-parsing"
+#STAGES=("0-download-inputs"
+#         "1-network-centrality"
+#         "2-sequence-parsing"
+#       )
+
+STAGES=(
+        "3-uniprot-annotation"
+        "4-idr-properties"
        )
 
 for STAGE in "${STAGES[@]}"; do
