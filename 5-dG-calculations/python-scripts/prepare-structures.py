@@ -2,8 +2,43 @@ import os, sys
 import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from Bio.PDB import PDBParser, PDBIO, Select
 import typing
 from typing import Optional
+
+class CleavageSelect(Select):
+
+    def __init__(self, cut_pos: int):
+        self.cut_pos = cut_pos
+
+    def accept_residue(self, residue):
+        return residue.id[1] > self.cut_pos
+
+
+def truncate_structure(pdb_path: str, cut_pos: int, output_path: str) -> None:
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure("structure", pdb_path)
+    io = PDBIO()
+    io.set_structure(structure)
+    io.save(output_path, CleavageSelect(cut_pos))
+
+
+def truncate_row_structure(row) -> Optional[str]:
+    if not row["structure_exists"] or pd.isna(row["cleavage_start_site"]):
+        return None
+
+    input_path = row["structure_path"]
+    cut_pos = int(row["cleavage_start_site"])
+
+    output_path = input_path.replace(".pdb", "-cleaved.pdb")
+
+    try:
+        truncate_structure(input_path, cut_pos, output_path)
+        return output_path
+    except Exception as e:
+        print(f"Error processing {input_path}: {e}")
+        return None
+
 
 def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame:
     """
@@ -75,16 +110,32 @@ def read_fasta_sequence(fasta_path: str) -> Optional(str):
         return None
 
 
-def truncate_fasta(nodes_df:pd.DataFrame, fasta_dir: str) -> pd.DataFrame:
+def truncate_fasta(seq: str, cut: Optional[int]) -> Optional(str):
     """
-    Creates a truncated fasta sequence based on the original AF2 sequence and the SignalP
+    Creates a truncated fasta sequence based on the original AF2 sequence and the SignalP predicted cleavage site
     Args:
-        nodes_df (pd.DataFrame): DataFrame to which structure information will be added
-        fasta_dir (str): path to the directory containing AlphaFold2 structure-based sequencers
-
+        seq (str): sequence to be trimmed
+        cut (Optional[int]): the integer value of the first value to keep, or None
     Returns:
-        Updated nodes_df with AF2_fasta_path column inserted
+        The truncated sequence
     """
+
+    if pd.isna(cut) or cut is None:
+        return seq
+
+    return seq[int(cut):]
+
+
+def compare_sequence(row) -> bool:
+
+    struct_seq = row.get("cleaved_structure_sequence")
+    signalp_seq = row.get("signalP_trimmed_sequence")
+
+    # only compare if both sequences are present and not null
+    if pd.isna(struct_seq) or pd.isna(signalp_seq) or struct_seq is None or signalp_seq is None:
+        return False
+
+    return str(struct_seq) == str(signalp_seq)
 
 
 def main():
@@ -118,12 +169,16 @@ def main():
     nodes_df = locate_structure_fasta(nodes_df, args.input_dir)
 
     # for proteins with a cleavage site predicted by SignalP, create a truncated structure and update structure_path value
-    
+    nodes_df["cleaved_structure_path"] = nodes_df.apply(truncate_row_structure, axis=1)
 
-    # for proteins with a cleavage site predicted by SignalP, create a truncated FASTA based on the sequence
-    # present in the truncated AF2 structure
+    # for proteins with a cleavage site predicted by SignalP, create a truncated FASTA based on the sequence from the AF2 structure
+    nodes_df["cleaved_structure_sequence"] = nodes_df.apply(
+        lambda row: truncate_sequence(row["structure_sequence"], row["cleavage_site_start"]),
+        axis=1
+    )
 
     # compare sequences between structures and trimmed sequences and add this information to a Boolean column named "sequence_matches_structure"
+    nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequences, axis=1)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
     nodes_df.to_pickle("{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl")

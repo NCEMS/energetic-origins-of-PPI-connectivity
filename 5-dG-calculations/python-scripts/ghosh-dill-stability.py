@@ -4,7 +4,7 @@ import pint_pandas
 import argparse
 import numpy as np
 
-def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float):
+def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float, seq_column: str) -> pd.DataFrame:
     """
     Compute the stability of a protein from chain length and temperature alone using Eq. 1 from Ghosh and Dill Biophys. J. 2010 equation
 
@@ -25,10 +25,10 @@ def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float):
     T = Q_(T, "kelvin")
 
     # get required information
-    dG_df = nodes_df[["node", "DeepTMHMM_trimmed_sequence"]].copy()
+    dG_df = nodes_df[["node", seq_column]].copy()
 
     # add protein length
-    dG_df["L"] = dG_df["DeepTMHMM_trimmed_sequence"].str.len()
+    dG_df["L"] = dG_df[seq_column].str.len()
 
     # define constants
     T_h = Q_(373.5, "kelvin")
@@ -79,6 +79,7 @@ def main():
         help="Directory where results will be saved (default: 'outputs')",
     )
     parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
+    parser.add_argument("--seq_column_to_use", default="signalP_trimmed_sequence")
     parser.add_argument(
         "--temperature",
         default=303.15,
@@ -92,12 +93,12 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    nodes_df = compute_Ghosh_Dill_dG(nodes_df, args.temperature)
+    nodes_df = compute_Ghosh_Dill_dG(nodes_df, args.temperature, args.seq_column_to_use)
 
     nodes_df["cagiada-dG"] = None
 
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
     )
 
 if __name__ == "__main__":
