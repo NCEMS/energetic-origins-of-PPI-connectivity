@@ -226,30 +226,6 @@ def predict_dG(cagiada_info, output_dir, model, alphabet, create_file=False):
     return dg_kcalmol
 
 
-def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame:
-    """
-    Adds information to nodes_df regarding if a structure exists for a node and, if so, its path
-
-    Args:
-        nodes_df (pd.DataFrame): DataFrame to which structure information will be added
-        structure_dir (str): path to the directory containing AlphaFold2 structures
-
-    Returns:
-        Updated nodes_df with structure_path and structure_exists columns inserted
-    """
-
-    # locate and add structures to dataframe
-    nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(
-        lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb"
-    )
-
-    # create the structure_exists column by checking if the file actually exists
-    nodes_df["structure_exists"] = nodes_df["structure_path"].apply(
-        lambda path: 1 if os.path.exists(path) else None
-    )
-
-    return nodes_df
-
 def main():
 
     # parse command-line arguments
@@ -267,6 +243,7 @@ def main():
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
     parser.add_argument("--ESM_model", default="0-download-inputs/data-files/esm_if1_gvp4_t16_142M_UR50.pt", help="Path to the ESM-IF model to be used")
     parser.add_argument("--structure_dir", default="0-download-inputs/data-files", help="Path to directory containing AF2 structures for predictions")
+    parser.add_argument("--seq_column_to_use")
 
     args = parser.parse_args()
 
@@ -313,20 +290,22 @@ def main():
         os.path.join(args.output_dir, "AF-P78285-F1-model_v4-cagiada-dG.csv")
     )
 
-    # locate structures and add relevant information to the pd.DataFrame
-    nodes_df = locate_structure(nodes_df, args.structure_dir)
-
     # run predictions in series using CUDA
     start = datetime.now()
     for i, r in nodes_df.iterrows():
 
         if (
             r["has_verified_sequence"] == True
-            and r["DeepTMHMM_class"] == "GLOB"
+            and r["DeepTMHMM_class"] not in ["TM", "SP+TM", "BETA"]
             and r["structure_exists"] == 1
         ):
 
-            curr_cagiada = cagiada(r["structure_path"], chainID, r["UniProtKB-AC"])
+            if isna(r["cleavage_start_site"]):
+                structure_path_to_use = r["structure_path"]
+            else:
+                structure_path_to_use = r["cleaved_structure_path"]
+
+            curr_cagiada = cagiada(r[structure_path_to_use], chainID, r["UniProtKB-AC"])
 
             # test that the sequences between the orf_trans.fasta file from SGD and AF2 structures from EBI match
             seq_match = test_sequences_match(
