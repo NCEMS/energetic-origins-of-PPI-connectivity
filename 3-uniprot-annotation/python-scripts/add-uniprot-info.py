@@ -76,7 +76,7 @@ def main():
 
     # save the updated nodes_df to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-UniProt.csv",
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt.csv",
         index=False,
     )
 
