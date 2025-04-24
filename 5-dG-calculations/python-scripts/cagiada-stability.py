@@ -243,12 +243,12 @@ def main():
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
     parser.add_argument("--ESM_model", default="0-download-inputs/data-files/esm_if1_gvp4_t16_142M_UR50.pt", help="Path to the ESM-IF model to be used")
     parser.add_argument("--structure_dir", default="0-download-inputs/data-files", help="Path to directory containing AF2 structures for predictions")
-    parser.add_argument("--seq_column_to_use")
-    parser.add_argument("organism-tag")
+    parser.add_argument("--organism_tag")
+    parser.add_argument("--test_dir")
     args = parser.parse_args()
 
     # load network node information
-    nodes_df = pd.read_pickel(args.nodes)
+    nodes_df = pd.read_pickle(args.nodes)
 
     # check if CUDA is available
     if torch.cuda.is_available():
@@ -269,7 +269,7 @@ def main():
     model.eval().cuda().requires_grad_(False)
 
     # testing purposes only - select the first ten nodes to run a small set of dG predictions
-    nodes_df = nodes_df.head(10)
+    nodes_df = nodes_df.head(100)
 
     # all protein structure predictions from EBI for S288C contain a single chain with name A
     chainID = "A"
@@ -278,7 +278,7 @@ def main():
     # run on the default protein P78285 from Cagiada Google Colab notebook
     predict_dG(
         cagiada(
-            "test/P78285/AF-P78285-F1-model_v4.pdb", chainID, "AF-P78285-F1-model_v4"
+            f"{args.test_dir}/P78285/AF-P78285-F1-model_v4.pdb", chainID, "AF-P78285-F1-model_v4"
         ),
         args.output_dir,
         model,
@@ -300,12 +300,12 @@ def main():
             and r["structure_exists"] == 1
         ):
 
-            if isna(r["cleavage_start_site"]):
+            if pd.isna(r["cleavage_site_start"]):
                 structure_path_to_use = r["structure_path"]
             else:
                 structure_path_to_use = r["cleaved_structure_path"]
 
-            curr_cagiada = cagiada(r[structure_path_to_use], chainID, r["UniProtKB-AC"])
+            curr_cagiada = cagiada(structure_path_to_use, chainID, r["UniProtKB-AC"])
 
             # test that the sequences between the orf_trans.fasta file from SGD and AF2 structures from EBI match
             seq_match = test_sequences_match(
@@ -332,9 +332,6 @@ def main():
     print(
         "Total execution time is:", datetime.now() - start
     )  # total time for all dG predictions
-
-    nodes_df = nodes_df.replace("", "None")
-    nodes_df = nodes_df.fillna("None")
 
     # save updated nodes_df to file with a new name
     nodes_df.to_pickle(
