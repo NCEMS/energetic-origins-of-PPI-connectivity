@@ -131,17 +131,31 @@ def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
     return seq[int(cut):]
 
 
+#def compare_sequence(row) -> bool:
+#    struct_seq = row.get("cleaved_structure_sequence")
+#    signalp_seq = row.get("signalP_trimmed_sequence")
+#    # only compare if both sequences are present and not null
+#    if pd.isna(struct_seq) or pd.isna(signalp_seq) or struct_seq is None or signalp_seq is None:
+#        return False
+#    return str(struct_seq) == str(signalp_seq)
+
 def compare_sequence(row) -> bool:
 
     struct_seq = row.get("cleaved_structure_sequence")
     signalp_seq = row.get("signalP_trimmed_sequence")
 
-    # only compare if both sequences are present and not null
-    if pd.isna(struct_seq) or pd.isna(signalp_seq) or struct_seq is None or signalp_seq is None:
+    # basic checks
+    if not isinstance(struct_seq, str) or not isinstance(signalp_seq, str):
         return False
 
-    return str(struct_seq) == str(signalp_seq)
+    # strip and uppercase
+    struct_seq_clean = struct_seq.strip().upper()
+    signalp_seq_clean = signalp_seq.strip().upper()
 
+    if struct_seq_clean != signalp_seq_clean:
+        print(f"Mismatch:\n  STRUCT:   {struct_seq_clean}\n  SIGNALP: {signalp_seq_clean}\n")
+
+    return struct_seq_clean == signalp_seq_clean
 
 def main():
 
