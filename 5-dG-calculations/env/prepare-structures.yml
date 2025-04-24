@@ -7,3 +7,5 @@ dependencies:
   - biopython
   - numpy=1.26.4
   - pandas
+  - pint
+  - pint-pandas

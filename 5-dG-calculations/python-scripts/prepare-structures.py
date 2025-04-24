@@ -5,6 +5,9 @@ from Bio.SeqRecord import SeqRecord
 from Bio.PDB import PDBParser, PDBIO, Select
 import typing
 from typing import Optional
+import argparse
+import pint
+import pint_pandas
 
 class CleavageSelect(Select):
 
@@ -16,6 +19,7 @@ class CleavageSelect(Select):
 
 
 def truncate_structure(pdb_path: str, cut_pos: int, output_path: str) -> None:
+
     parser = PDBParser(QUIET=True)
     structure = parser.get_structure("structure", pdb_path)
     io = PDBIO()
@@ -24,11 +28,12 @@ def truncate_structure(pdb_path: str, cut_pos: int, output_path: str) -> None:
 
 
 def truncate_row_structure(row) -> Optional[str]:
-    if not row["structure_exists"] or pd.isna(row["cleavage_start_site"]):
+
+    if not row["structure_exists"] or pd.isna(row["cleavage_site_start"]):
         return None
 
     input_path = row["structure_path"]
-    cut_pos = int(row["cleavage_start_site"])
+    cut_pos = int(row["cleavage_site_start"])
 
     output_path = input_path.replace(".pdb", "-cleaved.pdb")
 
@@ -77,8 +82,8 @@ def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFra
     """
 
     # locate the fasta file and add to dataframe
-    nodes_df["structure_fasta_path"] = nodes_df"UniProtKB-AC"].apply(
-        lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.fasta"
+    nodes_df["structure_fasta_path"] = nodes_df["UniProtKB-AC"].apply(
+        lambda id: f"{fasta_dir}/AF-{id}-F1-model_v4.fasta"
     )
 
     # add the sequence from this fasta file if it exists
@@ -87,7 +92,7 @@ def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFra
     return nodes_df
 
 
-def read_fasta_sequence(fasta_path: str) -> Optional(str):
+def read_fasta_sequence(fasta_path: str) -> Optional[str]:
     """
     Read in the sequence stored in a fasta file and return it
 
@@ -110,7 +115,7 @@ def read_fasta_sequence(fasta_path: str) -> Optional(str):
         return None
 
 
-def truncate_fasta(seq: str, cut: Optional[int]) -> Optional(str):
+def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
     """
     Creates a truncated fasta sequence based on the original AF2 sequence and the SignalP predicted cleavage site
     Args:
@@ -151,6 +156,9 @@ def main():
         help="Directory where truncated PDBs will be saved",
     )
     parser.add_argument(
+        "--output_prefix"
+    )
+    parser.add_argument(
         "--input_dir",
         default="processed-data",
         help="Directory containing predicted structures for the proteome under consideration",
@@ -173,15 +181,15 @@ def main():
 
     # for proteins with a cleavage site predicted by SignalP, create a truncated FASTA based on the sequence from the AF2 structure
     nodes_df["cleaved_structure_sequence"] = nodes_df.apply(
-        lambda row: truncate_sequence(row["structure_sequence"], row["cleavage_site_start"]),
+        lambda row: truncate_fasta(row["structure_sequence"], row["cleavage_site_start"]),
         axis=1
     )
 
     # compare sequences between structures and trimmed sequences and add this information to a Boolean column named "sequence_matches_structure"
-    nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequences, axis=1)
+    nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
-    nodes_df.to_pickle("{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl")
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl")
 
 if __name__ == "__main__":
 
