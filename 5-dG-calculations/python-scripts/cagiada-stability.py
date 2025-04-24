@@ -244,7 +244,7 @@ def main():
     parser.add_argument("--ESM_model", default="0-download-inputs/data-files/esm_if1_gvp4_t16_142M_UR50.pt", help="Path to the ESM-IF model to be used")
     parser.add_argument("--structure_dir", default="0-download-inputs/data-files", help="Path to directory containing AF2 structures for predictions")
     parser.add_argument("--seq_column_to_use")
-
+    parser.add_argument("organism-tag")
     args = parser.parse_args()
 
     # load network node information
@@ -268,7 +268,7 @@ def main():
     model.to("cuda")
     model.eval().cuda().requires_grad_(False)
 
-    # testing purposes only
+    # testing purposes only - select the first ten nodes to run a small set of dG predictions
     nodes_df = nodes_df.head(10)
 
     # all protein structure predictions from EBI for S288C contain a single chain with name A
@@ -337,11 +337,11 @@ def main():
     nodes_df = nodes_df.fillna("None")
 
     # save updated nodes_df to file with a new name
-    nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}network_nodes_with_annotation_and_stability.csv",
-        index=False,
-        na_rep=None,
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
     )
+
+
 if __name__ == "__main__":
 
     main()

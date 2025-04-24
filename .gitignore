@@ -10,3 +10,4 @@ cyverse-access-token
 # ignore everything in data-files except Yeast Interactome files
 0-download-inputs/data-files/*
 !0-download-inputs/data-files/The_Yeast_Interactome*
+!o-download-inputs/data-files/DisProt*

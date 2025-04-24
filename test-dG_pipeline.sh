@@ -22,7 +22,9 @@ CONFIG_FILE=$1
 #        "5-dG-calculations"
 #       )
 
-STAGES=("0-download-inputs")
+#STAGES=("0-download-inputs")
+
+STAGES=("5-dG-calculations")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"

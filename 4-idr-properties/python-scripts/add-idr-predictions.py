@@ -3,13 +3,38 @@ import typing
 from typing import Optional
 from typing import Union
 from typing import Dict
+from typing import List
 import pandas as pd
 import numpy as np
 import argparse
 
+def get_disprot_thresholds(disprot: str, percentiles: List[float], organism_string: str) -> pd.DataFrame:
+
+    """
+    Extracts thresholds for determining when a protein is disordered based on percentiles of the fraction disordered data within DisProt
+
+    Args:
+        disprot (str): path to the DisProt database file
+        percentlies (List(float)]: list of percentile cutoffs to be computed
+        organism_string (str): string that is used to label the organism of interest for this run in DisProt
+
+    Returns:
+        Dict[float, float] with keys as percentiles and values as the disorder fraction at each percentile
+    """
+
+    # parse DisProt to select organism of interest and unique entries by accession code
+    dp = pd.read_csv(disprot, sep="\t")
+    dp = dp[dp["organism"] == organism_string]
+    dp_unique = dp.drop_duplicates(subset="acc", keep="first")
+
+    # convert from percent disorder to match metapredict output
+    dp_unique["disorder_content"] = dp_unique["disorder_content"] / 100
+
+    return {round(p, 2): dp_unique["disorder_content"].quantile(p) for p in percentiles}
+
 
 def predict_disorder(
-    nodes_df: pd.DataFrame, seq_column, disorder_threshold: float = 0.5
+    nodes_df: pd.DataFrame, seq_column: str, disorder_thresholds: Dict[float, float]
 ) -> pd.DataFrame:
     """
     Predict IDRs with metapredict and add output to nodes_df pd.DataFrame
@@ -17,7 +42,7 @@ def predict_disorder(
     Args:
         nodes_df (pd.DataFrame): input DataFrame to be annotated with IDR information
         seq_column (str): name of the column from which sequence information will be extracted for IDR predictions with metapredict
-        disorder_threshold (float): cutoff for when a PROTEIN is considered to be disordered
+        disorder_thresholds (float): Dict of cutoffs computed from DisProt for determining when a PROTEIN is considered to be disordered
 
     Returns:
         pd.DataFrame
@@ -43,10 +68,12 @@ def predict_disorder(
         fraction_disordered
     )
 
-    # add binary classification of protein as disordered/not disordered
-    nodes_df["is_disordered"] = nodes_df["disorder_fraction"].apply(
-        lambda x: 1 if x > disorder_threshold else 0
-    )
+    # add binary classifications of protein as disordered/not disordered based on DisProt percentiles
+    for percentile, cutoff in cutoff_dict.items():
+        colname = f"is_disordered_{percentile:.2f}"
+        nodes_df[colname] = nodes_df["disorder_fraction"].apply(
+            lambda x: 1 if pd.notnull(x) and x > cutoff else 0
+        )
 
     # return the updated DataFrame
     return nodes_df
@@ -193,25 +220,29 @@ def main():
         help="The cutoff above which a RESIDUE is considered to be disordered",
     )
     parser.add_argument(
-        "--disorder_threshold_prot",
-        default=0.5,
-        type=float,
-        help="The cutoff above which a PROTEIN is considered to be disordered",
-    )
-    parser.add_argument(
         "--seq_column_to_use",
         default="signalP_trimmed_sequence",
         type=str,
         help="Column within nodes_df from which sequences for IDR predictions will be drawn",
+    )
+    parser.add_argument(
+        "--disprot"
+    )
+    parser.add_argument(
+        "--disprot_organism_name"
     )
     args = parser.parse_args()
 
     # read in the previous step's nodes_df
     nodes_df = pd.read_csv(args.nodes)
 
+    # calculate thresholds for determining what is and is not an IDR based on DisProt database
+    percentiles = np.arange(0.05, 1.05, 0.05)
+    disprot_thresholds = get_disprot_thresholds(args.disprot, percentiles, args.disprot_organism_name)
+
     # use metapredict to predict IDRs
     nodes_df = predict_disorder(
-        nodes_df, args.seq_column_to_use, disorder_threshold=args.disorder_threshold_prot
+        nodes_df, args.seq_column_to_use, disorder_thresholds=disprot_thresholds
     )
 
     # count the number of IDRs in each protein
