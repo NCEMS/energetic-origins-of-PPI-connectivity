@@ -17,7 +17,8 @@ rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"),
         *(
-            [str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")]
+            [str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"),
+             str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")]
             if RUN_CAGIADA
             else []
         )
@@ -62,15 +63,15 @@ if RUN_CAGIADA:
         shell:
             f"""
             python {WORK_DIR}/python-scripts/prepare-structures.py \
-            --nodes      {{input.nodes}} \
-            --input_dir  {{params.input_dir}} \
-            --output_dir {{params.output_dir}} \
+            --nodes        {{input.nodes}} \
+            --input_dir    {{params.input_dir}} \
+            --output_dir   {{params.output_dir}} \
             --organism_tag {{params.organism_tag}}
             """
 
     rule cagiada_stability:
         input:
-            nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+            nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
         conda:
             "env/cagiada-stability.yml"
         params:

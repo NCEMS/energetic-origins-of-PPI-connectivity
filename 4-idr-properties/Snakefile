@@ -2,15 +2,16 @@ from pathlib import Path
 
 LOCAL_CONFIG  = config["idr_properties"]
 
-WORK_DIR       = Path(workflow.basedir)
-DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
-OUTPUT_PREFIX  = config["output_prefix"]
-OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
-ORGANISM_TAG   = config["organism_label"]
-MIN_IDR_LENGTH = LOCAL_CONFIG["min_idr_length"]
-DISORDER_RESI  = LOCAL_CONFIG["disorder_resi_cut"]
-DISORDER_PROT  = LOCAL_CONFIG["disorder_prot_cut"]
-SEQ_COLUMN     = LOCAL_CONFIG["seq_column"] 
+WORK_DIR         = Path(workflow.basedir)
+DATA_DIR1        = Path(LOCAL_CONFIG["input_dir"])
+OUTPUT_PREFIX    = config["output_prefix"]
+OUTPUT_DIR       = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG     = config["organism_label"]
+MIN_IDR_LENGTH   = LOCAL_CONFIG["min_idr_length"]
+DISORDER_RESI    = LOCAL_CONFIG["disorder_resi_cut"]
+SEQ_COLUMN       = LOCAL_CONFIG["seq_column"]
+DISPROT          = LOCAL_CONFID["disprot_database"]
+DISPROT_ORGANISM = LOCAL_CONFIG["disprot_organism"]
 
 rule all:
     input:
@@ -29,8 +30,9 @@ rule predict_IDRs:
         organism_tag   = ORGANISM_TAG,
         min_idr_length = MIN_IDR_LENGTH,
         disorder_aa    = DISORDER_RESI,
-        disorder_prot  = DISORDER_PROT,
-        seq_column     = SEQ_COLUMN
+        seq_column     = SEQ_COLUMN,
+        disprot        = DISPROT,
+        disprot_org    = DISPROT_ORGANISM
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs.pkl")
     shell:
@@ -42,8 +44,9 @@ rule predict_IDRs:
         --organism_tag            {{params.organism_tag}} \
         --min_idr_length          {{params.min_idr_length}} \
         --disorder_threshold_aa   {{params.disorder_aa}} \
-        --disorder_threshold_prot {{params.disorder_prot}} \
-        --seq_column_to_use       {{params.seq_column}}
+        --seq_column_to_use       {{params.seq_column}} \
+        --disprot                 {{params.disprot}} \
+        --disprot_organism_name   {{params.disprot_org}}
         """
 
 rule run_albatross:

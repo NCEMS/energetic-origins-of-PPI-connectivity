@@ -162,10 +162,10 @@ def main():
     # read in the nodes_df from the previous step
     nodes_df = pd.read_pickle(args.nodes)
 
-    # check to see if a structure exists for each node and add to column "structure_exists"
+    # check to see if a structure exists for each node and add to column "structure_exists" with path in "structure_path"
     nodes_df = locate_structure(nodes_df, args.input_dir)
 
-    # add AF2 fasta information as well
+    # add AF2 fasta information as well; adds "structure_fasta_path" and "structure_sequence" to the pd.DataFrame
     nodes_df = locate_structure_fasta(nodes_df, args.input_dir)
 
     # for proteins with a cleavage site predicted by SignalP, create a truncated structure and update structure_path value
