@@ -69,7 +69,7 @@ def predict_disorder(
     )
 
     # add binary classifications of protein as disordered/not disordered based on DisProt percentiles
-    for percentile, cutoff in cutoff_dict.items():
+    for percentile, cutoff in disorder_thresholds.items():
         colname = f"is_disordered_{percentile:.2f}"
         nodes_df[colname] = nodes_df["disorder_fraction"].apply(
             lambda x: 1 if pd.notnull(x) and x > cutoff else 0
@@ -239,6 +239,8 @@ def main():
     # calculate thresholds for determining what is and is not an IDR based on DisProt database
     percentiles = np.arange(0.05, 1.05, 0.05)
     disprot_thresholds = get_disprot_thresholds(args.disprot, percentiles, args.disprot_organism_name)
+
+    print ("Whether or not a protein is disordered will be determined using the following percentile thresholds from DisProt:\n", disprot_thresholds)
 
     # use metapredict to predict IDRs
     nodes_df = predict_disorder(

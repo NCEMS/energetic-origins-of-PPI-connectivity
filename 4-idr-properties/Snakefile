@@ -10,7 +10,7 @@ ORGANISM_TAG     = config["organism_label"]
 MIN_IDR_LENGTH   = LOCAL_CONFIG["min_idr_length"]
 DISORDER_RESI    = LOCAL_CONFIG["disorder_resi_cut"]
 SEQ_COLUMN       = LOCAL_CONFIG["seq_column"]
-DISPROT          = LOCAL_CONFID["disprot_database"]
+DISPROT          = LOCAL_CONFIG["disprot_database"]
 DISPROT_ORGANISM = LOCAL_CONFIG["disprot_organism"]
 
 rule all:
@@ -46,7 +46,7 @@ rule predict_IDRs:
         --disorder_threshold_aa   {{params.disorder_aa}} \
         --seq_column_to_use       {{params.seq_column}} \
         --disprot                 {{params.disprot}} \
-        --disprot_organism_name   {{params.disprot_org}}
+        --disprot_organism_name   "{{params.disprot_org}}"
         """
 
 rule run_albatross:

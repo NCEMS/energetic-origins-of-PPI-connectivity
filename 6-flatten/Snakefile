@@ -20,7 +20,8 @@ def get_input(wildcards):
 
 rule all:
     input:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-final-flat.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-final-per-node.csv"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-final-per-IDR.csv")
 
 rule flatten_nodes:
     input:
@@ -32,7 +33,8 @@ rule flatten_nodes:
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG 
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-final-flat.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-final-per-node.csv"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-final-per-IDR.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/flatten.py \
