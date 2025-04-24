@@ -43,8 +43,9 @@ def flatten_nodes(nodes_df: pd.DataFrame, nested_columns: List[str]) -> pd.DataF
             flattened_rows.append(new_row)
 
     idr_df = pd.DataFrame(flattened_rows)
- 
+
     return idr_df
+
 
 def main():
 
@@ -65,11 +66,14 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
+    nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-node.csv", index=False)
+
     nested_columns = ["albatross", "cider", "IDR_sequences"]
 
     flat_nodes_df = flatten_nodes(nodes_df, nested_columns)
 
-    flat_nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-flat.csv", index=False)
+    flat_nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-IDR.csv", index=False)
+
 
 if __name__ == "__main__":
 
