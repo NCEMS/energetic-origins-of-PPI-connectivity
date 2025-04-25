@@ -1,0 +1,11 @@
+name: protein-half-life
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - biopython
+  - numpy=1.26.4
+  - pandas
+  - pint
+  - pint-pandas

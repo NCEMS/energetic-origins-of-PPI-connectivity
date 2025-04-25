@@ -131,21 +131,21 @@ def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
     return seq[int(cut):]
 
 
-#def compare_sequence(row) -> bool:
-#    struct_seq = row.get("cleaved_structure_sequence")
-#    signalp_seq = row.get("signalP_trimmed_sequence")
-#    # only compare if both sequences are present and not null
-#    if pd.isna(struct_seq) or pd.isna(signalp_seq) or struct_seq is None or signalp_seq is None:
-#        return False
-#    return str(struct_seq) == str(signalp_seq)
-
 def compare_sequence(row) -> bool:
 
-    struct_seq = row.get("cleaved_structure_sequence")
-    signalp_seq = row.get("signalP_trimmed_sequence")
+    if pd.isna(row["cleavage_site_start"]):
+        struct_seq = row.get("structure_sequence")
+    else:
+        struct_seq = row.get("cleaved_structure_sequence")
+
+    signalp_seq = row.get("signalP_trimmed_sequence_x")
 
     # basic checks
     if not isinstance(struct_seq, str) or not isinstance(signalp_seq, str):
+        print ("Problem with", row["node"])
+        print (f"Either {struct_seq} or {signalp_seq} or both is not a str object")
+        print (f"type of struct_seq", type(struct_seq))
+        print (f"type of signalp_seq", type(signalp_seq), "\n")
         return False
 
     # strip and uppercase
@@ -153,7 +153,7 @@ def compare_sequence(row) -> bool:
     signalp_seq_clean = signalp_seq.strip().upper()
 
     if struct_seq_clean != signalp_seq_clean:
-        print(f"Mismatch:\n  STRUCT:   {struct_seq_clean}\n  SIGNALP: {signalp_seq_clean}\n")
+        print(f"Mismatch for", row["node"], f":\n  STRUCT:   {struct_seq_clean}\n  SIGNALP: {signalp_seq_clean}\n")
 
     return struct_seq_clean == signalp_seq_clean
 

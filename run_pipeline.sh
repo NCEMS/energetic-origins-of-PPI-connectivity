@@ -8,7 +8,8 @@ STAGES=("0-download-inputs"
          "3-uniprot-annotation"
          "4-idr-properties"
          "5-dG-calculations"
-         "6-flatten"
+         "6-protein-half-life"
+         "7-flatten"
        )
 
 for STAGE in "${STAGES[@]}"; do
