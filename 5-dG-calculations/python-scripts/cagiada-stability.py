@@ -293,11 +293,12 @@ def main():
     # run predictions in series using CUDA
     start = datetime.now()
     for i, r in nodes_df.iterrows():
-
+        print (f"Attempting prediction for {r['node']}")
         if (
             r["has_verified_sequence"] == True
             and r["DeepTMHMM_class"] not in ["TM", "SP+TM", "BETA"]
             and r["structure_exists"] == 1
+            and r["sequence_matches_structure"] == True
         ):
 
             if pd.isna(r["cleavage_site_start"]):
@@ -305,35 +306,31 @@ def main():
             else:
                 structure_path_to_use = r["cleaved_structure_path"]
 
+            # create cagiada class object for this calculation
             curr_cagiada = cagiada(structure_path_to_use, chainID, r["UniProtKB-AC"])
 
-            # test that the sequences between the orf_trans.fasta file from SGD and AF2 structures from EBI match
-            seq_match = test_sequences_match(
-                r["structure_path"].split(".pdb")[0] + ".fasta", r["sequence"]
-            )
-
-            if seq_match:
-
-                # generate the prediction and add it to the DataFrame
-                abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
-                nodes_df.at[i, "cagiada-dG"] = abs_dG
-
-            else:
-                nodes_df.at[i, "cagiada-dG"] = seq_match
+            # generate the prediction and add it to the DataFrame
+            abs_dG = predict_dG(curr_cagiada, args.output_dir, model, alphabet)
+            nodes_df.at[i, "cagiada-dG"] = abs_dG
 
             # clean up GPU memory after each iteration
             torch.cuda.empty_cache()
 
-            print("Done with ΔG prediction for:", r["UniProtKB-AC"])
+            print("Done with ΔG prediction for:", r["UniProtKB-AC"], "SGD name", r["node"], '\n')
+            print(f"Structure used: {structure_path_to_use}\n")
+            print(f"DeepmTMHMM_class: {r['DeepTMHMM_class']}\n")
 
         else:
-            pass
+            print(f"No prediction will be run:\n"
+                  f"has_verified_seq = {r['has_verified_sequence']}\n"
+                  f"DeepTMHMM_class = {r['DeepTMHMM_class']}\n"
+                  f"structure_exists = {r['structure_exists']}\n"
+                  f"sequence_matches_structure = {r['sequence_matches_structure']}\n")
 
     print(
         "Total execution time is:", datetime.now() - start
-    )  # total time for all dG predictions
+    )
 
-    # save updated nodes_df to file with a new name
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
     )

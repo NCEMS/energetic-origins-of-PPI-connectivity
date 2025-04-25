@@ -95,5 +95,6 @@ if RUN_CAGIADA:
             --organism_tag   {{params.organism_tag}} \
             --structure_dir  {{params.structure_dir}} \
             --ESM_model      {{params.ESM_model}} \
-            --test_dir       {{params.test_dir}}
+            --test_dir       {{params.test_dir}} \
+            > {WORK_DIR}/cagiada.log
             """

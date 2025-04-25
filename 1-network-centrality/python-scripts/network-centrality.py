@@ -38,6 +38,13 @@ def compute_centrality(
     # make networkx style graph
     interactome_graph = nx.from_pandas_edgelist(edges_df, "source", "target", create_using=nx.Graph())
 
+    # extract the largest connected subgraph for information centrality calculations
+    if not nx.is_connected(interactome_graph):
+        largest_cc = max(nx.connected_components(interactome_graph), key=len)
+        interactome_graph_connected = interactome_graph.subgraph(largest_cc).copy()
+    else:
+        interactome_graph_connected = interactome_graph
+
     # perform centrality calculations
     centrality_measures = {
         "degree_centrality": nx.degree_centrality(interactome_graph),
@@ -48,20 +55,8 @@ def compute_centrality(
         "closeness_centrality": nx.closeness_centrality(interactome_graph),
         "load_centrality": nx.load_centrality(interactome_graph),
         "pagerank": nx.pagerank(interactome_graph),
+        "information_centrality": nx.information_centrality(interactome_graph_connected)
     }
-
-    # this version of centrality_measure contains information centrality, which currently fails as the graph is not connected...
-    #centrality_measures = {
-    #    "degree_centrality": nx.degree_centrality(interactome_graph),
-    #    "betweenness_centrality": nx.betweenness_centrality(interactome_graph),
-    #    "eigenvector_centrality": nx.eigenvector_centrality(
-    #        interactome_graph, max_iter=1000
-    #    ),
-    #    "closeness_centrality": nx.closeness_centrality(interactome_graph),
-    #    "load_centrality": nx.load_centrality(interactome_graph),
-    #    "pagerank": nx.pagerank(interactome_graph),
-    #    "information_centrality": nx.information_centrality(interactome_graph)
-    #}
 
     # add per-node information to the DataFrame
     for key, values in centrality_measures.items():
