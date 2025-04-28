@@ -2,13 +2,21 @@ gocmd
 cyverse-access-token
 */.snakemake
 .snakemake
+
+# do not copy SignalP into the GitHub repo
 2-sequence-parsing/python-scripts/signalp6_fast
-#2-sequence-parsing/processed-data/signalP/*
-#!2-sequence-parsing/processed-data/signalP/prediction_results.txt
-#2-sequence-parsing/processed-data/signalP
 
 # ignore everything in data-files except Yeast Interactome files
 0-download-inputs/data-files/*
+
+# raw and processed files from The Yeast Interactome
 !0-download-inputs/data-files/The_Yeast_Interactome*
+
+# DisProt raw & processed files
 !0-download-inputs/data-files/DisProt*
+
+# protein half-life data file from 10.1016/j.celrep.2014.10.065
 !0-download-inputs/data-files/1-s2.0-S2211124714009346-mmc2.*
+
+# protein expression data file from 10.1016/j.cels.2017.12.004
+!0-download-inputs/data-files/1-s2.0-S240547121730546X-mmc5.*
