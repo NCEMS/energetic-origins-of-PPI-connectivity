@@ -37,6 +37,7 @@ def compute_centrality(
 
     # make networkx style graph
     interactome_graph = nx.from_pandas_edgelist(edges_df, "source", "target", create_using=nx.Graph())
+    total_nodes = interactome_graph.number_of_nodes()
 
     # extract the largest connected subgraph for information centrality calculations
     if not nx.is_connected(interactome_graph):
@@ -44,6 +45,10 @@ def compute_centrality(
         interactome_graph_connected = interactome_graph.subgraph(largest_cc).copy()
     else:
         interactome_graph_connected = interactome_graph
+
+    subgraph_nodes = interactome_graph_connected.number_of_nodes()
+
+    print (f"The full graph has {total_nodes} nodes; the largest connected subgraph has {subgraph_nodes} nodes")
 
     # perform centrality calculations
     centrality_measures = {
