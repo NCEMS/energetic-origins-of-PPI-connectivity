@@ -12,9 +12,9 @@ RUN_CAGIADA   = PREV_CONFIG["run_cagiada"]
 
 def get_input(wildcards):
     fname = (
-        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife.pkl"
+        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife-expr.pkl"
         if RUN_CAGIADA else
-        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife.pkl"
+        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife-expr.pkl"
     )
     return str(DATA_DIR / fname)
 

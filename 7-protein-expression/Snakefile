@@ -1,6 +1,6 @@
 from pathlib import Path
 
-LOCAL_CONFIG  = config["protein_half_life"]
+LOCAL_CONFIG  = config["protein_expression"]
 LAST_CONFIG   = config["dG_predictions"]
 
 DATA_DIR      = Path(LOCAL_CONFIG["input_dir"])
@@ -8,47 +8,47 @@ WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
-HALFLIFE_DB   = Path(LOCAL_CONFIG["halflife_db"])
+EXPRESSION_DB = Path(LOCAL_CONFIG["expression_db"])
 RUN_CAGIADA   = LAST_CONFIG["run_cagiada"]
 
 def get_input(wildcards):
     fname = (
-        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
+        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife.pkl"
         if RUN_CAGIADA else
-        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
+        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife.pkl"
     )
     return str(DATA_DIR / fname)
 
 output_file = (
-    f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife.pkl"
+    f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife-expr.pkl"
     if RUN_CAGIADA else
-    f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife.pkl"
+    f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife-expr.pkl"
 )
 
 rule all:
     input:
         output_file
 
-rule add_half_life:
+rule add_expression:
     input:
         get_input
     conda:
-        "env/add-protein-half-life.yml"
+        "env/add-protein-expression.yml"
     params:
         output_prefix  = OUTPUT_PREFIX,
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG,
-        halflife_db    = str(HALFLIFE_DB),
+        expression_db  = str(EXPRESSION_DB),
         run_cagiada    = str(RUN_CAGIADA)
     output:
         output_file
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/add-half-life.py \
+        python {WORK_DIR}/python-scripts/add-expression.py \
         --nodes         {{input}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
         --organism_tag  {{params.organism_tag}} \
-        --halflife_db   {{params.halflife_db}} \
+        --expression_db {{params.expression_db}} \
         --run_cagiada   {{params.run_cagiada}}
         """
