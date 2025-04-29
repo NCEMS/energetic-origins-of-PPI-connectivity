@@ -1,0 +1,13 @@
+name: signalp_fast
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - -e /home/dan182/energetic-origins/energetic-origins-of-PPI-connectivity/2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package
+      - matplotlib>3.3.2
+      - numpy>1.19.2,<2
+      - torch>1.7.0,<2
+      - tqdm>4.46.1

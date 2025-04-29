@@ -1,0 +1,64 @@
+from pathlib import Path
+
+LOCAL_CONFIG  = config["FoldX"]
+
+DATA_DIR      = Path(LOCAL_CONFIG["input_dir"])
+WORK_DIR      = Path(workflow.basedir)
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+SCORE_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"] / "scores"
+ORGANISM_TAG  = config["organism_label"]
+NPROCS        = LOCAL_CONFIG["nprocessors"]
+EXEC          = LOCAL_CONFIG["executable"]
+
+rule all:
+    input:
+        str(SCORE_DIR / ".all_scores_done"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX.pkl")
+
+rule run_FoldX:
+    input:
+        str(DATA_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta.pkl")
+    conda:
+        "env/run-FoldX.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = SCORE_DIR,
+        organism_tag   = ORGANISM_TAG,
+        nprocessors    = NPROCS,
+        exec           = EXEC
+    output:
+        str(SCORE_DIR / ".all_scores_done")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/run-FoldX.py \
+        --nodes         {{input}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}} \
+        --nprocessors   {{params.nprocessors}} \
+        --executable    {{params.exec}}
+        """
+
+rule add_scores_to_nodes:
+    input:
+        input_nodes       = str(DATA_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta.pkl"),
+        input_done_signal = str(SCORE_DIR / ".all_scores_done")
+    conda:
+        "env/run-FoldX.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        input_dir     = SCORE_DIR,
+        organism_tag  = ORGANISM_TAG,
+        output_dir    = OUTPUT_DIR
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-FoldX-scores.py \
+        --nodes         {{input.input_nodes}} \
+        --input_dir     {{params.input_dir}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}}
+        """

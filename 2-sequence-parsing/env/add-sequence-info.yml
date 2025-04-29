@@ -1,6 +1,6 @@
 name: add-sequence-info
 channels:
-  - Bioconda
+  - bioconda
   - conda-forge
 dependencies:
   - pandas

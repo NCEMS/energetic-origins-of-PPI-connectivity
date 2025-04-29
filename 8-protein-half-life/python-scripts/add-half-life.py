@@ -42,10 +42,7 @@ def main():
         "--organism_tag",
         help="Organism label for this run")
     parser.add_argument("--halflife_db")
-    parser.add_argument("--run_cagiada", type=str)
     args = parser.parse_args()
-
-    run_cagiada = args.run_cagiada.lower() == "true"
 
     nodes_df = pd.read_pickle(args.nodes)
 
@@ -59,10 +56,7 @@ def main():
 
     nodes_df = add_halflife(nodes_df, halflife_df, merge_col1, merge_col2, halflife_df_cols)
 
-    if run_cagiada:
-        nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife.pkl")
-    else:
-        nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife.pkl")
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife.pkl")
 
 if __name__ == "__main__":
     main()

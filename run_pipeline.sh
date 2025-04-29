@@ -8,12 +8,14 @@ STAGES=("0-download-inputs"
          "3-uniprot-annotation"
          "4-idr-properties"
          "5-dG-calculations"
-         "6-protein-half-life"
-         "7-protein-expression"
+         "6-Rosetta-scoring"
+         "7-FoldX-scoring"
+         "8-protein-half-life"
+         "9-protein-expression"
          "flatten"
        )
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
-    snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 4 --use-conda || exit 1
+    snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 4 --use-conda --conda-frontend conda || exit 1
 done

@@ -20,3 +20,6 @@ cyverse-access-token
 
 # protein expression data file from 10.1016/j.cels.2017.12.004
 !0-download-inputs/data-files/1-s2.0-S240547121730546X-mmc5.*
+
+# ignore all */processed-data/scores directories from Rosetta & FoldX
+*/processed-data/scores/*
