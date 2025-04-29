@@ -94,9 +94,8 @@ rule run_SignalP:
     input:
         fasta = str(SIGNALP_FASTA)
     conda:
-        str(WORK_DIR / "env/signalp_fast.yml")
+        str(WORK_DIR / "env/signalp_fast_local.yml")
     params:
-        fasta_file    = input.fasta,
         organism_type = ORGANISM_TYPE,
         output_dir1   = str(OUTPUT_DIR / "signalP"),
         output_dir2   = str(OUTPUT_DIR), 

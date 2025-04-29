@@ -245,10 +245,19 @@ def main():
     parser.add_argument("--structure_dir", default="0-download-inputs/data-files", help="Path to directory containing AF2 structures for predictions")
     parser.add_argument("--organism_tag")
     parser.add_argument("--test_dir")
+    parser.add_argument("--run_cagiada", type=str)
     args = parser.parse_args()
 
     # load network node information
     nodes_df = pd.read_pickle(args.nodes)
+
+    # check to see if running Cagiada stability calculations has been requested by the user
+    if args.run_cagiada == "False":
+        nodes_df["cagiada-dG"] = None
+        nodes_df.to_pickle(
+            f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
+        )
+        sys.exit()
 
     # check if CUDA is available
     if torch.cuda.is_available():

@@ -8,15 +8,6 @@ WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
-RUN_CAGIADA   = PREV_CONFIG["run_cagiada"]
-
-def get_input(wildcards):
-    fname = (
-        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-halflife-expr.pkl"
-        if RUN_CAGIADA else
-        f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-halflife-expr.pkl"
-    )
-    return str(DATA_DIR / fname)
 
 rule all:
     input:
@@ -25,7 +16,7 @@ rule all:
 
 rule flatten_nodes:
     input:
-        get_input
+        f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl"
     conda:
         "env/flatten.yml"
     params:

@@ -1,0 +1,3 @@
+SEQUENCE: 
+SCORE: total_score       score dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb linear_chainbreak lk_ball_wtd       omega overlap_chainbreak            p_aa_pp pro_close rama_prepro         ref        time yhh_planarity description 
+SCORE:     246.686     246.686    -1.217 -1929.480  1073.885  -549.633        3.551              67.614             232.286            1330.099     -36.965    -100.910     -17.402    -106.085             0.000     -39.661     188.729              0.000            -41.187    29.729      77.722      65.612       1.000         0.000 AF-Q12396-F1-model_v4-cleaved_0001

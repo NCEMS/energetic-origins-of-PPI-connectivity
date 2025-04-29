@@ -1,0 +1,3 @@
+SEQUENCE: 
+SCORE: total_score       score dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb linear_chainbreak lk_ball_wtd       omega overlap_chainbreak            p_aa_pp pro_close rama_prepro         ref        time yhh_planarity description 
+SCORE:   -1083.527   -1083.527     0.000 -4667.696  1457.833 -1228.054        7.162             161.827             509.975            2970.128     -92.934    -131.703     -71.927    -272.757             0.000     -95.446     292.093              0.000           -117.791   103.412      -6.128      98.478       0.000         0.000 AF-P13188-F1-model_v4_0001

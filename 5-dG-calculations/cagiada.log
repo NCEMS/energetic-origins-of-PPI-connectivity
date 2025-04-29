@@ -1,6 +1,6 @@
 CUDA is available
 Current GPU device index: 0
-GPU Name: NVIDIA A16
+GPU Name: NVIDIA RTX 4500 Ada Generation
 Attempting prediction for YKL063C
 No prediction will be run:
 has_verified_seq = True
@@ -701,4 +701,4 @@ Structure used: 0-download-inputs/data-files/AF-Q06708-F1-model_v4.pdb
 
 DeepmTMHMM_class: GLOB
 
-Total execution time is: 0:03:24.807794
+Total execution time is: 0:01:19.981667
