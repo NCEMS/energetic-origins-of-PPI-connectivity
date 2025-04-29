@@ -1,3 +1,0 @@
-SEQUENCE: 
-SCORE: total_score       score dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb linear_chainbreak lk_ball_wtd       omega overlap_chainbreak            p_aa_pp pro_close rama_prepro         ref        time yhh_planarity description 
-SCORE:     200.319     200.319    -1.069 -1071.985   595.223  -305.887        1.986              42.567             129.852             774.210     -12.828     -46.757      -7.903     -70.645             0.000     -25.363     127.825              0.000            -29.584    58.976      21.729      19.971       0.000         0.000 AF-P40364-F1-model_v4_0001

@@ -1,3 +1,0 @@
-SEQUENCE: 
-SCORE: total_score       score dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb linear_chainbreak lk_ball_wtd       omega overlap_chainbreak            p_aa_pp pro_close rama_prepro         ref        time yhh_planarity description 
-SCORE:    7989.794    7989.794    -1.254 -1437.083  2741.593   -99.981        4.779              97.825             247.830            1101.436     -10.059      -5.215      -8.821     -67.901             0.000     -59.053    3018.625              0.000            132.087   716.796    1634.167     -15.980       1.000         0.000 AF-Q12753-F1-model_v4_0001

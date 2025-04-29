@@ -1,3 +1,0 @@
-SEQUENCE: 
-SCORE: total_score       score dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb linear_chainbreak lk_ball_wtd       omega overlap_chainbreak            p_aa_pp pro_close rama_prepro         ref        time yhh_planarity description 
-SCORE:     -55.920     -55.920    -1.099 -2047.396   942.185  -584.736        3.600              72.175             222.315            1470.283     -45.569     -99.553     -18.605    -128.326             0.000     -39.751     144.567              0.000            -58.502    37.352      18.926      56.213       1.000         0.000 AF-P43555-F1-model_v4-cleaved_0001
