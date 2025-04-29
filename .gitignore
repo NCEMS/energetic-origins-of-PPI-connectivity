@@ -22,4 +22,5 @@ cyverse-access-token
 !0-download-inputs/data-files/1-s2.0-S240547121730546X-mmc5.*
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
-*/processed-data/scores/*
+6-Rosetta-scoring/processed-data/scores/*
+7-FoldX-scoring/processed-data/scores/*
