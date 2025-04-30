@@ -2,6 +2,9 @@ import pandas as pd
 import typing
 from typing import List
 import argparse
+import pint
+from pint import UnitRegistry
+import pint_pandas
 
 def flatten_nodes(nodes_df: pd.DataFrame, nested_columns: List[str]) -> pd.DataFrame:
     """
@@ -66,7 +69,14 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    columns_to_drop = ["ENSG", "Systematic Name"]
+    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS"]
+
+    ureg = UnitRegistry()
+
+    #nodes_df["Ghosh-Dill-dG"] = nodes_df['Ghosh-Dill-dG'].apply(lambda x: ureg(x).to_base_units().magnitude)
+    nodes_df["Ghosh-Dill-dG"] = nodes_df["Ghosh-Dill-dG"].apply(
+        lambda x: x.to("kilocalorie / mole").magnitude if isinstance(x, pint.Quantity) else x
+    )
 
     if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
         nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})

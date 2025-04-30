@@ -9,7 +9,7 @@ from pathlib import Path
 import argparse
 
 def select_structure(row):
-    if row.get("structure_exists", 0) == 1:
+    if row.get("structure_exists", 0) == 1 and row.get("DeepTMHMM_class", 0) == "GLOB":
         if pd.notna(row["cleaved_structure_path"]):
             return row["cleaved_structure_path"]
         else:

@@ -22,6 +22,11 @@ def add_halflife(nodes_df: pd.DataFrame, halflife_df: pd.DataFrame, merge_col1, 
     """
 
     halflife_df = halflife_df[halflife_df_cols]
+
+    # drop duplicates; the half-life data used for s288c have two entries for YPR033C & YER168C for different isoforms
+    # this code keeps the first instance, which corresponds to the first isoform in both cases
+    halflife_df = halflife_df.drop_duplicates(subset='ENSG', keep='first')
+
     nodes_df = nodes_df.merge(halflife_df, how="left", left_on=merge_col1, right_on=merge_col2)
 
     return nodes_df
