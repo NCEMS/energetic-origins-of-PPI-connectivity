@@ -83,7 +83,7 @@ def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFra
 
     # locate the fasta file and add to dataframe
     nodes_df["structure_fasta_path"] = nodes_df["UniProtKB-AC"].apply(
-        lambda id: f"{fasta_dir}/AF-{id}-F1-model_v4.fasta"
+        lambda id: f"{fasta_dir}/AF-{id}-F1-model_v4.fasta" if pd.notna(id) else None
     )
 
     # add the sequence from this fasta file if it exists
@@ -101,6 +101,9 @@ def read_fasta_sequence(fasta_path: str) -> Optional[str]:
 
     Returns: either the sequence as a str or None
     """
+
+    if fasta_path is None:
+        return None
 
     if not os.path.isfile(fasta_path):
         print(f"Missing file: {fasta_path}")
