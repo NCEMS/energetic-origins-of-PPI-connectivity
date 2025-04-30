@@ -2,7 +2,6 @@ from pathlib import Path
 
 LOCAL_CONFIG  = config["network_centrality"]
 
-# global variables
 WORK_DIR      = Path(workflow.basedir)
 DATA_DIR      = WORK_DIR / config["data_dir"]
 OUTPUT_PREFIX = config["output_prefix"]
@@ -10,6 +9,7 @@ ORGANISM_TAG  = config["organism_label"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
 EDGES         = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
+NODES         = Path(config["data_dir"]) / LOCAL_CONFIG["nodes"]
 COSDISTPATH   = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
 
 rule all:
@@ -18,7 +18,8 @@ rule all:
 
 rule network_centrality:
     input:
-        edges = str(EDGES)
+        edges = str(EDGES),
+        nodes = str(NODES)
     conda:
         str(WORK_DIR / "env/network-analysis.yml")
     params:
@@ -33,6 +34,7 @@ rule network_centrality:
         f"""
         python {WORK_DIR}/python-scripts/network-centrality.py \
         --edges         {{input.edges}} \
+        --nodes         {{input.nodes}} \
         --output_prefix {{params.output_prefix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}} \

@@ -28,7 +28,9 @@ CONFIG_FILE=$1
 #STAGES=("8-protein-half-life"
 #        "9-protein-expression"
 #        "flatten")
-STAGES=("flatten")
+#STAGES=("flatten")
+
+STAGES=("1-network-centrality")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
