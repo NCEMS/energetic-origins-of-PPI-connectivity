@@ -19,9 +19,13 @@ These steps are automated in `setup.sh`, so you can just run the command
 
 `./setup.sh`
 
+(If running on CyVerse, use `cyverse_setup.sh` instead)
+
 3. You can now run the pipeline by entering the command `./run_pipeline.sh <.config file>`
 
 The `.config` file contains all commonly changed parameters, including those used to label output files. 
+
+4. To be added - download Rosetta & FoldX and insert paths to executables in the config file
 
 ### PIPELINE
 
@@ -40,8 +44,6 @@ Downloads the required input data (e.g., fasta protein sequences, ESM-IF weights
 #### Step 1 - Calculate network centrality metrics for each node
 
 Uses NetworkX to annotate network with centrality metrics
-
-TO DO: Add information centrality calculations; Add *weighted* k-shell decomposition metric
 
 #### Step 2 - Add sequence information for each node
 
