@@ -278,7 +278,7 @@ def main():
     model.eval().cuda().requires_grad_(False)
 
     # testing purposes only - select the first ten nodes to run a small set of dG predictions
-    nodes_df = nodes_df.head(100)
+    #nodes_df = nodes_df.head(100)
 
     # all protein structure predictions from EBI for S288C contain a single chain with name A
     chainID = "A"
