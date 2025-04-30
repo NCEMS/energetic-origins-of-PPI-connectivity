@@ -85,10 +85,25 @@ def main():
     print (Path(output_dir / "scores"))
 
     # print some things for debugging
-    print (f"\nNumber of structures on which scoring was attempted:", len(structure_paths))
-    print (f"Number of score files produced for these poses     :", len(score_files), "\n")
+    print(f"\nNumber of structures on which scoring was attempted:", len(structure_paths))
+    print(f"Number of score files produced for these poses     :", len(score_files), "\n")
 
-    if len(score_files) == len(structure_paths):
+    # Identify missing structures
+    structure_ids = {Path(p).stem for p in structure_paths}
+    score_ids = {f.stem for f in score_files}
+    missing_ids = structure_ids - score_ids
+    missing_paths = [p for p in structure_paths if Path(p).stem in missing_ids]
+
+    if missing_paths:
+        print(f"\nMissing score files for {len(missing_paths)} structures:")
+        for m in missing_paths:
+            print(f" - {m}")
+        # save to file
+        with open(output_dir / "missing_structures.txt", "w") as f:
+            for m in missing_paths:
+                f.write(f"{m}\n")
+    else:
+        print("All structures were scored successfully.")
         (Path(args.output_dir) / ".all_scores_done").touch()
 
 if __name__ == "__main__":

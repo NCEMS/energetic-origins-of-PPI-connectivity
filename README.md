@@ -67,7 +67,7 @@ If requested in the .config file, will also run Cagiada stability predictions (r
 
 TO DO: Add FoldX dG predictions
 
-#### Step 6 - Flatten the database
+#### Step 10 - Flatten the database
 
 Converts the database from "one row per protein" to "one row per IDR"
 

@@ -66,6 +66,14 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
+    columns_to_drop = ["ENSG", "Systematic Name"]
+
+    if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
+        nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
+        columns_to_drop.append("signalP_trimmed_sequence_y")
+
+    nodes_df = nodes_df.drop(columns=columns_to_drop)
+
     nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-node.csv", index=False)
 
     nested_columns = ["albatross", "cider", "IDR_sequences"]

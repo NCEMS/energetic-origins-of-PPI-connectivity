@@ -82,6 +82,12 @@ def main():
     # add Rosetta scoring function information to the nodes_df
     nodes_df["Rosetta_scores"] = nodes_df["Rosetta_score_file"].apply(parse_rosetta_score_file)
 
+    # expand dictionary into multiple columns
+    rosetta_scores_df = nodes_df["Rosetta_scores"].apply(pd.Series)
+    rosetta_scores_df = rosetta_scores_df.add_prefix("Rosetta_")
+    nodes_df = pd.concat([nodes_df, rosetta_scores_df], axis=1)
+    nodes_df = nodes_df.drop(columns=["Rosetta_scores"])
+
     nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta.pkl"
     )
 

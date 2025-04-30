@@ -19,13 +19,10 @@ def select_structure(row):
         return None
 
 def score_pdb(args):
-    pdb_path_str, FoldX_exec, output_dir = args
-    pdb_path = Path(pdb_path_str).resolve()
-    pdb_filename = pdb_path.name
 
     pdb_path_str, FoldX_exec, output_dir = args
     pdb_path = Path(pdb_path_str).resolve()
-    pdb_filename = pdb_path.name  # get just the file name (no path)
+    pdb_filename = pdb_path.name
 
     # Symlink the pdb into the output directory if it doesn't already exist
     destination_pdb = output_dir / pdb_filename
@@ -38,16 +35,39 @@ def score_pdb(args):
             print(f"Warning: Failed to create symlink for {pdb_path} -> {destination_pdb}: {e}")
             raise
 
-    # Now run FoldX in output_dir with the pdb file name
+    # run FoldX in output_dir with the pdb file name
     cmd = (
         f"{FoldX_exec} --command=Stability "
         f"--pdb={pdb_filename} "
         f"--output-file={pdb_filename.replace('.pdb', '.fxout')}"
     )
-    print(cmd)
-    subprocess.run(cmd, shell=True, cwd=output_dir, check=True)
+    #print(cmd)
+    #subprocess.run(cmd, shell=True, cwd=output_dir, check=True)
+    # Run FoldX, capturing stdout and stderr
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        cwd=output_dir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
 
-    return pdb_path.name
+    # Save stdout and stderr to a .log file
+    log_path = output_dir / f"{pdb_path.stem}.log"
+    with open(log_path, "w") as log_file:
+        log_file.write("=== STDOUT ===\n")
+        log_file.write(result.stdout)
+        log_file.write("\n\n=== STDERR ===\n")
+        log_file.write(result.stderr)
+
+    # Check if FoldX exited cleanly
+    if result.returncode != 0:
+        print(f"FoldX error on {pdb_filename}. See log: {log_path}")
+        return {"pdb": pdb_filename, "error": True, "log_file": str(log_path)}
+
+    print(f"FoldX completed for {pdb_filename}. Log saved: {log_path}")
+    return {"pdb": pdb_filename, "error": False, "log_file": str(log_path)}
 
 def main():
 
