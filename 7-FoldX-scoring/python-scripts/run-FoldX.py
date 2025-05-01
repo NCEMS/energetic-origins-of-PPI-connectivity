@@ -6,16 +6,20 @@ from pathlib import Path
 import argparse
 import subprocess
 
-def select_structure(row):
+def select_relaxed_structure(row, relaxed_dir):
     if (
         row.get("structure_exists", 0) == 1 and
         row.get("DeepTMHMM_class", 0) not in ["TM", "SP+TM", "BETA"] and
         row.get("sequence_matches_structure", 0) == True and
         row.get("has_verified_sequence", 0) == True
     ):
-        return row["cleaved_structure_path"] if pd.notna(row["cleaved_structure_path"]) else row["structure_path"]
-    else:
-        return None
+        structure_path = row["cleaved_structure_path"] if pd.notna(row["cleaved_structure_path"]) else row["structure_path"]
+        stem = Path(structure_path).stem
+        relaxed_path = Path(relaxed_dir) / f"{stem}_0001.pdb"
+        print ("TEST:", relaxedf_path)
+        if relaxed_path.exists():
+            return relaxed_path
+    return None
 
 def score_pdb(args):
     pdb_path_str, FoldX_exec, output_dir = args
@@ -71,6 +75,7 @@ def main():
     parser.add_argument("--nprocessors", type=int)
     parser.add_argument("--organism_tag")
     parser.add_argument("--output_prefix", default="0")
+    parser.add_argument("--struc_dir")
     parser.add_argument("--executable")
     args = parser.parse_args()
 
@@ -80,7 +85,8 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Select and deduplicate structure paths
-    structure_paths = list({p for p in nodes_df.apply(select_structure, axis=1).dropna()})
+    #structure_paths = list({p for p in nodes_df.apply(select_structure, axis=1).dropna()})
+    structure_paths = list({p for p in nodes_df.apply(lambda row: select_relaxed_structure(row, args.struc_dir), axis=1).dropna()})
 
     print(f"Total unique structures to score: {len(structure_paths)}")
 

@@ -20,7 +20,7 @@ def get_score_file(row, score_dir="processed-data/scores"):
     structure_path = select_structure(row)
     if pd.notna(structure_path):
         stem = Path(structure_path).stem
-        return score_dir / f"{stem}.sc"
+        return score_dir / f"{stem}_0001.sc"
     else:
         return None
 
@@ -43,6 +43,8 @@ def parse_rosetta_score_file(score_file_path):
             # This is the first data line
             values = line.strip().split()[1:]  # Skip "SCORE:" keyword
             score_dict = dict(zip(header, map(float_or_str, values)))
+            if "total_score" not in score_dict:
+                print(f"Warning: 'total_score' not found in {score_file_path}")
             return score_dict
 
 def float_or_str(x):
@@ -55,7 +57,7 @@ def main():
 
     # parse command-line arguments
     parser = argparse.ArgumentParser(
-        description="Run Rosetta energy scoring of protein structures"
+        description="Extract Rosetta energy scoring of protein structures and add to nodes_df"
     )
     parser.add_argument(
         "--nodes", required=True

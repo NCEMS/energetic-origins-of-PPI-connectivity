@@ -9,7 +9,7 @@ OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 SCORE_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"] / "scores"
 ORGANISM_TAG  = config["organism_label"]
 NPROCS        = LOCAL_CONFIG["nprocessors"]
-EXEC          = LOCAL_CONFIG["executable"]
+RELAX_EXEC    = LOCAL_CONFIG["relax_executable"]
 
 rule all:
     input:
@@ -26,18 +26,18 @@ rule run_Rosetta:
         output_dir     = SCORE_DIR,
         organism_tag   = ORGANISM_TAG,
         nprocessors    = NPROCS,
-        exec           = EXEC
+        relax_exec     = RELAX_EXEC
     output:
         str(SCORE_DIR / ".all_scores_done")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-Rosetta.py \
-        --nodes         {{input}} \
-        --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --organism_tag  {{params.organism_tag}} \
-        --nprocessors   {{params.nprocessors}} \
-        --executable    {{params.exec}}
+        --nodes            {{input}} \
+        --output_dir       {{params.output_dir}} \
+        --output_prefix    {{params.output_prefix}} \
+        --organism_tag     {{params.organism_tag}} \
+        --nprocessors      {{params.nprocessors}} \
+        --relax_executable {{params.relax_exec}}
         """
 
 rule add_scores_to_nodes:
