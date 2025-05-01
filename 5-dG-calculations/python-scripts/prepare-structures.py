@@ -9,6 +9,7 @@ import argparse
 import pint
 import pint_pandas
 
+
 class CleavageSelect(Select):
 
     def __init__(self, cut_pos: int):
@@ -69,6 +70,7 @@ def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame
 
     return nodes_df
 
+
 def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFrame:
     """
     Adds information to nodes_df regarding the fasta sequence extracted from the AF2 structure
@@ -87,7 +89,9 @@ def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFra
     )
 
     # add the sequence from this fasta file if it exists
-    nodes_df["structure_sequence"] = nodes_df["structure_fasta_path"].apply(read_fasta_sequence)
+    nodes_df["structure_sequence"] = nodes_df["structure_fasta_path"].apply(
+        read_fasta_sequence
+    )
 
     return nodes_df
 
@@ -131,7 +135,7 @@ def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
     if pd.isna(cut) or cut is None:
         return seq
 
-    return seq[int(cut):]
+    return seq[int(cut) :]
 
 
 def compare_sequence(row) -> bool:
@@ -145,10 +149,10 @@ def compare_sequence(row) -> bool:
 
     # basic checks
     if not isinstance(struct_seq, str) or not isinstance(signalp_seq, str):
-        print ("Problem with", row["node"])
-        print (f"Either {struct_seq} or {signalp_seq} or both is not a str object")
-        print (f"type of struct_seq", type(struct_seq))
-        print (f"type of signalp_seq", type(signalp_seq), "\n")
+        print("Problem with", row["node"])
+        print(f"Either {struct_seq} or {signalp_seq} or both is not a str object")
+        print(f"type of struct_seq", type(struct_seq))
+        print(f"type of signalp_seq", type(signalp_seq), "\n")
         return False
 
     # strip and uppercase
@@ -156,32 +160,32 @@ def compare_sequence(row) -> bool:
     signalp_seq_clean = signalp_seq.strip().upper()
 
     if struct_seq_clean != signalp_seq_clean:
-        print(f"Mismatch for", row["node"], f":\n  STRUCT:   {struct_seq_clean}\n  SIGNALP: {signalp_seq_clean}\n")
+        print(
+            f"Mismatch for",
+            row["node"],
+            f":\n  STRUCT:   {struct_seq_clean}\n  SIGNALP: {signalp_seq_clean}\n",
+        )
 
     return struct_seq_clean == signalp_seq_clean
+
 
 def main():
 
     # parse command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--nodes", required=True
-    )
+    parser.add_argument("--nodes", required=True)
     parser.add_argument(
         "--output_dir",
         default="processed-data",
         help="Directory where truncated PDBs will be saved",
     )
-    parser.add_argument(
-        "--output_prefix"
-    )
+    parser.add_argument("--output_prefix")
     parser.add_argument(
         "--input_dir",
         default="processed-data",
         help="Directory containing predicted structures for the proteome under consideration",
     )
-    parser.add_argument(
-        "--organism_tag")
+    parser.add_argument("--organism_tag")
     args = parser.parse_args()
 
     # read in the nodes_df from the previous step
@@ -198,15 +202,20 @@ def main():
 
     # for proteins with a cleavage site predicted by SignalP, create a truncated FASTA based on the sequence from the AF2 structure
     nodes_df["cleaved_structure_sequence"] = nodes_df.apply(
-        lambda row: truncate_fasta(row["structure_sequence"], row["cleavage_site_start"]),
-        axis=1
+        lambda row: truncate_fasta(
+            row["structure_sequence"], row["cleavage_site_start"]
+        ),
+        axis=1,
     )
 
     # compare sequences between structures and trimmed sequences and add this information to a Boolean column named "sequence_matches_structure"
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl")
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl"
+    )
+
 
 if __name__ == "__main__":
 

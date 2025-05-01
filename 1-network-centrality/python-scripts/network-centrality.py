@@ -36,7 +36,9 @@ def compute_centrality(
     """
 
     # make networkx style graph
-    interactome_graph = nx.from_pandas_edgelist(edges_df, "source", "target", create_using=nx.Graph())
+    interactome_graph = nx.from_pandas_edgelist(
+        edges_df, "source", "target", create_using=nx.Graph()
+    )
     total_nodes = interactome_graph.number_of_nodes()
 
     # extract the largest connected subgraph for information centrality calculations
@@ -48,7 +50,9 @@ def compute_centrality(
 
     subgraph_nodes = interactome_graph_connected.number_of_nodes()
 
-    print (f"The full graph has {total_nodes} nodes; the largest connected subgraph has {subgraph_nodes} nodes")
+    print(
+        f"The full graph has {total_nodes} nodes; the largest connected subgraph has {subgraph_nodes} nodes"
+    )
 
     # do information_centrality calculations
     info_centrality = nx.information_centrality(interactome_graph_connected)
@@ -65,7 +69,7 @@ def compute_centrality(
         "closeness_centrality": nx.closeness_centrality(interactome_graph),
         "load_centrality": nx.load_centrality(interactome_graph),
         "pagerank": nx.pagerank(interactome_graph),
-        "information_centrality": full_info_centrality
+        "information_centrality": full_info_centrality,
     }
 
     # add per-node information to the DataFrame
@@ -266,9 +270,11 @@ def main():
 
     # load nodes to get weighted k-shell information
     nodes_df_temp = pd.read_csv(args.nodes, usecols=["_wkshell", "name"])
-    nodes_df_temp["_wkshell"] = nodes_df_temp["_wkshell"].fillna(0.0) # impute 0 for NaN weighted k-shell values
+    nodes_df_temp["_wkshell"] = nodes_df_temp["_wkshell"].fillna(
+        0.0
+    )  # impute 0 for NaN weighted k-shell values
 
-    print (nodes_df_temp["name"].nunique(dropna=False))
+    print(nodes_df_temp["name"].nunique(dropna=False))
 
     # extract nodes and create pd.DataFrame
     nodes_df = pd.DataFrame(
@@ -276,12 +282,19 @@ def main():
     )
 
     # add weighted kshell information to nodes_df
-    nodes_df = nodes_df.merge(nodes_df_temp, left_on="node", right_on="name", how="left")
+    nodes_df = nodes_df.merge(
+        nodes_df_temp, left_on="node", right_on="name", how="left"
+    )
     nodes_df = nodes_df.drop(columns="name")
 
     # compute network centrality measures
     nodes_df = compute_centrality(
-        edges_df, nodes_df, args.output_dir, args.output_prefix, args.test_dir, args.CosDistPath
+        edges_df,
+        nodes_df,
+        args.output_dir,
+        args.output_prefix,
+        args.test_dir,
+        args.CosDistPath,
     )
 
     # save the output to file

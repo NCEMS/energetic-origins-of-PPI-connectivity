@@ -3,8 +3,10 @@ import typing
 from typing import List
 import argparse
 
-def write_SignalP_fasta(nodes_df: pd.DataFrame, DeepTMHMM_classes_to_use: List[str], output_file: str) -> None:
 
+def write_SignalP_fasta(
+    nodes_df: pd.DataFrame, DeepTMHMM_classes_to_use: List[str], output_file: str
+) -> None:
     """
     Creates a fasta file that contains the sequences for which SignalP cleavage site predictions need to be run
 
@@ -24,9 +26,12 @@ def write_SignalP_fasta(nodes_df: pd.DataFrame, DeepTMHMM_classes_to_use: List[s
 
     return
 
+
 def main():
 
-    parser = argparse.ArgumentParser(description="Create input fasta file for SignalP6.0; only proteins with classification SP will be included.")
+    parser = argparse.ArgumentParser(
+        description="Create input fasta file for SignalP6.0; only proteins with classification SP will be included."
+    )
     parser.add_argument(
         "--nodes",
         help="Path to the input nodes CSV file",
@@ -41,10 +46,7 @@ def main():
         default="0",
         help="Prefix to be applied to output file",
     )
-    parser.add_argument(
-        "--output_fasta",
-        help="Path to the fasta file to be written"
-    )
+    parser.add_argument("--output_fasta", help="Path to the fasta file to be written")
     parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
@@ -58,6 +60,7 @@ def main():
 
     # create the fasta file needed as input for SignalP
     write_SignalP_fasta(nodes_df, DeepTMHMM_classes_to_use, args.output_fasta)
+
 
 if __name__ == "__main__":
     main()

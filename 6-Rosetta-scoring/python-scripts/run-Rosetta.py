@@ -9,13 +9,14 @@ from pathlib import Path
 import argparse
 import subprocess
 
+
 def select_structure(row):
     if (
-        row.get("structure_exists", 0) == 1 and
-        row.get("DeepTMHMM_class", 0) not in ["TM", "SP+TM", "BETA"] and
-        row.get("sequence_matches_structure", 0) == True and
-        row.get("has_verified_sequence", 0) == True
-       ):
+        row.get("structure_exists", 0) == 1
+        and row.get("DeepTMHMM_class", 0) not in ["TM", "SP+TM", "BETA"]
+        and row.get("sequence_matches_structure", 0) == True
+        and row.get("has_verified_sequence", 0) == True
+    ):
 
         if pd.notna(row["cleaved_structure_path"]):
             return row["cleaved_structure_path"]
@@ -24,6 +25,7 @@ def select_structure(row):
     else:
         return None
 
+
 def score_pdb(args):
     pdb_path_str, rosetta_exec, output_dir = args
     pdb_path = Path(pdb_path_str)
@@ -31,10 +33,14 @@ def score_pdb(args):
 
     cmd = [
         rosetta_exec,
-        "-in:file:s", str(pdb_path),
-        "-score:weights", "ref2015",
-        "-out:file:scorefile", str(output_scorefile),
-        "-out:pdb", "false"
+        "-in:file:s",
+        str(pdb_path),
+        "-score:weights",
+        "ref2015",
+        "-out:file:scorefile",
+        str(output_scorefile),
+        "-out:pdb",
+        "false",
     ]
 
     print(f"Scoring {pdb_path.name} ...")
@@ -44,9 +50,12 @@ def score_pdb(args):
         print(f"\nRosetta failed on {pdb_path.name}:\n{e.stderr}")
         return str(pdb_path), False
     if not output_scorefile.exists():
-        print(f"\nNo score file produced for {pdb_path.name} (no crash, but silent failure?)")
+        print(
+            f"\nNo score file produced for {pdb_path.name} (no crash, but silent failure?)"
+        )
         return str(pdb_path), False
     return str(pdb_path), True
+
 
 def relax_pdb(args):
 
@@ -61,14 +70,20 @@ def relax_pdb(args):
     # run FastRelax
     relax_cmd = [
         rosetta_exec,
-        "-s", str(pdb_path),
+        "-s",
+        str(pdb_path),
         "-relax:fast",
         "-relax:constrain_relax_to_start_coords",
-        "-nstruct", "1",
-        "-score:weights", "ref2015",
-        "-out:file:scorefile", str(scorefile),
-        "-out:pdb", "true",
-        "-out:path:all", str(output_dir)
+        "-nstruct",
+        "1",
+        "-score:weights",
+        "ref2015",
+        "-out:file:scorefile",
+        str(scorefile),
+        "-out:pdb",
+        "true",
+        "-out:path:all",
+        str(output_dir),
     ]
     print(f"Running FastRelax on {pdb_filename}")
     try:
@@ -84,23 +99,20 @@ def relax_pdb(args):
     print(f"FastRelax completed for {pdb_filename}")
     return str(pdb_path), True
 
+
 def main():
 
     # parse command-line arguments
     parser = argparse.ArgumentParser(
         description="Run Rosetta energy scoring of protein structures"
     )
-    parser.add_argument(
-        "--nodes", required=True
-    )
+    parser.add_argument("--nodes", required=True)
     parser.add_argument(
         "--output_dir",
         default="processed-data",
         help="Directory where results will be saved (default: 'outputs')",
     )
-    parser.add_argument(
-        "--nprocessors", type=int
-    )
+    parser.add_argument("--nprocessors", type=int)
     parser.add_argument("--organism_tag")
     parser.add_argument("--relax_executable")
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
@@ -110,7 +122,7 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
 
     # relatively quick test run
-    #nodes_df = nodes_df[nodes_df["L"] < 120]
+    # nodes_df = nodes_df[nodes_df["L"] < 120]
 
     # Rosetta executable to use for scoring structures
     rosetta_exec = args.relax_executable
@@ -139,11 +151,15 @@ def main():
     # check all expected score files are present
     score_files = list(output_dir.glob("*.sc"))
 
-    print (Path(output_dir / "scores"))
+    print(Path(output_dir / "scores"))
 
     # print some things for debugging
-    print(f"\nNumber of structures on which scoring was attempted:", len(structure_paths))
-    print(f"Number of score files produced for these poses     :", len(score_files), "\n")
+    print(
+        f"\nNumber of structures on which scoring was attempted:", len(structure_paths)
+    )
+    print(
+        f"Number of score files produced for these poses     :", len(score_files), "\n"
+    )
 
     # check all expected score files are present
     score_files = list(output_dir.glob("*.sc"))
@@ -153,7 +169,9 @@ def main():
 
     missing_paths = [p for p in structure_paths if Path(p).stem in missing_ids]
 
-    print(f"\nNumber of structures on which scoring was attempted: {len(structure_paths)}")
+    print(
+        f"\nNumber of structures on which scoring was attempted: {len(structure_paths)}"
+    )
     print(f"Number of score files produced for these poses     : {len(score_files)}")
     print(f"Number of missing score files                      : {len(missing_paths)}")
 
@@ -167,6 +185,7 @@ def main():
     else:
         print("All structures were scored successfully.")
         (Path(args.output_dir) / ".all_scores_done").touch()
+
 
 if __name__ == "__main__":
     main()

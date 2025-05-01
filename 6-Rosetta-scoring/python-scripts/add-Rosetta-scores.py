@@ -7,6 +7,7 @@ import pint
 import pint_pandas
 from pathlib import Path
 
+
 def select_structure(row):
     if row.get("structure_exists", 0) == 1:
         if pd.notna(row["cleaved_structure_path"]):
@@ -16,6 +17,7 @@ def select_structure(row):
     else:
         return None
 
+
 def get_score_file(row, score_dir="processed-data/scores"):
     structure_path = select_structure(row)
     if pd.notna(structure_path):
@@ -23,6 +25,7 @@ def get_score_file(row, score_dir="processed-data/scores"):
         return score_dir / f"{stem}_0001.sc"
     else:
         return None
+
 
 def parse_rosetta_score_file(score_file_path):
 
@@ -47,11 +50,13 @@ def parse_rosetta_score_file(score_file_path):
                 print(f"Warning: 'total_score' not found in {score_file_path}")
             return score_dict
 
+
 def float_or_str(x):
     try:
         return float(x)
     except ValueError:
         return x
+
 
 def main():
 
@@ -59,17 +64,13 @@ def main():
     parser = argparse.ArgumentParser(
         description="Extract Rosetta energy scoring of protein structures and add to nodes_df"
     )
-    parser.add_argument(
-        "--nodes", required=True
-    )
+    parser.add_argument("--nodes", required=True)
     parser.add_argument(
         "--output_dir",
         default="processed-data",
         help="Directory where results will be saved (default: 'outputs')",
     )
-    parser.add_argument(
-        "--input_dir"
-    )
+    parser.add_argument("--input_dir")
     parser.add_argument("--organism_tag")
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
     args = parser.parse_args()
@@ -79,10 +80,14 @@ def main():
 
     # add path to the Rosetta score file
     score_dir = Path(args.input_dir)
-    nodes_df["Rosetta_score_file"] = nodes_df.apply(lambda row: get_score_file(row, score_dir), axis=1)
+    nodes_df["Rosetta_score_file"] = nodes_df.apply(
+        lambda row: get_score_file(row, score_dir), axis=1
+    )
 
     # add Rosetta scoring function information to the nodes_df
-    nodes_df["Rosetta_scores"] = nodes_df["Rosetta_score_file"].apply(parse_rosetta_score_file)
+    nodes_df["Rosetta_scores"] = nodes_df["Rosetta_score_file"].apply(
+        parse_rosetta_score_file
+    )
 
     # expand dictionary into multiple columns
     rosetta_scores_df = nodes_df["Rosetta_scores"].apply(pd.Series)
@@ -90,7 +95,8 @@ def main():
     nodes_df = pd.concat([nodes_df, rosetta_scores_df], axis=1)
     nodes_df = nodes_df.drop(columns=["Rosetta_scores"])
 
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta.pkl"
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta.pkl"
     )
 
 

@@ -8,8 +8,10 @@ import pandas as pd
 import numpy as np
 import argparse
 
-def get_disprot_thresholds(disprot: str, percentiles: List[float], organism_string: str) -> pd.DataFrame:
 
+def get_disprot_thresholds(
+    disprot: str, percentiles: List[float], organism_string: str
+) -> pd.DataFrame:
     """
     Extracts thresholds for determining when a protein is disordered based on percentiles of the fraction disordered data within DisProt
 
@@ -225,12 +227,8 @@ def main():
         type=str,
         help="Column within nodes_df from which sequences for IDR predictions will be drawn",
     )
-    parser.add_argument(
-        "--disprot"
-    )
-    parser.add_argument(
-        "--disprot_organism_name"
-    )
+    parser.add_argument("--disprot")
+    parser.add_argument("--disprot_organism_name")
     args = parser.parse_args()
 
     # read in the previous step's nodes_df
@@ -238,9 +236,14 @@ def main():
 
     # calculate thresholds for determining what is and is not an IDR based on DisProt database
     percentiles = np.arange(0.05, 1.05, 0.05)
-    disprot_thresholds = get_disprot_thresholds(args.disprot, percentiles, args.disprot_organism_name)
+    disprot_thresholds = get_disprot_thresholds(
+        args.disprot, percentiles, args.disprot_organism_name
+    )
 
-    print ("Whether or not a protein is disordered will be determined using the following percentile thresholds from DisProt:\n", disprot_thresholds)
+    print(
+        "Whether or not a protein is disordered will be determined using the following percentile thresholds from DisProt:\n",
+        disprot_thresholds,
+    )
 
     # use metapredict to predict IDRs
     nodes_df = predict_disorder(
@@ -257,7 +260,10 @@ def main():
     # extract_IDR_seqs(row: pd.Series, threshold: float = 0.5, min_length: int = 30 )
     nodes_df["IDR_sequences"] = nodes_df.apply(
         lambda row: extract_IDR_seqs(
-            row, args.seq_column_to_use, threshold=args.disorder_threshold_aa, min_length=args.min_idr_length
+            row,
+            args.seq_column_to_use,
+            threshold=args.disorder_threshold_aa,
+            min_length=args.min_idr_length,
         ),
         axis=1,
     )
