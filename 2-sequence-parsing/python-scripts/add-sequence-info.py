@@ -26,8 +26,8 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
 
     return nodes_df
 
-def add_mappings(nodes_df: pd.DataFrame, map_file: str) -> pd.DataFrame:
 
+def add_mappings(nodes_df: pd.DataFrame, map_file: str) -> pd.DataFrame:
     """
     Add UniProtKB-AC identifiers to each node as possible
 
@@ -100,7 +100,8 @@ def main():
 
     # write the updated nodes_df to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs.csv", index=False
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs.csv",
+        index=False,
     )
 
 

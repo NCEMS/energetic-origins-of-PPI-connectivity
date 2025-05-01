@@ -20,6 +20,7 @@ from esm.inverse_folding.multichain_util import (
     load_complex_coords,
 )
 
+
 # class to store parameters for each dG calculation to be carried out
 class cagiada:
 
@@ -39,6 +40,7 @@ def read_values_from_file(f_path):
         val2 = lines[-1].strip().split(",")[1]  # dG prediction
 
     return float(val1), float(val2)
+
 
 # test that results match expectation
 def test_P78285_results_within_tolerance(f_path):
@@ -62,6 +64,7 @@ def test_P78285_results_within_tolerance(f_path):
         abs(ref_dG_predicted - new_dG_predicted) < tol
     ), "Reference and calculated ΔG do not match"
 
+
 # test that sequences match between structure used for dG prediction and sequence used for all other predictions (e.g., metapredict)
 def test_sequences_match(AF2_fasta_path, seq2):
 
@@ -75,6 +78,7 @@ def test_sequences_match(AF2_fasta_path, seq2):
     else:
         return "Sequence mismatch"
 
+
 # function to check CUDA memory being used by script
 def print_gpu_memory_usage():
 
@@ -82,6 +86,7 @@ def print_gpu_memory_usage():
     reserved = torch.cuda.memory_reserved()
     print(f"GPU Memory Allocated: {allocated/1e6:.2f} MB")
     print(f"GPU Memory Reserved:  {reserved/1e6:.2f} MB")
+
 
 # function to run the model for a set of inputs
 def run_model(coords, sequence, model, alphabet, chain_target="A"):
@@ -114,6 +119,7 @@ def run_model(coords, sequence, model, alphabet, chain_target="A"):
     token_probs = torch.softmax(logits_swapped, dim=-1)
 
     return token_probs
+
 
 # compute likelihood scores for each residue in the sequence
 def score_variants(sequence, token_probs, alphabet):
@@ -167,6 +173,7 @@ def score_variants(sequence, token_probs, alphabet):
 
     return aa_list, wt_scores
 
+
 # compute masked absolute probability score
 def masked_absolute(mut, idx, token_probs, alphabet):
     """
@@ -183,6 +190,7 @@ def masked_absolute(mut, idx, token_probs, alphabet):
     """
     mt_encoded = alphabet.get_idx(mut)
     return token_probs[0, idx, mt_encoded].item()
+
 
 # function to carry out various steps in model pipeline
 def predict_dG(cagiada_info, output_dir, model, alphabet, create_file=False):
@@ -241,8 +249,16 @@ def main():
         help="Directory where results will be saved (default: 'outputs')",
     )
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
-    parser.add_argument("--ESM_model", default="0-download-inputs/data-files/esm_if1_gvp4_t16_142M_UR50.pt", help="Path to the ESM-IF model to be used")
-    parser.add_argument("--structure_dir", default="0-download-inputs/data-files", help="Path to directory containing AF2 structures for predictions")
+    parser.add_argument(
+        "--ESM_model",
+        default="0-download-inputs/data-files/esm_if1_gvp4_t16_142M_UR50.pt",
+        help="Path to the ESM-IF model to be used",
+    )
+    parser.add_argument(
+        "--structure_dir",
+        default="0-download-inputs/data-files",
+        help="Path to directory containing AF2 structures for predictions",
+    )
     parser.add_argument("--organism_tag")
     parser.add_argument("--test_dir")
     parser.add_argument("--run_cagiada", type=str)
@@ -278,7 +294,7 @@ def main():
     model.eval().cuda().requires_grad_(False)
 
     # testing purposes only - select the first ten nodes to run a small set of dG predictions
-    #nodes_df = nodes_df.head(100)
+    # nodes_df = nodes_df.head(100)
 
     # all protein structure predictions from EBI for S288C contain a single chain with name A
     chainID = "A"
@@ -287,7 +303,9 @@ def main():
     # run on the default protein P78285 from Cagiada Google Colab notebook
     predict_dG(
         cagiada(
-            f"{args.test_dir}/P78285/AF-P78285-F1-model_v4.pdb", chainID, "AF-P78285-F1-model_v4"
+            f"{args.test_dir}/P78285/AF-P78285-F1-model_v4.pdb",
+            chainID,
+            "AF-P78285-F1-model_v4",
         ),
         args.output_dir,
         model,
@@ -302,7 +320,7 @@ def main():
     # run predictions in series using CUDA
     start = datetime.now()
     for i, r in nodes_df.iterrows():
-        print (f"Attempting prediction for {r['node']}")
+        print(f"Attempting prediction for {r['node']}")
         if (
             r["has_verified_sequence"] == True
             and r["DeepTMHMM_class"] not in ["TM", "SP+TM", "BETA"]
@@ -325,20 +343,26 @@ def main():
             # clean up GPU memory after each iteration
             torch.cuda.empty_cache()
 
-            print("Done with ΔG prediction for:", r["UniProtKB-AC"], "SGD name", r["node"], '\n')
+            print(
+                "Done with ΔG prediction for:",
+                r["UniProtKB-AC"],
+                "SGD name",
+                r["node"],
+                "\n",
+            )
             print(f"Structure used: {structure_path_to_use}\n")
             print(f"DeepmTMHMM_class: {r['DeepTMHMM_class']}\n")
 
         else:
-            print(f"No prediction will be run:\n"
-                  f"has_verified_seq = {r['has_verified_sequence']}\n"
-                  f"DeepTMHMM_class = {r['DeepTMHMM_class']}\n"
-                  f"structure_exists = {r['structure_exists']}\n"
-                  f"sequence_matches_structure = {r['sequence_matches_structure']}\n")
+            print(
+                f"No prediction will be run:\n"
+                f"has_verified_seq = {r['has_verified_sequence']}\n"
+                f"DeepTMHMM_class = {r['DeepTMHMM_class']}\n"
+                f"structure_exists = {r['structure_exists']}\n"
+                f"sequence_matches_structure = {r['sequence_matches_structure']}\n"
+            )
 
-    print(
-        "Total execution time is:", datetime.now() - start
-    )
+    print("Total execution time is:", datetime.now() - start)
 
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"

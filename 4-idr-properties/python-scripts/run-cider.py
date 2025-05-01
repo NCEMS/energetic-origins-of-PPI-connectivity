@@ -1,9 +1,10 @@
 import argparse
 from sparrow import Protein
 import pandas as pd
-from tqdm import tqdm 
+from tqdm import tqdm
 from typing import Optional
-from typing import Dict 
+from typing import Dict
+
 
 def run_cider(row: pd.Series) -> Optional[Dict[int, Dict[str, float]]]:
 
@@ -78,6 +79,7 @@ def main():
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl"
     )
+
 
 if __name__ == "__main__":
 

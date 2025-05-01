@@ -4,7 +4,10 @@ import pint_pandas
 import argparse
 import numpy as np
 
-def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float, seq_column: str) -> pd.DataFrame:
+
+def compute_Ghosh_Dill_dG(
+    nodes_df: pd.DataFrame, T: float, seq_column: str
+) -> pd.DataFrame:
     """
     Compute the stability of a protein from chain length and temperature alone using Eq. 1 from Ghosh and Dill Biophys. J. 2010 equation
 
@@ -26,10 +29,10 @@ def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float, seq_column: str) -> 
 
     # get required information and apply filters
     dG_df = nodes_df[
-        (nodes_df["has_verified_sequence"] == True) &
-        (nodes_df["DeepTMHMM_class"].isin(["GLOB", "SP"])) &
-        (nodes_df["structure_exists"] == 1) &
-        (nodes_df["sequence_matches_structure"] == True)
+        (nodes_df["has_verified_sequence"] == True)
+        & (nodes_df["DeepTMHMM_class"].isin(["GLOB", "SP"]))
+        & (nodes_df["structure_exists"] == 1)
+        & (nodes_df["sequence_matches_structure"] == True)
     ][["node", seq_column]].copy()
 
     # add protein length
@@ -70,6 +73,7 @@ def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float, seq_column: str) -> 
 
     return nodes_df
 
+
 def main():
 
     parser = argparse.ArgumentParser(
@@ -91,9 +95,7 @@ def main():
         type=float,
         help="Temperature in kelvin for Ghosh and Dill equation",
     )
-    parser.add_argument(
-        "--organism_tag",
-        help="Organism label for this run")
+    parser.add_argument("--organism_tag", help="Organism label for this run")
     args = parser.parse_args()
 
     nodes_df = pd.read_pickle(args.nodes)
@@ -105,6 +107,7 @@ def main():
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
     )
+
 
 if __name__ == "__main__":
     main()
