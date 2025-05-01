@@ -1,0 +1,59 @@
+from pathlib import Path
+
+LOCAL_CONFIG   = config["translation_speed"]
+
+DATA_DIR       = Path(LOCAL_CONFIG["input_dir"])
+WORK_DIR       = Path(workflow.basedir)
+OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG   = config["organism_label"]
+TRANS_SPEED_DB = Path(LOCAL_CONFIG["trans_speed_db"])
+RAW_DATA_DIR   = Path(LOCAL_CONFIG["raw_data_dir"])
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl"
+
+rule prepare_reads:
+    input:
+        data1 = f"{RAW_DATA_DIR}/A-site_profiles_Jan.tab"
+        data2 = f"{RAW_DATA_DIR}/A-site_profiles_Nissley1.tab"
+        data3 = f"{RAW_DATA_DIR}/A-site_profiles_Nissley2.tab"
+        data4 = f"{RAW_DATA_DIR}/A-site_profiles_Weinberg.tab"
+        data5 = f"{RAW_DATA_DIR}/A-site_profiles_Williams.tab"
+        data6 = f"{RAW_DATA_DIR}/A-site_profiles_Young.tab"
+    conda:
+        "env/add-translation-speed.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-pooled-data.csv"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/prepare-reads.py
+        """
+
+rule add_translation_speed:
+    input:
+        f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-pooled-data.csv"
+    conda:
+        "env/add-translation-speed.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = str(OUTPUT_DIR),
+        organism_tag   = ORGANISM_TAG,
+        trans_speed_db = str(TRANS_SPEED_DB)
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-translation-speed.py \
+        --nodes          {{input}} \
+        --output_dir     {{params.output_dir}} \
+        --output_prefix  {{params.output_prefix}} \
+        --organism_tag   {{params.organism_tag}} \
+        --trans_speed_db {{params.trans_speed_db}}
+        """
