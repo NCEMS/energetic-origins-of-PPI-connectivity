@@ -24,8 +24,13 @@ def compute_Ghosh_Dill_dG(nodes_df: pd.DataFrame, T: float, seq_column: str) -> 
     # add units to input temperature
     T = Q_(T, "kelvin")
 
-    # get required information
-    dG_df = nodes_df[["node", seq_column]].copy()
+    # get required information and apply filters
+    dG_df = nodes_df[
+        (nodes_df["has_verified_sequence"] == True) &
+        (nodes_df["DeepTMHMM_class"].isin(["GLOB", "SP"])) &
+        (nodes_df["structure_exists"] == 1) &
+        (nodes_df["sequence_matches_structure"] == True)
+    ][["node", seq_column]].copy()
 
     # add protein length
     dG_df["L"] = dG_df[seq_column].str.len()

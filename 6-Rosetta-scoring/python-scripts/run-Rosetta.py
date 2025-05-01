@@ -7,9 +7,16 @@ import typing
 import multiprocessing as mp
 from pathlib import Path
 import argparse
+import subprocess
 
 def select_structure(row):
-    if row.get("structure_exists", 0) == 1 and row.get("DeepTMHMM_class", 0) == "GLOB":
+    if (
+        row.get("structure_exists", 0) == 1 and
+        row.get("DeepTMHMM_class", 0) not in ["TM", "SP+TM", "BETA"] and
+        row.get("sequence_matches_structure", 0) == True and
+        row.get("has_verified_sequence", 0) == True
+       ):
+
         if pd.notna(row["cleaved_structure_path"]):
             return row["cleaved_structure_path"]
         else:
@@ -18,21 +25,28 @@ def select_structure(row):
         return None
 
 def score_pdb(args):
-
     pdb_path_str, rosetta_exec, output_dir = args
-
     pdb_path = Path(pdb_path_str)
-    output_scorefile = output_dir / (pdb_path.stem + ".sc")  # use filename without extension
-    cmd = (
-        f"{rosetta_exec} "
-        f"-in:file:s {pdb_path} "
-        f"-score:weights ref2015 "
-        f"-out:file:scorefile {output_scorefile} "
-        f"-out:pdb false"
-    )
+    output_scorefile = output_dir / (pdb_path.stem + ".sc")
+
+    cmd = [
+        rosetta_exec,
+        "-in:file:s", str(pdb_path),
+        "-score:weights", "ref2015",
+        "-out:file:scorefile", str(output_scorefile),
+        "-out:pdb", "false"
+    ]
+
     print(f"Scoring {pdb_path.name} ...")
-    os.system(cmd)
-    return pdb_path.name
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"\nRosetta failed on {pdb_path.name}:\n{e.stderr}")
+        return str(pdb_path), False
+    if not output_scorefile.exists():
+        print(f"\nNo score file produced for {pdb_path.name} (no crash, but silent failure?)")
+        return str(pdb_path), False
+    return str(pdb_path), True
 
 def main():
 
@@ -79,6 +93,10 @@ def main():
     with mp.Pool(processes=ncpus) as pool:
         results = pool.map(score_pdb, job_args)
 
+        # filter success/failure
+        successful_paths = [r[0] for r in results if r[1] is True]
+        failed_paths = [r[0] for r in results if r[1] is False]
+
     # check all expected score files are present
     score_files = list(output_dir.glob("*.sc"))
 
@@ -88,17 +106,22 @@ def main():
     print(f"\nNumber of structures on which scoring was attempted:", len(structure_paths))
     print(f"Number of score files produced for these poses     :", len(score_files), "\n")
 
-    # Identify missing structures
-    structure_ids = {Path(p).stem for p in structure_paths}
-    score_ids = {f.stem for f in score_files}
-    missing_ids = structure_ids - score_ids
+    # check all expected score files are present
+    score_files = list(output_dir.glob("*.sc"))
+    scored_ids = {f.stem for f in score_files}
+    expected_ids = {Path(p).stem for p in structure_paths}
+    missing_ids = expected_ids - scored_ids
+
     missing_paths = [p for p in structure_paths if Path(p).stem in missing_ids]
 
-    if missing_paths:
+    print(f"\nNumber of structures on which scoring was attempted: {len(structure_paths)}")
+    print(f"Number of score files produced for these poses     : {len(score_files)}")
+    print(f"Number of missing score files                      : {len(missing_paths)}")
+
+    if len(missing_paths) > 0:
         print(f"\nMissing score files for {len(missing_paths)} structures:")
         for m in missing_paths:
             print(f" - {m}")
-        # save to file
         with open(output_dir / "missing_structures.txt", "w") as f:
             for m in missing_paths:
                 f.write(f"{m}\n")
