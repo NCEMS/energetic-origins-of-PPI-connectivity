@@ -21,7 +21,8 @@ def get_log_file(row, score_dir="processed-data/scores"):
     structure_path = select_structure(row)
     if pd.notna(structure_path):
         stem = Path(structure_path).stem
-        return score_dir / f"{stem}.log"
+        #print ("TEST:", score_dir / f"{stem}_0001.log")
+        return score_dir / f"{stem}_0001.log"
     else:
         return None
 

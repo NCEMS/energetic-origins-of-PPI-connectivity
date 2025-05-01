@@ -10,6 +10,7 @@ SCORE_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"] / "scores"
 ORGANISM_TAG  = config["organism_label"]
 NPROCS        = LOCAL_CONFIG["nprocessors"]
 EXEC          = LOCAL_CONFIG["executable"]
+STRUCTURE_DIR = LOCAL_CONFIG["structure_dir"]
 
 rule all:
     input:
@@ -26,7 +27,8 @@ rule run_FoldX:
         output_dir     = SCORE_DIR,
         organism_tag   = ORGANISM_TAG,
         nprocessors    = NPROCS,
-        exec           = EXEC
+        exec           = EXEC,
+        struc_dir      = STRUCTURE_DIR
     output:
         str(SCORE_DIR / ".all_scores_done")
     shell:
@@ -37,7 +39,8 @@ rule run_FoldX:
         --output_prefix {{params.output_prefix}} \
         --organism_tag  {{params.organism_tag}} \
         --nprocessors   {{params.nprocessors}} \
-        --executable    {{params.exec}}
+        --executable    {{params.exec}} \
+        --struc_dir     {{params.struc_dir}}
         """
 
 rule add_scores_to_nodes:

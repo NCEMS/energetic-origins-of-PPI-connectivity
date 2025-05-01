@@ -48,6 +48,42 @@ def score_pdb(args):
         return str(pdb_path), False
     return str(pdb_path), True
 
+def relax_pdb(args):
+
+    pdb_path_str, rosetta_exec, output_dir = args
+    pdb_path = Path(pdb_path_str).resolve()
+    pdb_filename = pdb_path.name
+    base = pdb_filename.replace(".pdb", "")
+
+    relaxed_pdb = output_dir / f"{base}_0001.pdb"
+    scorefile = output_dir / f"{base}_0001.sc"
+
+    # run FastRelax
+    relax_cmd = [
+        rosetta_exec,
+        "-s", str(pdb_path),
+        "-relax:fast",
+        "-relax:constrain_relax_to_start_coords",
+        "-nstruct", "1",
+        "-score:weights", "ref2015",
+        "-out:file:scorefile", str(scorefile),
+        "-out:pdb", "true",
+        "-out:path:all", str(output_dir)
+    ]
+    print(f"Running FastRelax on {pdb_filename}")
+    try:
+        subprocess.run(relax_cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"FastRelax failed on {pdb_filename}:\n{e.stderr}")
+        return str(pdb_path), False
+
+    if not scorefile.exists():
+        print(f"Missing relaxed score file for {pdb_filename}")
+        return str(pdb_path), False
+
+    print(f"FastRelax completed for {pdb_filename}")
+    return str(pdb_path), True
+
 def main():
 
     # parse command-line arguments
@@ -66,15 +102,18 @@ def main():
         "--nprocessors", type=int
     )
     parser.add_argument("--organism_tag")
-    parser.add_argument("--executable")
+    parser.add_argument("--relax_executable")
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
     args = parser.parse_args()
 
     # read in the nodes_df from file
     nodes_df = pd.read_pickle(args.nodes)
 
+    # relatively quick test run
+    #nodes_df = nodes_df[nodes_df["L"] < 120]
+
     # Rosetta executable to use for scoring structures
-    rosetta_exec = args.executable
+    rosetta_exec = args.relax_executable
 
     # number of processors over which jobs will be distributed
     ncpus = args.nprocessors
@@ -91,7 +130,7 @@ def main():
 
     # run scoring in parallel
     with mp.Pool(processes=ncpus) as pool:
-        results = pool.map(score_pdb, job_args)
+        results = pool.map(relax_pdb, job_args)
 
         # filter success/failure
         successful_paths = [r[0] for r in results if r[1] is True]
@@ -109,7 +148,7 @@ def main():
     # check all expected score files are present
     score_files = list(output_dir.glob("*.sc"))
     scored_ids = {f.stem for f in score_files}
-    expected_ids = {Path(p).stem for p in structure_paths}
+    expected_ids = {Path(p).stem + "_0001" for p in structure_paths}
     missing_ids = expected_ids - scored_ids
 
     missing_paths = [p for p in structure_paths if Path(p).stem in missing_ids]
