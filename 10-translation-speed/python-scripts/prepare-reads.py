@@ -60,14 +60,13 @@ def pooled_ribo_profile(study_dfs: List[pd.DataFrame], return_codon_counts=True)
 
 def main():
 
-    # Example list of file paths
-    file_paths = [
-        "study1.tsv",
-        "study2.tsv",
-        "study3.tsv",
-    ]
+    parser = argparse.ArgumentParser(description="Pool ribosome profiles.")
+    parser.add_argument("--ribo_seq_data_files", nargs="+", required=True, help="Input TSV files with ribo seq data")
+    parser.add_argument("--output_dir", required=True, help="Output directory")
+    parser.add_argument("--output_prefix", required=True, help="Prefix appended to output files")
+    parser.add_argument("--organism_tag", required=True, help="Organism label to be applied to output files")
+    parser.parse_args()
 
-    study_dfs = []
 
     for file_path in file_paths:
         df = pd.read_csv(file_path, sep="\t", header=None, names=["gene", "num_ncs", "raw_counts"])
