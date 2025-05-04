@@ -9,6 +9,7 @@ OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 TRANS_SPEED_DB = Path(LOCAL_CONFIG["trans_speed_db"])
 RAW_DATA_DIR   = Path(LOCAL_CONFIG["raw_data_dir"])
+RIBO_FILES     = [f"{ROAW_DATA_DIR}/{fname}" for fname in LOCAL_CONFIG["ribo_seq_data"]]
 
 rule all:
     input:
@@ -16,12 +17,7 @@ rule all:
 
 rule prepare_reads:
     input:
-        data1 = f"{RAW_DATA_DIR}/A-site_profiles_Jan.tab"
-        data2 = f"{RAW_DATA_DIR}/A-site_profiles_Nissley1.tab"
-        data3 = f"{RAW_DATA_DIR}/A-site_profiles_Nissley2.tab"
-        data4 = f"{RAW_DATA_DIR}/A-site_profiles_Weinberg.tab"
-        data5 = f"{RAW_DATA_DIR}/A-site_profiles_Williams.tab"
-        data6 = f"{RAW_DATA_DIR}/A-site_profiles_Young.tab"
+        data = RIBO_FILES
     conda:
         "env/add-translation-speed.yml"
     params:
@@ -33,6 +29,10 @@ rule prepare_reads:
     shell:
         f"""
         python {WORK_DIR}/python-scripts/prepare-reads.py
+        --output_dir
+        --output_prefix
+        --organism_tag
+        --ribo_seq_data_files
         """
 
 rule add_translation_speed:
