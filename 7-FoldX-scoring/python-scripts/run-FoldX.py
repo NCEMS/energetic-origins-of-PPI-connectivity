@@ -16,7 +16,7 @@ def select_relaxed_structure(row, relaxed_dir):
         structure_path = row["cleaved_structure_path"] if pd.notna(row["cleaved_structure_path"]) else row["structure_path"]
         stem = Path(structure_path).stem
         relaxed_path = Path(relaxed_dir) / f"{stem}_0001.pdb"
-        print ("TEST:", relaxedf_path)
+        print ("TEST:", relaxed_path)
         if relaxed_path.exists():
             return relaxed_path
     return None
