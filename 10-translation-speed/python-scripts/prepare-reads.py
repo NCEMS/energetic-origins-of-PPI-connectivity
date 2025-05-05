@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from typing import List
-
+import argparse
 
 def normalize_counts(row):
     """Normalize raw_counts string to CPM and return list of floats."""
@@ -65,18 +65,18 @@ def main():
     parser.add_argument("--output_dir", required=True, help="Output directory")
     parser.add_argument("--output_prefix", required=True, help="Prefix appended to output files")
     parser.add_argument("--organism_tag", required=True, help="Organism label to be applied to output files")
-    parser.parse_args()
+    args = parser.parse_args()
 
-
-    for file_path in file_paths:
+    study_dfs = []
+    for file_path in args.ribo_seq_data_files:
         df = pd.read_csv(file_path, sep="\t", header=None, names=["gene", "num_ncs", "raw_counts"])
         df["normalized_counts"] = df.apply(normalize_counts, axis=1)
         study_dfs.append(df)
 
     pooled_df = pooled_ribo_profile(study_dfs)
 
-    # Print a preview
-    print(pooled_df.head())
+    # save the output file
+    pooled_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-pooled-ribo-seq-data.csv", index=False)
 
 
 if __name__ == "__main__":

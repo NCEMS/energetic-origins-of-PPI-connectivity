@@ -67,6 +67,10 @@ def relax_pdb(args):
     relaxed_pdb = output_dir / f"{base}_0001.pdb"
     scorefile = output_dir / f"{base}_0001.sc"
 
+    if scorefile.exists():
+        print(f"Skipping {pdb_filename} (already scored)")
+        return str(pdb_path), True
+
     # run FastRelax
     relax_cmd = [
         rosetta_exec,
