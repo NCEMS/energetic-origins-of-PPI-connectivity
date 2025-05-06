@@ -18,31 +18,9 @@ rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
 
-rule prepare_structures:
-    input:
-        nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl")
-    conda:
-        "env/prepare-structures.yml"
-    params:
-        input_dir     = str(STRUCTURE_DIR),
-        output_dir    = str(OUTPUT_DIR),
-        organism_tag  = ORGANISM_TAG,
-        output_prefix = OUTPUT_PREFIX
-    output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
-    shell:
-        f"""
-        python {WORK_DIR}/python-scripts/prepare-structures.py \
-        --nodes         {{input.nodes}} \
-        --input_dir     {{params.input_dir}} \
-        --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --organism_tag  {{params.organism_tag}}
-        """
-
 rule ghosh_dill_stability:
     input:
-        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
+        nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl")
     conda:
         "env/ghosh-dill-stability.yml"
     params:
@@ -64,10 +42,31 @@ rule ghosh_dill_stability:
         --seq_column_to_use {{params.seq_column}}
         """
 
+rule prepare_structures:
+    input:
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+    conda:
+        "env/prepare-structures.yml"
+    params:
+        input_dir     = str(STRUCTURE_DIR),
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+        output_prefix = OUTPUT_PREFIX
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/prepare-structures.py \
+        --nodes         {{input.nodes}} \
+        --input_dir     {{params.input_dir}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}}
+        """
 
 rule cagiada_stability:
     input:
-        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
     conda:
         "env/cagiada-stability.yml"
     params:
