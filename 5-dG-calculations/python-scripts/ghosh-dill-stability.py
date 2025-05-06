@@ -58,16 +58,28 @@ def compute_Ghosh_Dill_dG(
     )
 
     # compute ΔG
-    dG = dG_df.apply(
-        lambda row: (
+    #dG = dG_df.apply(
+    #    lambda row: (
+    #        row["dH"]
+    #        + row["dCp"] * (T - T_h)
+    #        - T * row["dS"]
+    #        - T * row["dCp"] * np.log(T.magnitude / T_s.magnitude)
+    #    ).to("kilocalorie / mole"),
+    #    axis=1,
+    #)
+    #dG_df["Ghosh-Dill-dG"] = dG.apply(lambda x: x.to("kilocalorie / mole").magnitude)
+
+    dG_list = []
+    for _, row in dG_df.iterrows():
+        deltaG = (
             row["dH"]
             + row["dCp"] * (T - T_h)
             - T * row["dS"]
             - T * row["dCp"] * np.log(T.magnitude / T_s.magnitude)
-        ).to("kilocalorie / mole"),
-        axis=1,
-    )
-    dG_df["Ghosh-Dill-dG"] = dG
+        ).to("kilocalorie / mole")
+        dG_list.append(deltaG.magnitude)
+
+    dG_df["Ghosh-Dill-dG"] = dG_list
 
     nodes_df = pd.merge(nodes_df, dG_df, on="node", how="left")
 

@@ -1,0 +1,94 @@
+from pathlib import Path
+
+LOCAL_CONFIG  = config["dG_predictions"]
+
+WORK_DIR      = Path(workflow.basedir)
+DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG  = config["organism_label"]
+TEMPERATURE   = LOCAL_CONFIG["temperature"]
+RUN_CAGIADA   = LOCAL_CONFIG["run_cagiada"]
+STRUCTURE_DIR = Path(LOCAL_CONFIG["structure_dir"])
+ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
+SEQ_COLUMN    = LOCAL_CONFIG["seq_column"]
+TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
+
+rule all:
+    input:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+
+rule ghosh_dill_stability:
+    input:
+        nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl")
+    conda:
+        "env/ghosh-dill-stability.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = str(OUTPUT_DIR),
+        organism_tag   = ORGANISM_TAG,
+        temperature    = TEMPERATURE,
+        seq_column     = SEQ_COLUMN
+    output:
+        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/ghosh-dill-stability.py \
+        --nodes         {{input.nodes}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}} \
+        --temperature   {{params.temperature}} \
+        --seq_column_to_use {{params.seq_column}}
+        """
+
+rule prepare_structures:
+    input:
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+    conda:
+        "env/prepare-structures.yml"
+    params:
+        input_dir     = str(STRUCTURE_DIR),
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+        output_prefix = OUTPUT_PREFIX
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/prepare-structures.py \
+        --nodes         {{input.nodes}} \
+        --input_dir     {{params.input_dir}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}}
+        """
+
+rule cagiada_stability:
+    input:
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
+    conda:
+        "env/cagiada-stability.yml"
+    params:
+        output_prefix  = OUTPUT_PREFIX,
+        output_dir     = str(OUTPUT_DIR),
+        organism_tag   = ORGANISM_TAG,
+        structure_dir  = STRUCTURE_DIR,
+        ESM_model      = ESM_MODEL,
+        test_dir       = TEST_DIR,
+        run_cagiada    = RUN_CAGIADA
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/cagiada-stability.py \
+        --nodes          {{input.nodes}} \
+        --output_dir     {{params.output_dir}} \
+        --output_prefix  {{params.output_prefix}} \
+        --organism_tag   {{params.organism_tag}} \
+        --structure_dir  {{params.structure_dir}} \
+        --ESM_model      {{params.ESM_model}} \
+        --test_dir       {{params.test_dir}} \
+        --run_cagiada    {{params.run_cagiada}} \
+        > {WORK_DIR}/cagiada.log
+        """
