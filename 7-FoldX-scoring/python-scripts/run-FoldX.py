@@ -16,7 +16,7 @@ def select_relaxed_structure(row, relaxed_dir):
         structure_path = row["cleaved_structure_path"] if pd.notna(row["cleaved_structure_path"]) else row["structure_path"]
         stem = Path(structure_path).stem
         relaxed_path = Path(relaxed_dir) / f"{stem}_0001.pdb"
-        print ("TEST:", relaxed_path)
+        #print ("TEST:", relaxed_path)
         if relaxed_path.exists():
             return relaxed_path
     return None
@@ -44,13 +44,19 @@ def score_pdb(args):
         f"--output-file={pdb_filename.replace('.pdb', '.fxout')}"
     )
 
+    # check to see if the log file has already been written; if so, skip this run
+    log_path = output_dir / f"{pdb_path.stem}.log"
+
+    if log_path.exists():
+        print (f"Skipping {pdb_filename}, log file already exists.")
+        return str(pdb_path), True
+
     result = subprocess.run(
         cmd, shell=True, cwd=output_dir,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
 
-    # Save stdout/stderr
-    log_path = output_dir / f"{pdb_path.stem}.log"
+    # save the stdout & stderr
     with open(log_path, "w") as log_file:
         log_file.write("=== STDOUT ===\n" + result.stdout)
         log_file.write("\n\n=== STDERR ===\n" + result.stderr)
