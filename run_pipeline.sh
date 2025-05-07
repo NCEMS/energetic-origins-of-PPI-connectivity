@@ -3,16 +3,16 @@
 CONFIG_FILE=$1
 
 STAGES=("0-download-inputs"
-         "1-network-centrality"
-         "2-sequence-parsing"
-         "3-uniprot-annotation"
-         "4-idr-properties"
-         "5-dG-calculations"
-         "6-Rosetta-scoring"
-         "7-FoldX-scoring"
-         "8-protein-half-life"
-         "9-protein-expression"
-         "flatten"
+        "1-network-centrality"
+        "2-sequence-parsing"
+        "3-uniprot-annotation"
+        "4-idr-properties"
+        "5-dG-calculations"
+        "6-Rosetta-scoring"
+        "7-FoldX-scoring"
+        "8-protein-half-life"
+        "9-protein-expression"
+        "flatten"
        )
 
 for STAGE in "${STAGES[@]}"; do

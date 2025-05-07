@@ -8,6 +8,7 @@ from typing import Optional
 import argparse
 import pint
 import pint_pandas
+import numpy as np
 
 
 class CleavageSelect(Select):
@@ -145,7 +146,7 @@ def compare_sequence(row) -> bool:
     else:
         struct_seq = row.get("cleaved_structure_sequence")
 
-    signalp_seq = row.get("signalP_trimmed_sequence_x")
+    signalp_seq = row.get("signalP_trimmed_sequence")
 
     # basic checks
     if not isinstance(struct_seq, str) or not isinstance(signalp_seq, str):
@@ -167,6 +168,39 @@ def compare_sequence(row) -> bool:
         )
 
     return struct_seq_clean == signalp_seq_clean
+
+
+def extract_plddt_ca_only(pdb_filename):
+    """
+    Extracts pLDDT values from CA atoms in B-factor field of an AlphaFold2 PDB file.
+
+    Parameters:
+    - pdb_filename (str): Path to the PDB file.
+
+    Returns:
+    - avg_plddt (float): Mean pLDDT value across all residues.
+    """
+    plddt_values = []
+
+    with open(pdb_filename, 'r') as f:
+        for line in f:
+            if line.startswith("ATOM") and line[12:16].strip() == "CA":
+                try:
+                    b_factor = float(line[60:66].strip())
+                    plddt_values.append(b_factor)
+                except ValueError:
+                    continue  # skip lines with malformed B-factors
+
+    plddt_array = np.array(plddt_values)
+    avg_plddt = np.mean(plddt_array) if len(plddt_array) > 0 else float('nan')
+    return avg_plddt
+
+def compute_mean_plddt(row):
+
+    if row["structure_exists"] == 1:
+        return extract_plddt_ca_only(row["structure_path"])
+    else:
+        return np.nan
 
 
 def main():
@@ -210,6 +244,9 @@ def main():
 
     # compare sequences between structures and trimmed sequences and add this information to a Boolean column named "sequence_matches_structure"
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
+
+    # compute the mean of per-residue pLDDT for each AF2 structure
+    nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
     nodes_df.to_pickle(
