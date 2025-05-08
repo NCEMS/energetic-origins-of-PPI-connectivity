@@ -1,18 +1,21 @@
 from pathlib import Path
 
-LOCAL_CONFIG  = config["dG_predictions"]
+LOCAL_CONFIG      = config["dG_predictions"]
 
-WORK_DIR      = Path(workflow.basedir)
-DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
-OUTPUT_PREFIX = config["output_prefix"]
-OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
-ORGANISM_TAG  = config["organism_label"]
-TEMPERATURE   = LOCAL_CONFIG["temperature"]
-RUN_CAGIADA   = LOCAL_CONFIG["run_cagiada"]
-STRUCTURE_DIR = Path(LOCAL_CONFIG["structure_dir"])
-ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
-SEQ_COLUMN    = LOCAL_CONFIG["seq_column"]
-TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
+WORK_DIR          = Path(workflow.basedir)
+DATA_DIR1         = Path(LOCAL_CONFIG["input_dir"])
+OUTPUT_PREFIX     = config["output_prefix"]
+OUTPUT_DIR        = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG      = config["organism_label"]
+TEMPERATURE       = LOCAL_CONFIG["temperature"]
+RUN_CAGIADA       = LOCAL_CONFIG["run_cagiada"]
+STRUCTURE_DIR     = Path(LOCAL_CONFIG["structure_dir"])
+ESM_MODEL         = Path(LOCAL_CONFIG["ESM_model"])
+SEQ_COLUMN        = LOCAL_CONFIG["seq_column"]
+TEST_DIR          = WORK_DIR / LOCAL_CONFIG["test_dir"]
+AF2_DATABASES     = LOCAL_CONFIG["AF2_databases"]
+AF2_DOCKER        = LOCAL_CONFIG["AF2_docker_script"]
+MAX_TEMPLATE_DATE = LOCAL_CONFIG["max_template_date"]
 
 rule all:
     input:
@@ -39,6 +42,24 @@ rule prepare_structures:
         --output_prefix {{params.output_prefix}} \
         --organism_tag  {{params.organism_tag}}
         """
+
+rule run_alphafold2:
+    input:
+        fasta = "AF2_sequences/{id}.fasta"
+    output:
+        pred_dir = directory("processed-data/AF2-predictions")
+    params:
+        data_dir          = AF2_DATABASES,
+        docker_script     = AF2_DOCKER,
+        max_template_date = MAX_TEMPLATE_DATE
+    shell:
+        f"""
+        python {{params.docker_script}} \
+        --fasta_paths       {{input.fasta}} \
+        --output_dir        {{output.pred_dir}} \
+        --data_dir          {{params.data_dir}} \
+        --max_template_date {{params.max_template_date}}
+        """"
 
 rule ghosh_dill_stability:
     input:
