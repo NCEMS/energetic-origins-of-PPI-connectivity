@@ -12,6 +12,7 @@ STAGES=("0-download-inputs"
         "7-FoldX-scoring"
         "8-protein-half-life"
         "9-protein-expression"
+        "10-translation-speed"
         "flatten"
        )
 
