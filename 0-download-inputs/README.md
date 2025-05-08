@@ -10,6 +10,4 @@ This section of the pipeline handles the download of required files to `data-fil
 
 After downloading the files, the second rule will extract SEQRES records from each AF2 PDB file and convert them to fasta format
 
-To run this pipeline step in isolation, run the command `snakemake` from the `0-download-inputs` directory.
-
-*N.B.*: This pipeline will add approximately 7.3 GB of data to the `data-files/` directory.
+*N.B.*: This step will add approximately 7.3 GB of data to the `data-files/` directory.
