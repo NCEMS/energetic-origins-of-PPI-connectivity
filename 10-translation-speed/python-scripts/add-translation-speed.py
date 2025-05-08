@@ -21,24 +21,20 @@ def main():
     parser.add_argument(
         "--organism_tag",
         help="Organism label for this run")
-    parser.add_argument("--trans_speed_db")
+    parser.add_argument("--trans_speed_file")
     args = parser.parse_args()
 
-    #nodes_df = pd.read_pickle(args.nodes)
-    nodes_df = pd.read_csv(args.nodes)
+    # read in the nodes file
+    nodes_df = pd.read_pickle(args.nodes)
+    #nodes_df = pd.read_csv(args.nodes)
 
-    trans_speed_df = pd.read_csv(args.trans_speed_db, sep="\t", header=None, names=["gene", "num_ncs", "raw_counts"])
+    # read in the translation speed information
+    trans_speed_df = pd.read_pickle(args.trans_speed_file)
 
-    #print (type(trans_speed_df["raw_counts"].iloc[0]))
-    trans_speed_df["raw_counts"] = trans_speed_df["raw_counts"].apply(lambda s: [float(x) for x in s.split(",")])
-    trans_speed_df["canonical_frame_counts"] = trans_speed_df["float_list"].apply(lambda x: x[::3])
+    # merge the two pd.DataFrame objects to insert translation speed information into the nodes_df
+    nodes_df = nodes_df.merge(trans_speed_df[["gene", "translation_speed_score"]], how="left", left_on="node", right_on="gene")
 
-    #trans_speed_df_cols = ["ENSG", "Degradation rates (min-1)", "R2 (quality of curve fitting)", "t1/2 (min)"]
-    #merge_col1 = "node"
-    #merge_col2 = "ENSG"
-    #nodes_df = add_trans_speed(nodes_df, halflife_df, merge_col1, merge_col2, halflife_df_cols)
-
-    #nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-speed.pkl")
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl")
 
 if __name__ == "__main__":
     main()

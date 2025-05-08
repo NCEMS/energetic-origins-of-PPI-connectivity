@@ -9,7 +9,6 @@ STAGES=("0-download-inputs"
         "4-idr-properties"
        )
 
-#STAGES=("5-dG-calculations")
 
 STAGES=("5-dG-calculations"
         "6-Rosetta-scoring"
@@ -18,6 +17,8 @@ STAGES=("5-dG-calculations"
         "9-protein-expression"
         "flatten"
         )
+
+STAGES=("10-translation-speed" "flatten")
 
 
 for STAGE in "${STAGES[@]}"; do

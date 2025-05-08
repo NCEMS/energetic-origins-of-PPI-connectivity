@@ -43,8 +43,12 @@ def pooled_ribo_profile(study_dfs: List[pd.DataFrame], return_codon_counts=True)
         if not gene_profiles:
             continue
 
+        lengths = [len(c) for c in gene_profiles]
+        if len(set(lengths)) > 1:
+            print(f"Warning: Length mismatch for gene {gene}: {lengths}")
+
         # Pad to same length
-        max_len = max(len(c) for c in gene_profiles)
+        max_len = max(lengths)
         padded = [np.pad(c, (0, max_len - len(c)), constant_values=0.0) for c in gene_profiles]
 
         # Sum across studies
@@ -75,8 +79,21 @@ def main():
 
     pooled_df = pooled_ribo_profile(study_dfs)
 
+    # compute average dwell per gene (higher -> slower)
+    pooled_df["avg_dwell"] = pooled_df["pooled_counts"].apply(lambda x: np.mean(x))
+
+    # center around the mean
+    mean_dwell = pooled_df["avg_dwell"].mean()
+    centered = pooled_df["avg_dwell"] - mean_dwell
+
+    # normalize to [-1, 1] where -1 -> fastest and 1 -> slowest translation
+    max_dev = np.mean(np.abs(centered))
+    pooled_df["translation_speed_score"] = -1.0 * (centered / max_dev)
+
+    print(list(pooled_df.columns))
+
     # save the output file
-    pooled_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-pooled-ribo-seq-data.csv", index=False)
+    pooled_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-pooled-ribo-seq-data.pkl")
 
 
 if __name__ == "__main__":
