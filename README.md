@@ -21,7 +21,7 @@ These steps are automated in `setup.sh`, so you can just run the command
 
 (If running on CyVerse, use `cyverse_setup.sh` instead)
 
-3. Download Rosetta & FoldX and insert paths to executables in the config file
+3. Download SignalP, Rosetta, & FoldX and insert paths to executables in the config file (see below to identify the steps in which these executables need to be inserted)
 	
 4. You can now run the pipeline by entering the command `./run_pipeline.sh <.config file>`
 
@@ -36,27 +36,32 @@ You can run the pipeline with the command:
 
 For example, 
 
-`.run_pipeline.sh config-files/s288c.config`
+`.run_pipeline.sh config-files/s288c-cagiada.config`
 
 #### Step 0 - Download inputs
 
-Downloads the required input data (e.g., fasta protein sequences, ESM-IF weights, etc.) and extracts AlphaFold2 structure sequences. 
+Downloads the required input data (e.g., protein ORF sequences, ESM-IF weights, etc.) and extracts AlphaFold2 structure sequences. 
 
 #### Step 1 - Calculate network centrality metrics for each node
 
-Uses NetworkX to annotate network with centrality metrics
+Uses NetworkX to annotate network with centrality metrics; note that weighted k-shell calculation results are included in 0-download-inputs/data-files/The_Yeast_Interactom_nodes.csv.
 
 #### Step 2 - Add sequence information for each node
 
-Adds sequence information as possible to each node as well as DeepTMHMM annotations (predicts if proteins are TM, secreted, globular, etc.)
+Adds sequence information as possible to each node 
+
+Adds DeepTMHMM annotations (predicts if proteins are TM, secreted, globular, etc.; this step is precomputed using the DeepTMHMM Docker container)
 
 Adds SignalP6.0 identification of cleavage sites for signal peptides
 
-TO DO: Add AF2 re-prediction of proteins without signal sequence as needed
+*TO DO: Add AF2 re-prediction of proteins without signal sequence as needed*
+*TO DO: Add predictions of post-translational modifications made with PTMGPT2*
 
 #### Step 3 - Add UniProt & GO annotations
 
 Parses the UniProt database and inserts annotation information on function, subcellular location, post-translational modifications, and gene ontology terms
+
+*This section of the code should be considered experimental; while a handful of extracted annotations have been manually confirmed, more extensive manual checks are required.*
 
 #### Step 4 - Predict IDRs and their properties
 
@@ -66,7 +71,7 @@ Predicts IDRs (metapredict v3.0) and annotates each of them with sequence- (CIDE
 
 Uses Eq. 1 from Ghosh & Dill 2010 to predict dG for each protein sequence (minus cleaved signal sequences)
 
-If requested in the .config file, will also run Cagiada stability predictions (required ~1 h for entire Yeast Interactome dataset; uses GPU)
+If requested in the .config file, will also run Cagiada stability predictions (required ~1 h for entire Yeast Interactome dataset on an RTX4500 GPU)
 
 #### Step 6 - Run Rosetta FastRelax and scoring
 
@@ -92,10 +97,14 @@ Integrates protein expression data from 10.1016/j.cels.2017.12.004
 
 Integrates six ribosome profiling datasets into a single aggregate score of overall translation speed for each gene. Data are sourced from https://doi.org/10.1093/bioinformatics/btab020
 
-#### Step 10 - Flatten the database
+*This section of the code should be considered experimental; Dan Nissley will consult with a bioinformatics expert on the suitability of the calculations.*
+
+#### Final step - Flatten the database
 
 Converts the database from "one row per protein" to "one row per IDR"
 
-#### TO DO
+The resulting files are:
 
-Incorporate AF2 predictions of cleaved protein sequences rather than naively cutting of the N-terminus of existing predictions.
+flatten/processed-data/{output_prefix}-{organism_tag}-nodes-final-per-IDR.csv & flatten/processed-data/{output_prefix}-{organism_tag}-nodes-final-per-node.csv
+
+Where {output_prefix} and {organism_label} are sourced from the global variables in your .config file
