@@ -97,6 +97,8 @@ Integrates protein expression data from 10.1016/j.cels.2017.12.004
 
 Integrates six ribosome profiling datasets into a single aggregate score of overall translation speed for each gene. Data are sourced from https://doi.org/10.1093/bioinformatics/btab020
 
+This section to be updated using scikit-ribo code for translation speed calculations
+
 *This section of the code should be considered experimental; Dan Nissley will consult with a bioinformatics expert on the suitability of the calculations.*
 
 #### Step 11 - Runs and integrates post-translational modification information
