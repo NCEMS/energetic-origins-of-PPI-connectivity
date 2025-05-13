@@ -20,6 +20,7 @@ STAGES=("5-dG-calculations"
 
 STAGES=("10-translation-speed" "flatten")
 
+STAGES=("11-predict-PTMs" "flatten")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
