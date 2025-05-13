@@ -133,6 +133,8 @@ def main():
     #nodes_df = nodes_df.head(10)
 
     df = nodes_df[["node", sequence_column]].copy()
+    df = df[df[sequence_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)].copy()
+    print (f"Dropping {len(nodes_df) - len(df)} rows with missing or invalid sequences.")
 
     df1 = df.iloc[:len(df)//2].reset_index(drop=True)
     df2 = df.iloc[len(df)//2:].reset_index(drop=True)
@@ -153,7 +155,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / f"{args.output_prefix}-{args.organism_tag}-PTMGPT2-predictions.csv"
     results_df.to_csv(output_file, index=False)
-    print(f"Saved: {output_file}")
+    print (f"Saved: {output_file}")
 
 
 if __name__ == "__main__":
