@@ -3,36 +3,29 @@ import numpy as np
 from typing import List
 import argparse
 
-def parse_raw_counts(row):
-    """Convert raw_counts string to a list of floats."""
-    return [float(x) for x in row["raw_counts"].split(",")]
-
-
-def normalize_globally(study_dfs: List[pd.DataFrame]) -> List[pd.DataFrame]:
-    """
-    Normalize raw A-site counts across all genes and studies to global CPM.
-
-    Returns updated study_dfs with a 'normalized_counts' column.
-    """
-    all_counts = []
-    for df in study_dfs:
-        df["raw_counts_list"] = df.apply(parse_raw_counts, axis=1)
-        all_counts.extend([x for sublist in df["raw_counts_list"] for x in sublist])
-
-    global_total = sum(all_counts)
-
-    for df in study_dfs:
-        df["normalized_counts"] = df["raw_counts_list"].apply(
-            lambda counts: [x / global_total * 1e6 for x in counts]
-        )
-
-    return study_dfs
+def normalize_counts(row):
+    """Normalize raw_counts string to CPM and return list of floats."""
+    counts = [float(x) for x in row["raw_counts"].split(",")]
+    total = sum(counts)
+    if total > 0:
+        norm_counts = [x / total * 1e6 for x in counts]
+    else:
+        norm_counts = [0.0] * len(counts)
+    return norm_counts
 
 
 def pooled_ribo_profile(study_dfs: List[pd.DataFrame], return_codon_counts=True):
     """
-    Pools globally normalized ribosome profiles across studies.
+    Pools normalized ribosome profiles across multiple studies.
+
+    Parameters:
+    - study_dfs: list of DataFrames, each with a 'gene' column and 'normalized_counts' column
+    - return_codon_counts: whether to reduce to canonical frame (default: True)
+
+    Returns:
+    - pooled_df: DataFrame with gene and pooled codon-level counts
     """
+    # Get union of all genes
     all_genes = set()
     for df in study_dfs:
         all_genes.update(df["gene"].unique())
@@ -40,6 +33,7 @@ def pooled_ribo_profile(study_dfs: List[pd.DataFrame], return_codon_counts=True)
     pooled_data = []
 
     for gene in sorted(all_genes):
+        # Collect all normalized profiles for this gene across studies
         gene_profiles = []
         for df in study_dfs:
             row = df[df["gene"] == gene]
@@ -53,9 +47,11 @@ def pooled_ribo_profile(study_dfs: List[pd.DataFrame], return_codon_counts=True)
         if len(set(lengths)) > 1:
             print(f"Warning: Length mismatch for gene {gene}: {lengths}")
 
+        # Pad to same length
         max_len = max(lengths)
         padded = [np.pad(c, (0, max_len - len(c)), constant_values=0.0) for c in gene_profiles]
 
+        # Sum across studies
         pooled = np.sum(padded, axis=0)
 
         if return_codon_counts:
@@ -67,7 +63,8 @@ def pooled_ribo_profile(study_dfs: List[pd.DataFrame], return_codon_counts=True)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Pool ribosome profiles with global CPM normalization.")
+
+    parser = argparse.ArgumentParser(description="Pool ribosome profiles.")
     parser.add_argument("--ribo_seq_data_files", nargs="+", required=True, help="Input TSV files with ribo seq data")
     parser.add_argument("--output_dir", required=True, help="Output directory")
     parser.add_argument("--output_prefix", required=True, help="Prefix appended to output files")
@@ -77,19 +74,27 @@ def main():
     study_dfs = []
     for file_path in args.ribo_seq_data_files:
         df = pd.read_csv(file_path, sep="\t", header=None, names=["gene", "num_ncs", "raw_counts"])
+        df["normalized_counts"] = df.apply(normalize_counts, axis=1)
         study_dfs.append(df)
-
-    study_dfs = normalize_globally(study_dfs)
 
     pooled_df = pooled_ribo_profile(study_dfs)
 
-    pooled_df["avg_dwell"] = pooled_df["pooled_counts"].apply(np.mean)
+    # compute average dwell per gene (higher -> slower)
+    pooled_df["avg_dwell"] = pooled_df["pooled_counts"].apply(lambda x: np.mean(x))
+
+    # center around the mean
     mean_dwell = pooled_df["avg_dwell"].mean()
     centered = pooled_df["avg_dwell"] - mean_dwell
+
+    # normalize to [-1, 1] where -1 -> fastest and 1 -> slowest translation
     max_dev = np.mean(np.abs(centered))
     pooled_df["translation_speed_score"] = -1.0 * (centered / max_dev)
 
+    print(list(pooled_df.columns))
+
+    # save the output file
     pooled_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-pooled-ribo-seq-data.pkl")
+
 
 if __name__ == "__main__":
     main()
