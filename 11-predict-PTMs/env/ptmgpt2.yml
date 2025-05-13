@@ -1,0 +1,23 @@
+name: ptmgpt2
+channels:
+  - nvidia
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.3
+  - pip
+  - pytorch=2.0.1
+  - pytorch-cuda=11.7
+  - scikit-learn=1.2.2
+  - pandas
+  - packaging
+  - certifi
+  - requests
+  - tqdm
+  - pip:
+      - transformers==4.29.2
+      - tokenizers==0.13.3
+      - evaluate==0.4.0
+      - huggingface_hub==0.16.4
+      - pint-pandas

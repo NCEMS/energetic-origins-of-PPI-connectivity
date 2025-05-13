@@ -99,9 +99,14 @@ Integrates six ribosome profiling datasets into a single aggregate score of over
 
 *This section of the code should be considered experimental; Dan Nissley will consult with a bioinformatics expert on the suitability of the calculations.*
 
+#### Step 11 - Runs and integrates post-translational modification information
+
+Runs the model PTMGPT2 to predict post-translational modifications for each protein. Current list of predicted PTMs can be found by checking main() in 11-predict-PTMs/python-scripts/run-PTMGPT2-parallel.py
+
+
 #### Final step - Flatten the database
 
-Converts the database from "one row per protein" to "one row per IDR"
+Converts the database from "one row per protein" to "one row per IDR" and also produces a "one row per protein" plain text file
 
 The resulting files are:
 
