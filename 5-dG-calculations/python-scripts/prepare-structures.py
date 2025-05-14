@@ -203,6 +203,55 @@ def compute_mean_plddt(row):
         return np.nan
 
 
+def prepare_alphafold_fasta_dirs(nodes_df: pd.DataFrame, output_dir: str, organism_tag: str, output_prefix: str) -> None:
+    """
+    Creates AlphaFold2 prediction directories and writes a list of target nodes to a file.
+
+    Outputs a text file: {output_prefix}-{organism_tag}-alphafold-targets.txt
+    Each line: one node ID
+    """
+
+    af_base_dir = os.path.join(output_dir, "alphafold")
+    os.makedirs(af_base_dir, exist_ok=True)
+
+    prepared_nodes = set()
+
+    for _, row in nodes_df.iterrows():
+        node_id = str(row["node"])
+        seq = row.get("signalP_trimmed_sequence")
+        cut = row.get("cleavage_site_start")
+        struct_ok = row.get("structure_exists") == 1
+        matches = row.get("sequence_matches_structure")
+
+        subdir = os.path.join(af_base_dir, node_id)
+        output_pdb = os.path.join(subdir, "result_model_1_pred_0.pdb")
+
+        if os.path.exists(output_pdb):
+            continue  # Skip if prediction already exists
+
+        # CASE 1: Cleaved prediction needed
+        if struct_ok and pd.notna(cut) and isinstance(seq, str):
+            prepared_nodes.add(node_id)
+            os.makedirs(subdir, exist_ok=True)
+            fasta_path = os.path.join(subdir, f"{node_id}.fasta")
+            with open(fasta_path, "w") as f:
+                f.write(f">{node_id}\n{seq.strip().upper()}\n")
+
+        # CASE 2: Full-length prediction due to mismatch
+        elif matches is False and isinstance(seq, str) and node_id not in prepared_nodes:
+            prepared_nodes.add(node_id)
+            os.makedirs(subdir, exist_ok=True)
+            fasta_path = os.path.join(subdir, f"{node_id}.fasta")
+            with open(fasta_path, "w") as f:
+                f.write(f">{node_id}\n{seq.strip().upper()}\n")
+
+    # Write target node IDs to file
+    targets_file = os.path.join(output_dir, f"{output_prefix}-{organism_tag}-alphafold-targets.txt")
+    with open(targets_file, "w") as f:
+        for node_id in sorted(prepared_nodes):
+            f.write(f"{node_id}\n")
+
+
 def main():
 
     # parse command-line arguments
@@ -246,7 +295,8 @@ def main():
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 
     # compute the mean of per-residue pLDDT for each AF2 structure
-    nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
+    #nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
+    prepare_alphafold_fasta_dirs(nodes_df, args.output_dir, args.organism_tag, args.output_prefix)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
     nodes_df.to_pickle(
