@@ -19,5 +19,10 @@ STAGES=("0-download-inputs"
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
-    snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 4 --use-conda --conda-frontend conda || exit 1
+
+    if [ "$STAGE" == "5-dG-calculations" ]; then
+        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" -j 2 --cores 2 --use-conda --conda-frontend conda || exit 1
+    else
+        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 4 --use-conda --conda-frontend conda || exit 1
+    fi
 done
