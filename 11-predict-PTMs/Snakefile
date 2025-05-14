@@ -33,7 +33,7 @@ rule predict_PTMs:
         tokenizer     = str(TOKENIZER_PATH),
         model_dir     = str(MODEL_PATH)
     output:
-        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
+        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-PTMGPT2-parallel.py \
@@ -47,6 +47,29 @@ rule predict_PTMs:
 
 
 rule combine_PTMs:
+    input:
+        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
+    output:
+        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
+    run:
+        import pandas as pd
+        import re
+        from collections import defaultdict
+
+        # Build mapping of ptm name to part files
+        parts = defaultdict(list)
+        for f in input:
+            ptm = re.sub(r"_part[01]\.csv$", "", os.path.basename(f))
+            parts[ptm].append(f)
+
+        for out_file in output:
+            ptm = os.path.splitext(os.path.basename(out_file))[0]
+            part_files = sorted(parts[ptm])
+            dfs = [pd.read_csv(pf) for pf in part_files]
+            pd.concat(dfs).to_csv(out_file, index=False)
+
+
+rule merge_all_PTMs:
     input:
         expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
     output:

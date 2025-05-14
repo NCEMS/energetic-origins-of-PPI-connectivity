@@ -97,7 +97,7 @@ def run_inference_gpu(gpu_id, df, model_list, type_dict, tokenizer_path, sequenc
         #results_all.extend(results.tolist())
         #print(f"[GPU {gpu_id}] Done: {model_name}")
         df_model = pd.DataFrame(results.tolist())
-        model_file = output_dir / f"{output_prefix}-{organism_tag}-{model_name.replace(' ', '_').replace('(', '').replace(')', '').replace(',', '')}.csv"
+        model_file = output_dir / f"{output_prefix}-{organism_tag}-{model_name.replace(' ', '_').replace('(', '').replace(')', '').replace(',', '')}_part{gpu_id}.csv"
         df_model.to_csv(model_file, index=False)
         print(f"[GPU {gpu_id}] Saved: {model_file}")
 
