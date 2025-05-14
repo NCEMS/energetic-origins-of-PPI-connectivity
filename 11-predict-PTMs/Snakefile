@@ -9,12 +9,17 @@ OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 TOKENIZER_PATH = Path(LOCAL_CONFIG["tokenizer_path"])
 MODEL_PATH     = Path(LOCAL_CONFIG["gpt_model_path"])
+PTM_NAMES      = [ "Acetylation_K", "Amidation_V", "Formylation_K", "Glutarylation_K", "Glutathionylation_C",
+                   "Hydroxylation_K", "Hydroxylation_P", "Malonylation_K", "Methylation_K", "Methylation_R",
+                   "N-linked_Glycosylation_N", "O-linked_Glycosylation_ST", "Phosphorylation_ST", "Phosphorylation_Y",
+                   "Succinylation_K", "Sumoylation_K", "S-nitrosylation_C", "S-palmitoylation_C", "Ubiquitination_K"]
 
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2.pkl",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions-processed.csv"
+
 
 rule predict_PTMs:
     input:
@@ -28,7 +33,7 @@ rule predict_PTMs:
         tokenizer     = str(TOKENIZER_PATH),
         model_dir     = str(MODEL_PATH)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv"
+        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-PTMGPT2-parallel.py \
@@ -39,6 +44,16 @@ rule predict_PTMs:
         --tokenizer_path {{params.tokenizer}} \
         --gpt_model_path {{params.model_dir}}
         """
+
+
+rule combine_PTMs:
+    input:
+        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv"
+    shell:
+        "head -n 1 {input[0]} > {output} && tail -n +2 -q {input} >> {output}"
+
 
 rule process_PTMs:
     input:

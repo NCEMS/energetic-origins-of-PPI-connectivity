@@ -79,10 +79,10 @@ def run_inference_on_row(row, model_path, tokenizer_path, target_residues, seque
     }
 
 
-def run_inference_gpu(gpu_id, df, model_list, type_dict, tokenizer_path, sequence_column, model_root_path):
+def run_inference_gpu(gpu_id, df, model_list, type_dict, tokenizer_path, sequence_column, model_root_path, output_dir, output_prefix, organism_tag):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     tokenizer_path = Path(tokenizer_path)
-
+    output_dir = Path(output_dir)
     results_all = []
     for model_name in model_list:
         model_path = Path(model_root_path) / model_name
@@ -94,10 +94,14 @@ def run_inference_gpu(gpu_id, df, model_list, type_dict, tokenizer_path, sequenc
             axis=1,
             args=(model_path, tokenizer_path, target_residues, sequence_column)
         )
-        results_all.extend(results.tolist())
-        print(f"[GPU {gpu_id}] Done: {model_name}")
+        #results_all.extend(results.tolist())
+        #print(f"[GPU {gpu_id}] Done: {model_name}")
+        df_model = pd.DataFrame(results.tolist())
+        model_file = output_dir / f"{output_prefix}-{organism_tag}-{model_name.replace(' ', '_').replace('(', '').replace(')', '').replace(',', '')}.csv"
+        df_model.to_csv(model_file, index=False)
+        print(f"[GPU {gpu_id}] Saved: {model_file}")
 
-    return results_all
+    return
 
 
 def main():
@@ -130,7 +134,7 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
 
     # take small subset of nodes for testing purposes
-    #nodes_df = nodes_df.head(10)
+    nodes_df = nodes_df.head(2)
 
     df = nodes_df[["node", sequence_column]].copy()
     df = df[df[sequence_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)].copy()
@@ -143,19 +147,18 @@ def main():
         results_split = pool.starmap(
             run_inference_gpu,
             [
-                (0, df1, model_list, type_dict, args.tokenizer_path, sequence_column, args.gpt_model_path),
-                (1, df2, model_list, type_dict, args.tokenizer_path, sequence_column, args.gpt_model_path),
+                (0, df1, model_list, type_dict, args.tokenizer_path, sequence_column, args.gpt_model_path, args.output_dir, args.output_prefix, args.organism_tag),
+                (1, df2, model_list, type_dict, args.tokenizer_path, sequence_column, args.gpt_model_path, args.output_dir, args.output_prefix, args.organism_tag),
             ]
         )
 
-    all_results = [item for sublist in results_split for item in sublist]
-    results_df = pd.DataFrame(all_results)
-
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / f"{args.output_prefix}-{args.organism_tag}-PTMGPT2-predictions.csv"
-    results_df.to_csv(output_file, index=False)
-    print (f"Saved: {output_file}")
+    #all_results = [item for sublist in results_split for item in sublist]
+    #results_df = pd.DataFrame(all_results)
+    #output_dir = Path(args.output_dir)
+    #output_dir.mkdir(parents=True, exist_ok=True)
+    #output_file = output_dir / f"{args.output_prefix}-{args.organism_tag}-PTMGPT2-predictions.csv"
+    #results_df.to_csv(output_file, index=False)
+    #print (f"Saved: {output_file}")
 
 
 if __name__ == "__main__":
