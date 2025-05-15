@@ -1,0 +1,54 @@
+from pathlib import Path
+import os
+
+# === CONFIG ===
+AF2_DATA_DIR      = "/home/dan182/energetic-origins/alphafold_databases"
+MAX_TEMPLATE_DATE = "2022-01-01"
+TARGETS_DIR       = Path("targets")
+OUTPUT_DIR        = Path("outputs")
+
+# === Read in targets ===
+def list_targets():
+    return [p.name for p in TARGETS_DIR.iterdir() if p.is_dir()]
+
+# === RULES ===
+rule all:
+    input:
+        expand(str(OUTPUT_DIR / "{node}" / "result_model_1_pred_0.pdb"), node=list_targets())
+
+rule run_alphafold2:
+    input:
+        fasta = "targets/{node}/{node}.fasta"
+    output:
+        pdb = "outputs/{node}/result_model_1_pred_0.pdb"
+    params:
+        data_dir = AF2_DATA_DIR,
+        max_template_date = MAX_TEMPLATE_DATE,
+        fasta_dir = lambda wc: os.path.abspath(f"targets/{wc.node}"),
+        output_dir = lambda wc: os.path.abspath(f"outputs/{wc.node}")
+    shell:
+        """
+        docker run --rm --runtime=nvidia --gpus all \
+          -v {params.fasta_dir}:/mnt/fasta_path_0:ro \
+          -v {params.data_dir}:/mnt/data_dir:ro \
+          -v {params.output_dir}:/mnt/output \
+          -e TF_FORCE_UNIFIED_MEMORY=1 \
+          -e XLA_PYTHON_CLIENT_MEM_FRACTION=0.8 \
+          -e XLA_PYTHON_CLIENT_PREALLOCATE=false \
+          --user $(id -u):$(id -g) \
+          alphafold \
+          --fasta_paths=/mnt/fasta_path_0/{wildcards.node}.fasta \
+          --output_dir=/mnt/output \
+          --data_dir=/mnt/data_dir \
+          --max_template_date={params.max_template_date} \
+          --model_preset=monomer \
+          --db_preset=full_dbs \
+          --uniref90_database_path=/mnt/data_dir/uniref90/uniref90.fasta \
+          --mgnify_database_path=/mnt/data_dir/mgnify/mgy_clusters_2022_05.fa \
+          --template_mmcif_dir=/mnt/data_dir/pdb_mmcif/mmcif_files \
+          --obsolete_pdbs_path=/mnt/data_dir/pdb_mmcif/obsolete.dat \
+          --pdb70_database_path=/mnt/data_dir/pdb70/pdb70 \
+          --uniref30_database_path=/mnt/data_dir/uniref30/UniRef30_2021_03 \
+          --bfd_database_path=/mnt/data_dir/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt \
+          --use_gpu_relax=False
+        """

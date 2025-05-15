@@ -202,14 +202,14 @@ def compute_mean_plddt(row):
     else:
         return np.nan
 
-
+"""
 def prepare_alphafold_fasta_dirs(nodes_df: pd.DataFrame, output_dir: str, organism_tag: str, output_prefix: str) -> None:
-    """
-    Creates AlphaFold2 prediction directories and writes a list of target nodes to a file.
+    #
+    #Creates AlphaFold2 prediction directories and writes a list of target nodes to a file.
 
-    Outputs a text file: {output_prefix}-{organism_tag}-alphafold-targets.txt
-    Each line: one node ID
-    """
+    #Outputs a text file: {output_prefix}-{organism_tag}-alphafold-targets.txt
+    #Each line: one node ID
+    #
 
     af_base_dir = os.path.join(output_dir, "alphafold")
     os.makedirs(af_base_dir, exist_ok=True)
@@ -250,7 +250,7 @@ def prepare_alphafold_fasta_dirs(nodes_df: pd.DataFrame, output_dir: str, organi
     with open(targets_file, "w") as f:
         for node_id in sorted(prepared_nodes):
             f.write(f"{node_id}\n")
-
+"""
 
 def main():
 
@@ -295,8 +295,10 @@ def main():
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 
     # compute the mean of per-residue pLDDT for each AF2 structure
-    #nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
-    prepare_alphafold_fasta_dirs(nodes_df, args.output_dir, args.organism_tag, args.output_prefix)
+    nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
+
+    # call function to prepare AF2 input fasta and directory (not currently used; AF2 run in separate pipeline)
+    #prepare_alphafold_fasta_dirs(nodes_df, args.output_dir, args.organism_tag, args.output_prefix)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
     nodes_df.to_pickle(
