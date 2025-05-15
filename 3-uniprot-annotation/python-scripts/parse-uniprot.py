@@ -117,6 +117,16 @@ def parse_ptm(ptm_strings: List[str]) -> List[str]:
     return ptms
 
 
+def extract_ft_ptms(features: List[tuple]) -> List[str]:
+    ptm_keywords = {"MOD_RES", "LIPID", "DISULFID", "CARBOHYD", "CROSSLNK", "GLYCOSYLATION"}
+    ptms = []
+    for feature in features:
+        key, start, end, description = feature
+        if key in ptm_keywords:
+            ptms.append(f"{key} at {start}: {description}")
+    return ptms
+
+
 def extract_block(comments: List[str], header: str) -> List[str]:
     """
     Extracts comment blocks that start with the specified header.
@@ -194,7 +204,8 @@ def extract_data(input_file: str, organism: str) -> List[dict]:
 
                 # extract post-translational modification information
                 ptms = extract_block(record.comments, "PTM:")
-                parsed_ptms = parse_ptm(ptms)
+                ptms_ft = extract_ft_ptms(record.features)
+                parsed_ptms = parse_ptm(ptms) + ptms_ft
 
                 # save info for this entry to records_data
                 records_data.append(

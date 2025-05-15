@@ -28,13 +28,13 @@ rule run_alphafold2:
         output_dir = lambda wc: os.path.abspath(f"outputs/{wc.node}")
     shell:
         """
-        docker run --rm --gpus all \
+        docker run --rm --runtime=nvidia --gpus all \
           -v {params.fasta_dir}:/mnt/fasta_path_0:ro \
           -v {params.data_dir}:/mnt/data_dir:ro \
           -v {params.output_dir}:/mnt/output \
-          -e NVIDIA_VISIBLE_DEVICES=0 \
           -e TF_FORCE_UNIFIED_MEMORY=1 \
           -e XLA_PYTHON_CLIENT_MEM_FRACTION=0.8 \
+          -e XLA_PYTHON_CLIENT_PREALLOCATE=false \
           --user $(id -u):$(id -g) \
           alphafold \
           --fasta_paths=/mnt/fasta_path_0/{wildcards.node}.fasta \

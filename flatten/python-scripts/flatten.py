@@ -69,7 +69,7 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS"]
+    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID"]
 
     ureg = UnitRegistry()
 
@@ -78,9 +78,11 @@ def main():
         lambda x: x.to("kilocalorie / mole").magnitude if isinstance(x, pint.Quantity) else x
     )
 
-    if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
-        nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
-        columns_to_drop.append("signalP_trimmed_sequence_y")
+    # the two columns signalP_trimmed_sequence_x and signalP_trimmed_sequence_y do not match as a result of the merge step
+    # inside ghosh-dill.py in step 5; TM protein nodes are dropped out, resulting in these columns being empty
+    #if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
+    nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
+    columns_to_drop.append("signalP_trimmed_sequence_y")
 
     nodes_df = nodes_df.drop(columns=columns_to_drop)
 
