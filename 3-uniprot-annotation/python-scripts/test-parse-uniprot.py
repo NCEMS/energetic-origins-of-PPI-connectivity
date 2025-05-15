@@ -2,10 +2,6 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import argparse
 import re
-from goatools.obo_parser import GODag
-
-# sloppy hardcoding but I just want this to work
-go_dag = GODag("0-download-inputs/data-files/go-basic.obo")
 
 def parse_entry(entry, target_organism):
 
@@ -25,12 +21,6 @@ def parse_entry(entry, target_organism):
         db_ref.attrib["id"]
         for db_ref in entry.findall("ns:dbReference", namespaces=ns)
         if db_ref.attrib.get("type") == "GO"
-    ]
-
-    # and map them to human-readable names with GOATOOLS
-    go_mapped = [
-        f"{go_id}: {go_dag[go_id].name}" if go_id in go_dag else go_id
-        for go_id in go_terms
     ]
 
     # extract FT-based PTMs
@@ -78,7 +68,6 @@ def parse_entry(entry, target_organism):
         "Organism": organism_name,
         "Sequence": sequence,
         "GO_terms": ";".join(go_terms),
-        "GO_terms_human_readable": ";".join(go_mapped),
         "parsed_PTMs": ";".join(ft_ptms),
         "parsed_functions": ";".join(function_texts),
         "localization_keywords": ";".join(subcell_locs),
@@ -98,16 +87,17 @@ def parse_uniprot_xml(xml_file, organism_filter):
             entry_name = elem.findtext("ns:name", namespaces=ns)
             organism = elem.findtext("ns:organism/ns:name[@type='scientific']", namespaces=ns)
 
-            #if entry_name == "ACEA_YEAST":
-            #    print(f"✅ Found target entry: {entry_name}")
-            #    print(f"Organism: {organism}")
-            #    for ft in elem.findall("ns:feature", namespaces=ns):
-            #        if ft.attrib.get("type") == "modified residue":
-            #            position = ft.find("ns:location/ns:position", namespaces=ns)
-            #            desc = ft.findtext("ns:description", default="", namespaces=ns)
-            #            pos_val = position.attrib["position"] if position is not None else "?"
-            #            print(f"Feature: modified residue at {pos_val}")
-            #            print(f"Description: '{desc}'")
+            if entry_name == "ACEA_YEAST":
+                print(f"✅ Found target entry: {entry_name}")
+                print(f"Organism: {organism}")
+
+                for ft in elem.findall("ns:feature", namespaces=ns):
+                    if ft.attrib.get("type") == "modified residue":
+                        position = ft.find("ns:location/ns:position", namespaces=ns)
+                        desc = ft.findtext("ns:description", default="", namespaces=ns)
+                        pos_val = position.attrib["position"] if position is not None else "?"
+                        print(f"Feature: modified residue at {pos_val}")
+                        print(f"Description: '{desc}'")
 
             record = parse_entry(elem, organism_filter)
             if record:
