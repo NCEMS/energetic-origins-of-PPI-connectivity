@@ -12,11 +12,17 @@ STAGES=("0-download-inputs"
         "7-FoldX-scoring"
         "8-protein-half-life"
         "9-protein-expression"
+        "flatten"
        )
 
 
+#STAGES=("1-network-centrality"
+#        "2-sequence-parsing"
+#        "3-uniprot-annotation"
+#         )
+
 #STAGES=("flatten")
-STAGES=("3-uniprot-annotation")
+#STAGES=("3-uniprot-annotation")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"

@@ -1,7 +1,7 @@
 import pandas as pd
 import typing
 import argparse
-
+import re
 
 def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
     """
@@ -34,6 +34,50 @@ def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
         how="left",
     ).drop(columns=["PrimaryAccession"])
 
+def add_PTM_exchange_info(nodes_df: pd.DataFrame, ptm_file: str) -> pd.DataFrame:
+    """
+    Adds Gold, Silver, and Bronze PTM annotations from PTMeXchange to nodes_df.
+
+    Args:
+        nodes_df (pd.DataFrame): Existing nodes DataFrame with UniProtKB-AC column.
+        ptm_file (str): Path to the PTM Exchange CSV file.
+
+    Returns:
+        pd.DataFrame: nodes_df with added columns: ptm_gold, ptm_silver, ptm_bronze
+    """
+    ptm_df = pd.read_csv(ptm_file)
+
+    # drop rows with missing PTM data
+    ptm_df = ptm_df.dropna(subset=["additional_PTMs", "UniProtKB-AC"])
+
+    # split each PTM entry into individual site entries with category
+    expanded_rows = []
+    for _, row in ptm_df.iterrows():
+        accession = row["UniProtKB-AC"]
+        ptms = row["additional_PTMs"].split(";")
+        for ptm in ptms:
+            match = re.match(r"([STYACDEFGHIKLMNPQRVW]{1}\d+)\((Gold|Silver|Bronze)\)", ptm.strip())
+            if match:
+                site, category = match.groups()
+                expanded_rows.append((accession, site, category))
+
+    expanded_df = pd.DataFrame(expanded_rows, columns=["UniProtKB-AC", "site", "category"])
+
+    # aggregate sites by UniProt ID and category
+    categorized = expanded_df.groupby(["UniProtKB-AC", "category"])["site"].apply(
+        lambda x: ";".join(sorted(set(x)))
+    ).unstack(fill_value="")
+
+    # rename columns
+    categorized = categorized.rename(columns={
+        "Gold": "ptm_gold",
+        "Silver": "ptm_silver",
+        "Bronze": "ptm_bronze"
+    }).reset_index()
+
+    merged = nodes_df.merge(categorized, on="UniProtKB-AC", how="left")
+
+    return merged
 
 def main():
 
@@ -52,6 +96,7 @@ def main():
         type=str,
         help="Path to input UniProt.dat file",
     )
+    parser.add_argument("--ptmexchange")
     parser.add_argument(
         "--output_dir",
         default="processed-data",
@@ -74,6 +119,9 @@ def main():
 
     # update nodes_df with annotations from UniProt
     nodes_df = add_UniProt_info(nodes_df, args.uniprot)
+
+    # add additional PTM information from PTMeXchange
+    nodes_df = add_PTM_exchange_info(nodes_df, args.ptmexchange)
 
     # save the updated nodes_df to file
     nodes_df.to_csv(

@@ -79,7 +79,8 @@ rule cagiada_stability:
         test_dir       = TEST_DIR,
         run_cagiada    = RUN_CAGIADA
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+        #str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+        csv = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/cagiada-stability.py \
@@ -92,4 +93,20 @@ rule cagiada_stability:
         --test_dir       {{params.test_dir}} \
         --run_cagiada    {{params.run_cagiada}} \
         > {WORK_DIR}/cagiada.log
+        """
+
+rule merge_cagiada_with_nodes:
+    input:
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"),
+        cagiada = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
+    conda:
+        "env/cagiada-stability.yml"
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/merge_cagiada.py \
+        --nodes   {{input.nodes}} \
+        --cagiada {{input.cagiada}} \
+        --output  {{output}}
         """

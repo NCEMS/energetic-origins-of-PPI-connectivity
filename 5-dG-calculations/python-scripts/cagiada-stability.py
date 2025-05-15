@@ -364,10 +364,11 @@ def main():
 
     print("Total execution time is:", datetime.now() - start)
 
-    nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
-    )
-
+    #nodes_df.to_pickle(
+    #    f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
+    #)
+    nodes_df = nodes_df[["node", "cagiada-dG"]]
+    nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-cagiada-dG.csv")
 
 if __name__ == "__main__":
 

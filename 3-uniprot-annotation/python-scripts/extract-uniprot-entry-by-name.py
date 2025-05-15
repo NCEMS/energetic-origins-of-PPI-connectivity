@@ -21,9 +21,11 @@ def extract_entry_by_name(xml_file, target_name, output_file):
                 tree = ET.ElementTree(wrapper)
                 tree.write(output_file, encoding="utf-8", xml_declaration=True)
                 break
-            root.clear()
+            else:
+                root.clear()
 
     if not found:
         print(f"❌ Entry {target_name} not found.")
 
-extract_entry_by_name("../0-download-inputs/data-files/uniprot_sprot.xml", "ACEA_YEAST", "acea_yeast_entry.xml")
+#extract_entry_by_name("../0-download-inputs/data-files/uniprot_sprot.xml", "ACEA_YEAST", "acea_yeast_entry.xml")
+extract_entry_by_name("../0-download-inputs/data-files/uniprot_sprot.xml", "CHO2_YEAST", "cho2_yeast_entry.xml")
