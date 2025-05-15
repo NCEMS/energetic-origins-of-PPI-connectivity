@@ -40,10 +40,21 @@ def parse_entry(entry, target_organism):
         ft_type = ft.attrib.get("type")
         if ft_type in ptm_keywords:
             desc = ft.attrib.get("description", "")
+            # get position (either <position> or range <begin>/<end>)
             loc_elem = ft.find("ns:location/ns:position", namespaces=ns)
             if loc_elem is not None:
                 position = loc_elem.attrib.get("position")
-                ft_ptms.append(f"{ft_type} at {position}: {desc}")
+            else:
+                # handle range-based features as fallback
+                begin = ft.find("ns:location/ns:begin", namespaces=ns)
+                end = ft.find("ns:location/ns:end", namespaces=ns)
+                if begin is not None and end is not None:
+                    position = f"{begin.attrib.get('position')}-{end.attrib.get('position')}"
+                else:
+                    position = "?"
+
+            # format output
+            ft_ptms.append(f"{desc} at {position}")
 
     # extract function comments
     function_texts = []
@@ -51,7 +62,7 @@ def parse_entry(entry, target_organism):
         for text_elem in comment.findall("ns:text", namespaces=ns):
             text = text_elem.text
             if text:
-                # Optionally remove citation notes like "{ECO:...}"
+                # remove citation notes like "{ECO:...}"
                 cleaned = re.sub(r"\{.*?\}", "", text).strip().rstrip(".")
                 function_texts.append(cleaned)
 

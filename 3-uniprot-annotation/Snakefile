@@ -13,6 +13,7 @@ ORGANISM_TAG  = config["organism_label"]
 rule all:
     input:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
+        str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt.csv")
 
 rule parse_uniprot:
@@ -34,10 +35,23 @@ rule parse_uniprot:
         --organism      "{{params.organism}}"
         """
 
+
+rule parse_ptmexchange:
+    input:
+        str(DATA_DIR2 / "Yeast_GSB_phospho_all_prots_0125.csv")
+    output:
+        str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv")
+    conda:
+        "env/parse-uniprot.yml"
+    shell:
+        f"python {WORK_DIR}/python-scripts/extract-additional-ptms.py --input {{input}} --output {{output}}"
+
+
 rule add_uniprot_info:
     input:
         nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv"),
-        unipr = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
+        unipr = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
+        ptmeX = str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv")
     conda:
         "env/add-uniprot-info.yml"
     params:
@@ -51,6 +65,7 @@ rule add_uniprot_info:
         python {WORK_DIR}/python-scripts/add-uniprot-info.py \
         --nodes         {{input.nodes}} \
         --uniprot       {{input.unipr}} \
+        --ptmexchange   {{input.ptmeX}} \
         --output_prefix {{params.output_prefix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}}
