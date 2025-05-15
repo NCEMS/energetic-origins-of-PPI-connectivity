@@ -12,20 +12,20 @@ ORGANISM_TAG  = config["organism_label"]
 
 rule all:
     input:
-        str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
+        str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot.csv"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt.csv")
 
 rule parse_uniprot:
     input:
-        uniprot = str(DATA_DIR2 / "uniprot_sprot.xml")
+        uniprot = str(DATA_DIR2 / "uniprot_sprot.dat")
     conda:
         "env/parse-uniprot.yml"
     params:
         output_dir   = str(OUTPUT_DIR),
         organism     = ORGANISM,
-        output_file  = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
+        output_file  = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot.csv")
     output:
-        str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
+        str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/parse-uniprot.py \
@@ -37,7 +37,7 @@ rule parse_uniprot:
 rule add_uniprot_info:
     input:
         nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv"),
-        unipr = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
+        unipr = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot.csv")
     conda:
         "env/add-uniprot-info.yml"
     params:

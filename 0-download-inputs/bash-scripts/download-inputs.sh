@@ -19,6 +19,8 @@ URLS=(
 	"https://sid.erda.dk/share_redirect/eIZVVNEd8B"
 	"https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz"
         "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz"
+        "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz"
+        "http://purl.obolibrary.org/obo/go.obo"
 )
 
 # define local files names (must match order of URLs)
@@ -28,6 +30,8 @@ FILENAMES=(
 	"esm_if1_gvp4_t16_142M_UR50.pt"
 	"YEAST_559292_idmapping.dat.gz"
         "uniprot_sprot.dat.gz"
+        "uniprot_sprot.xml.gz"
+        "go-basic.obo"
 )
 
 # function to download a file

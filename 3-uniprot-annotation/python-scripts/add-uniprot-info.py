@@ -21,6 +21,7 @@ def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
         "PrimaryAccession",
         "ProteinName",
         "GO_terms",
+        "GO_terms_human_readable",
         "localization_keywords",
         "parsed_functions",
         "parsed_PTMs",
