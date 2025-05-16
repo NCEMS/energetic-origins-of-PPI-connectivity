@@ -31,7 +31,7 @@ def truncate_structure(pdb_path: str, cut_pos: int, output_path: str) -> None:
 
 def truncate_row_structure(row) -> Optional[str]:
 
-    if not row["structure_exists"] or pd.isna(row["cleavage_site_start"]):
+    if row["structure_exists"] == 0 or pd.isna(row["cleavage_site_start"]):
         return None
 
     input_path = row["structure_path"]
@@ -61,12 +61,12 @@ def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame
 
     # locate and add structures to dataframe
     nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(
-        lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb"
+        lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb" if pd.notna(id) else None
     )
 
     # create the structure_exists column by checking if the file actually exists
     nodes_df["structure_exists"] = nodes_df["structure_path"].apply(
-        lambda path: 1 if os.path.exists(path) else None
+        lambda path: 1 if path is not None and os.path.exists(path) else 0
     )
 
     return nodes_df

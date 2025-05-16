@@ -16,13 +16,21 @@ STAGES=("0-download-inputs"
        )
 
 
-#STAGES=("1-network-centrality"
-#        "2-sequence-parsing"
-#        "3-uniprot-annotation"
-#         )
+STAGES=("1-network-centrality"
+        "2-sequence-parsing"
+        "3-uniprot-annotation"
+         )
+
+#STAGES=("4-idr-properties")
+
+#STAGES=("flatten")
+#STAGES=("3-uniprot-annotation")
+
+#STAGES=("5-dG-calculations" "6-Rosetta-scoring" "7-FoldX-scoring" "8-protein-half-life" "9-protein-expression")
+
+#STAGES=("11-predict-PTMs")
 
 STAGES=("flatten")
-#STAGES=("3-uniprot-annotation")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
