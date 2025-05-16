@@ -195,13 +195,24 @@ def extract_plddt_ca_only(pdb_filename):
     avg_plddt = np.mean(plddt_array) if len(plddt_array) > 0 else float('nan')
     return avg_plddt
 
+
+def compute_mean_plddt(row):
+    if row["structure_exists"] == 1:
+        if pd.isna(row["cleavage_site_start"]):
+            return extract_plddt_ca_only(row["structure_path"])
+        else:
+            return extract_plddt_ca_only(row["cleaved_structure_path"])
+    else:
+        return np.nan
+
+"""
 def compute_mean_plddt(row):
 
     if row["structure_exists"] == 1:
         return extract_plddt_ca_only(row["structure_path"])
     else:
         return np.nan
-
+"""
 """
 def prepare_alphafold_fasta_dirs(nodes_df: pd.DataFrame, output_dir: str, organism_tag: str, output_prefix: str) -> None:
     #

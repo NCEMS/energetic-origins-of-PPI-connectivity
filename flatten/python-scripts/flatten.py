@@ -69,7 +69,7 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID"]
+    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID", "Unnamed: 0", "cagiada-dG_x"]
 
     ureg = UnitRegistry()
 
@@ -83,6 +83,8 @@ def main():
     #if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
     nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
     columns_to_drop.append("signalP_trimmed_sequence_y")
+
+    nodes_df = nodes_df.rename(columns={"cagiada-dG_y":"cagiada-dG"})
 
     nodes_df = nodes_df.drop(columns=columns_to_drop)
 

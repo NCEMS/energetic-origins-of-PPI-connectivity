@@ -105,7 +105,7 @@ rule merge_cagiada_with_nodes:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/merge_cagiada.py \
+        python {WORK_DIR}/python-scripts/merge-cagiada.py \
         --nodes   {{input.nodes}} \
         --cagiada {{input.cagiada}} \
         --output  {{output}}
