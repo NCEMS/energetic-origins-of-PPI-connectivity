@@ -21,7 +21,7 @@ STAGES=("0-download-inputs"
 #        "3-uniprot-annotation"
 #         )
 
-#STAGES=("flatten")
+STAGES=("flatten")
 #STAGES=("3-uniprot-annotation")
 
 for STAGE in "${STAGES[@]}"; do
