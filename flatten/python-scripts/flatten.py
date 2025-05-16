@@ -5,6 +5,7 @@ import argparse
 import pint
 from pint import UnitRegistry
 import pint_pandas
+import numpy as np
 
 def flatten_nodes(nodes_df: pd.DataFrame, nested_columns: List[str]) -> pd.DataFrame:
     """
@@ -84,17 +85,30 @@ def main():
     nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
     columns_to_drop.append("signalP_trimmed_sequence_y")
 
+    # extra cagiada-dG column introduced; rename the correct one and drop the other
     nodes_df = nodes_df.rename(columns={"cagiada-dG_y":"cagiada-dG"})
 
     nodes_df = nodes_df.drop(columns=columns_to_drop)
 
+    # save as a pickle file with reprocessed columns
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-node.pkl")
+
+    # format disorder_predictions as a list
+    nodes_df["disorder_predictions"] = nodes_df["disorder_predictions"].apply(
+        lambda x: np.array2string(x, separator=",") if isinstance(x, np.ndarray) else x
+    )
+
+    # save to a .csv file
     nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-node.csv", index=False)
 
+    # reformat to expand dictionaries across N IDRs
     nested_columns = ["albatross", "cider", "IDR_sequences"]
 
     flat_nodes_df = flatten_nodes(nodes_df, nested_columns)
 
     flat_nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-IDR.csv", index=False)
+
+    flat_nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-IDR.pkl")
 
 
 if __name__ == "__main__":

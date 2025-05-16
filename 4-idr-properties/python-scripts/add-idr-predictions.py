@@ -74,7 +74,7 @@ def predict_disorder(
     for percentile, cutoff in disorder_thresholds.items():
         colname = f"is_disordered_{percentile:.2f}"
         nodes_df[colname] = nodes_df["disorder_fraction"].apply(
-            lambda x: 1 if pd.notnull(x) and x > cutoff else 0
+            lambda x: 1 if pd.notnull(x) and x >= cutoff else 0
         )
 
     # return the updated DataFrame

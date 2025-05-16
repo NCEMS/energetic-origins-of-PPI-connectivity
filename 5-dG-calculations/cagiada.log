@@ -5,7 +5,7 @@ Attempting prediction for YKL063C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL223C
@@ -19,7 +19,7 @@ Attempting prediction for YPL036W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL050C
@@ -131,7 +131,7 @@ Attempting prediction for YGR027W-A;YGR038C-A;YJR026W;YLR227W-A;YML040W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGL087C
@@ -299,14 +299,14 @@ Attempting prediction for YFL048C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR270W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL042W
@@ -341,14 +341,14 @@ Attempting prediction for YLR080W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR072W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL225C
@@ -369,7 +369,7 @@ Attempting prediction for YOL158C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL231C
@@ -439,7 +439,7 @@ Attempting prediction for YEL065W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER178W
@@ -530,14 +530,14 @@ Attempting prediction for YDR406W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR058W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR154W
@@ -614,21 +614,21 @@ Attempting prediction for YCL001W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL072C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL015C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR144C
@@ -649,7 +649,7 @@ Attempting prediction for YEL036C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL105W
@@ -677,21 +677,21 @@ Attempting prediction for YGL200C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL065C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL165C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR386W
@@ -712,7 +712,7 @@ Attempting prediction for YML067C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL121C
@@ -733,14 +733,14 @@ Attempting prediction for YOR153W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR016C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR094W
@@ -796,42 +796,42 @@ Attempting prediction for YAL042W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAL007C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR187W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAR002C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL167C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR205W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR034C
@@ -859,7 +859,7 @@ Attempting prediction for YBR096W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL125W
@@ -887,7 +887,7 @@ Attempting prediction for YGL140C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR222W
@@ -978,7 +978,7 @@ Attempting prediction for YJR145C;YHR203C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YJL096W
@@ -1146,14 +1146,14 @@ Attempting prediction for YJL186W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL002C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR193W
@@ -1545,7 +1545,7 @@ Attempting prediction for YKL120W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR108W
@@ -1629,7 +1629,7 @@ Attempting prediction for YLR268W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR077C
@@ -1650,7 +1650,7 @@ Attempting prediction for YOR075W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL063W
@@ -1741,7 +1741,7 @@ Attempting prediction for YNR039C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFR033C
@@ -1755,7 +1755,7 @@ Attempting prediction for Q0250
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR298C
@@ -1769,7 +1769,7 @@ Attempting prediction for YGL191W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL187C
@@ -1783,21 +1783,21 @@ Attempting prediction for YHR001W-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR132C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL111W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR051W
@@ -1818,14 +1818,14 @@ Attempting prediction for YJL166W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR356W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR038C
@@ -1839,21 +1839,21 @@ Attempting prediction for YNL052W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR089C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR018W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL055C
@@ -1874,7 +1874,7 @@ Attempting prediction for YOR065W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR529C
@@ -1888,7 +1888,7 @@ Attempting prediction for YCL057C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL024W
@@ -1902,7 +1902,7 @@ Attempting prediction for YDL067C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR012W
@@ -1916,7 +1916,7 @@ Attempting prediction for YGR231C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR003C
@@ -1944,21 +1944,21 @@ Attempting prediction for YER017C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL030C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL078C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL016C
@@ -1972,14 +1972,14 @@ Attempting prediction for Q0045
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR271C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR039W
@@ -1993,7 +1993,7 @@ Attempting prediction for Q0085
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL004W
@@ -2056,21 +2056,21 @@ Attempting prediction for YML081C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR003W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL131W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL077W-A
@@ -2084,7 +2084,7 @@ Attempting prediction for YPR020W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL271W
@@ -2105,14 +2105,14 @@ Attempting prediction for YHR079C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL077C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR090W
@@ -2133,7 +2133,7 @@ Attempting prediction for YER154W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL027W
@@ -2252,7 +2252,7 @@ Attempting prediction for YPL132W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR075W
@@ -2273,7 +2273,7 @@ Attempting prediction for YOR390W;YPL279C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YBL046W
@@ -2315,7 +2315,7 @@ Attempting prediction for YLR064W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL055C
@@ -2483,7 +2483,7 @@ Attempting prediction for YER100W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR048W
@@ -2497,7 +2497,7 @@ Attempting prediction for YIL030C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR119C
@@ -2525,35 +2525,35 @@ Attempting prediction for YLL039C;YLR167W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YKL100C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR207W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR088W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML029W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML013W
@@ -2581,7 +2581,7 @@ Attempting prediction for YMR119W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL141W
@@ -2609,7 +2609,7 @@ Attempting prediction for YOL013C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR157C
@@ -2931,7 +2931,7 @@ Attempting prediction for YBL072C;YER102W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YCR031C
@@ -2966,7 +2966,7 @@ Attempting prediction for YDR025W;YBR048W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDL060W
@@ -2994,14 +2994,14 @@ Attempting prediction for YER074W;YIL069C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR450W;YML026C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGR027C
@@ -3029,7 +3029,7 @@ Attempting prediction for YGR118W;YPR132W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YHL015W
@@ -3071,14 +3071,14 @@ Attempting prediction for YJL190C;YLR367W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YKL156W;YHR021C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YLR048W
@@ -3099,7 +3099,7 @@ Attempting prediction for YLR287C-A;YOR182C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YLR150W
@@ -3127,7 +3127,7 @@ Attempting prediction for YML024W;YDR447C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YLR441C
@@ -3155,7 +3155,7 @@ Attempting prediction for YMR143W;YDL083C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YNL112W
@@ -3232,7 +3232,7 @@ Attempting prediction for YPL090C;YBR181C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YOR369C
@@ -3547,7 +3547,7 @@ Attempting prediction for YIL148W;YKR094C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YIL127C
@@ -3589,7 +3589,7 @@ Attempting prediction for YOR293W;YMR230W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YPL127C
@@ -3757,7 +3757,7 @@ Attempting prediction for YGR138C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for Q0140
@@ -3897,7 +3897,7 @@ Attempting prediction for YLR018C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR082W
@@ -3918,7 +3918,7 @@ Attempting prediction for YML031W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR153W
@@ -3932,7 +3932,7 @@ Attempting prediction for YMR129W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR024C
@@ -3981,7 +3981,7 @@ Attempting prediction for YAL026C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR042W
@@ -4135,14 +4135,14 @@ Attempting prediction for YBL082C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR135C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL003C
@@ -4338,7 +4338,7 @@ Attempting prediction for YDR040C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR024C
@@ -4359,14 +4359,14 @@ Attempting prediction for YDR452W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR002C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR454W
@@ -4380,14 +4380,14 @@ Attempting prediction for YNR008W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR117W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL087C
@@ -4401,7 +4401,7 @@ Attempting prediction for YKL021C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YDR361C
@@ -4758,7 +4758,7 @@ Attempting prediction for YER190W;YGR296W;YNL339C;YPL283C;YEL077C;YLL066C;YLL067
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YBL023C
@@ -5108,7 +5108,7 @@ Attempting prediction for YMR112C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YNR010W
@@ -5192,7 +5192,7 @@ Attempting prediction for YML059C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL209W
@@ -5381,14 +5381,14 @@ Attempting prediction for YGR260W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR093W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR035W-A
@@ -5724,7 +5724,7 @@ Attempting prediction for YBL102W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR100W
@@ -5850,7 +5850,7 @@ Attempting prediction for YMR298W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL105C
@@ -5871,7 +5871,7 @@ Attempting prediction for YKR067W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL193W
@@ -6088,7 +6088,7 @@ Attempting prediction for YDR224C;YBL002W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR496C
@@ -6277,7 +6277,7 @@ Attempting prediction for YJL129C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR131C
@@ -6403,7 +6403,7 @@ Attempting prediction for YDL198C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR001C
@@ -6508,42 +6508,42 @@ Attempting prediction for YKL209C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR032W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL323W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL265W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR327C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR264C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL050W
@@ -6557,49 +6557,49 @@ Attempting prediction for YER001W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL042W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL160W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHL031C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL203C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL005W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR042W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR086W
@@ -6613,21 +6613,21 @@ Attempting prediction for YJL198W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR054W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR320C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR212W
@@ -6641,28 +6641,28 @@ Attempting prediction for YDR508C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR182W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL039W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHL017W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR037C
@@ -6676,7 +6676,7 @@ Attempting prediction for YMR071C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR292C
@@ -6760,7 +6760,7 @@ Attempting prediction for R0020C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YAL003W
@@ -6795,7 +6795,7 @@ Attempting prediction for R0040C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YER025W
@@ -6921,7 +6921,7 @@ Attempting prediction for YPL270W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR028C
@@ -7117,56 +7117,56 @@ Attempting prediction for YDR119W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR074W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR013C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL001W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR011C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR125W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFR048W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL047C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR039C-A
@@ -7180,28 +7180,28 @@ Attempting prediction for YNL321W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR093C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR270C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR087W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR332W
@@ -7215,21 +7215,21 @@ Attempting prediction for YOR291W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR036C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL057C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL082C
@@ -7243,14 +7243,14 @@ Attempting prediction for YBR043C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR042C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR046C
@@ -7285,7 +7285,7 @@ Attempting prediction for YBR029C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR044C
@@ -7488,7 +7488,7 @@ Attempting prediction for YMR296C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR089C
@@ -7551,7 +7551,7 @@ Attempting prediction for YBR069C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL040W
@@ -7572,42 +7572,42 @@ Attempting prediction for YLR214W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR138W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR281W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR266W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR413W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL149C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR070C
@@ -7621,14 +7621,14 @@ Attempting prediction for YCL019W;YDR034C-D;YFL002W-A;YGR161W-B
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YMR011W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR031C
@@ -7642,35 +7642,35 @@ Attempting prediction for YPL221W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR023C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL232W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR096C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL222C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR077C
@@ -7838,7 +7838,7 @@ Attempting prediction for YHR099W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YBR081C
@@ -8146,7 +8146,7 @@ Attempting prediction for YBR084C-A;YBL027W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YBR031W
@@ -8174,7 +8174,7 @@ Attempting prediction for YDL191W;YDL136W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR382W
@@ -8195,7 +8195,7 @@ Attempting prediction for YEL054C;YDR418W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YFL034C-A
@@ -8216,7 +8216,7 @@ Attempting prediction for YFR031C-A;YIL018W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGL099W
@@ -8265,7 +8265,7 @@ Attempting prediction for YHR010W;YDR471W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YHL033C
@@ -8328,14 +8328,14 @@ Attempting prediction for YMR242C;YOR312C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YNL162W;YHR141C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YNL069C
@@ -8356,7 +8356,7 @@ Attempting prediction for YOL120C;YNL301C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YOL039W
@@ -8391,21 +8391,21 @@ Attempting prediction for YPR043W;YJR094W-A
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YPL220W;YGL135W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YPR102C;YGR085C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YHR016C
@@ -8482,14 +8482,14 @@ Attempting prediction for YBR086C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR106W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR078W
@@ -8503,14 +8503,14 @@ Attempting prediction for YDR011W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL121C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR261C
@@ -8524,21 +8524,21 @@ Attempting prediction for YDR033W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL121W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL008C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL129C
@@ -8552,7 +8552,7 @@ Attempting prediction for YKL077W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR215W
@@ -8601,21 +8601,21 @@ Attempting prediction for YHR094C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML125C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR183C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR051C
@@ -8629,7 +8629,7 @@ Attempting prediction for YLR066W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR050C
@@ -8657,35 +8657,35 @@ Attempting prediction for YDR468C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR107C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR040W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR083C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL018C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL150W
@@ -8713,7 +8713,7 @@ Attempting prediction for YHL003C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL016W
@@ -9063,7 +9063,7 @@ Attempting prediction for YBR296C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER081W
@@ -9091,7 +9091,7 @@ Attempting prediction for YCL025C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR208C
@@ -9462,7 +9462,7 @@ Attempting prediction for YDL052C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL195W
@@ -9476,42 +9476,42 @@ Attempting prediction for YML075C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR171W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL012W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR133C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL054C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR372W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL043C
@@ -9539,70 +9539,70 @@ Attempting prediction for YGL038C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL183W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL004W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR075W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR099W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR117W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR283C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCL045C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR161W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR254C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL085W
@@ -9616,7 +9616,7 @@ Attempting prediction for YEL017W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL005W-B
@@ -9637,35 +9637,35 @@ Attempting prediction for YCR010C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR450W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR149W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR124W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL129W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR049C
@@ -9847,7 +9847,7 @@ Attempting prediction for YBR110W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR132W
@@ -9889,35 +9889,35 @@ Attempting prediction for YDR481C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFL004W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER072W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL012C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL019C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR117C
@@ -9945,7 +9945,7 @@ Attempting prediction for YBR121C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YER036C
@@ -10029,7 +10029,7 @@ Attempting prediction for YOR011W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL077W
@@ -10162,7 +10162,7 @@ Attempting prediction for YPL234C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR036W
@@ -10176,7 +10176,7 @@ Attempting prediction for YDL128W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER123W
@@ -10190,28 +10190,28 @@ Attempting prediction for YLL015W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR034C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLL048C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR241W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR118W
@@ -10239,7 +10239,7 @@ Attempting prediction for YDR089W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL002W-A
@@ -10253,49 +10253,49 @@ Attempting prediction for YPL006W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL088C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL146W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR221C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL101W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR026W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR316C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL013W
@@ -10309,7 +10309,7 @@ Attempting prediction for YKL175W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR039W
@@ -10323,7 +10323,7 @@ Attempting prediction for YHL047C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR131W
@@ -10498,7 +10498,7 @@ Attempting prediction for YOL081W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YOR371C
@@ -10519,7 +10519,7 @@ Attempting prediction for YBR140C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YKR008W
@@ -10708,7 +10708,7 @@ Attempting prediction for YER019C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR162C
@@ -10722,7 +10722,7 @@ Attempting prediction for YBL100W-A;YCL020W;YDR034C-C;YFL002W-B;YGR161W-A;YLR410
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YBR164C
@@ -10743,21 +10743,21 @@ Attempting prediction for YBR168W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR150W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR324W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML056C
@@ -10792,14 +10792,14 @@ Attempting prediction for YLR378C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL094C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR173C
@@ -10918,21 +10918,21 @@ Attempting prediction for YGR065C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR404W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR118C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR435W
@@ -11387,21 +11387,21 @@ Attempting prediction for YKL179C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR207W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFL041W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR318C
@@ -11499,7 +11499,7 @@ Attempting prediction for YJR010C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR457C
@@ -11709,7 +11709,7 @@ Attempting prediction for YDL204W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCL037C
@@ -12171,7 +12171,7 @@ Attempting prediction for YOR324C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR259W
@@ -12437,7 +12437,7 @@ Attempting prediction for YCR037C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHL025W
@@ -12507,14 +12507,14 @@ Attempting prediction for YGR191W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLL061W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML111W
@@ -12528,21 +12528,21 @@ Attempting prediction for YBR302C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR291C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCL005W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL029C
@@ -12640,7 +12640,7 @@ Attempting prediction for YKL220C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCL024W
@@ -12668,7 +12668,7 @@ Attempting prediction for YDL212W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL019W
@@ -12759,7 +12759,7 @@ Attempting prediction for YPR149W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL325C
@@ -12850,7 +12850,7 @@ Attempting prediction for YPR024W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL059W
@@ -12864,35 +12864,35 @@ Attempting prediction for YDR056C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL231C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL192C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL027C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL207W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR088C
@@ -12906,7 +12906,7 @@ Attempting prediction for YML101C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR115W
@@ -12920,7 +12920,7 @@ Attempting prediction for YCL052C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL045C
@@ -13032,21 +13032,21 @@ Attempting prediction for YLR332W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR060W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL111C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR051W
@@ -13067,7 +13067,7 @@ Attempting prediction for YIR022W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR250C
@@ -13081,21 +13081,21 @@ Attempting prediction for YML055W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR165W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL008C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR155W
@@ -13228,7 +13228,7 @@ Attempting prediction for YCR024C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR141C
@@ -13284,7 +13284,7 @@ Attempting prediction for YDR225W;YBL003C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YFR037C
@@ -13445,14 +13445,14 @@ Attempting prediction for YCR034W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL020C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR072W
@@ -13466,7 +13466,7 @@ Attempting prediction for YCR028C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR036W
@@ -13508,7 +13508,7 @@ Attempting prediction for YCR043C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL010W
@@ -13522,14 +13522,14 @@ Attempting prediction for YBR220C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER113C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL105C
@@ -13571,7 +13571,7 @@ Attempting prediction for YCR061W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR060W
@@ -13585,7 +13585,7 @@ Attempting prediction for YCR067C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR073W-A
@@ -13816,14 +13816,14 @@ Attempting prediction for YDL018C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR110W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL037C
@@ -13984,7 +13984,7 @@ Attempting prediction for YDL027C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL033C
@@ -14159,7 +14159,7 @@ Attempting prediction for YJL178C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL082W
@@ -14201,7 +14201,7 @@ Attempting prediction for YMR015C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR209C
@@ -14215,14 +14215,14 @@ Attempting prediction for YOR219C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR114W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL035C
@@ -14327,7 +14327,7 @@ Attempting prediction for YDR326C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL056W
@@ -14509,7 +14509,7 @@ Attempting prediction for YLR056W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML120C
@@ -14523,7 +14523,7 @@ Attempting prediction for YNR060W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFL023W
@@ -14614,14 +14614,14 @@ Attempting prediction for YDL089W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML034W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL090C
@@ -14635,14 +14635,14 @@ Attempting prediction for YPR109W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL034W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML105C
@@ -14789,7 +14789,7 @@ Attempting prediction for YNL026W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = BETA
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER162C
@@ -14866,7 +14866,7 @@ Attempting prediction for YER083C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL100C
@@ -15167,7 +15167,7 @@ Attempting prediction for YDL123W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL124W
@@ -15391,7 +15391,7 @@ Attempting prediction for YMR264W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR023W
@@ -15454,7 +15454,7 @@ Attempting prediction for YKL064W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR025C
@@ -15580,7 +15580,7 @@ Attempting prediction for YFL042C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR112W
@@ -15650,7 +15650,7 @@ Attempting prediction for YDL152W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YKR099W
@@ -15692,7 +15692,7 @@ Attempting prediction for YGR121C;YPR138C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR320C
@@ -15797,7 +15797,7 @@ Attempting prediction for YDR233C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL205C
@@ -15818,28 +15818,28 @@ Attempting prediction for YNL219C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR028W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR183W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR091C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL104C
@@ -15944,7 +15944,7 @@ Attempting prediction for YDL211C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR294W
@@ -15993,42 +15993,42 @@ Attempting prediction for YDL232W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL022W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL002C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML019W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR085W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR103C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR092C
@@ -16658,7 +16658,7 @@ Attempting prediction for YGR004W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR207C
@@ -16770,7 +16770,7 @@ Attempting prediction for YJL172W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR034C
@@ -16784,14 +16784,14 @@ Attempting prediction for YDR039C;YDR038C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR046C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR044W
@@ -16805,7 +16805,7 @@ Attempting prediction for YLL040C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR104C
@@ -16903,7 +16903,7 @@ Attempting prediction for YDR090C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL007C
@@ -16994,14 +16994,14 @@ Attempting prediction for YGL075C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR105C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR111C
@@ -17022,7 +17022,7 @@ Attempting prediction for YOL130W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR137W
@@ -17071,7 +17071,7 @@ Attempting prediction for YDR150W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGR097W
@@ -17155,7 +17155,7 @@ Attempting prediction for YHR149C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL056W
@@ -17169,7 +17169,7 @@ Attempting prediction for YLR256W-B
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR156W
@@ -17218,7 +17218,7 @@ Attempting prediction for YDR178W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR180W
@@ -17253,14 +17253,14 @@ Attempting prediction for YLR078C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR026C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR183W
@@ -17302,7 +17302,7 @@ Attempting prediction for YDR205W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAL041W
@@ -17659,14 +17659,14 @@ Attempting prediction for YGR235C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR236C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR244W
@@ -17694,7 +17694,7 @@ Attempting prediction for YNL214W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR026C
@@ -17792,7 +17792,7 @@ Attempting prediction for YDR275W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR154C
@@ -17841,7 +17841,7 @@ Attempting prediction for YDR294C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL021W
@@ -17876,14 +17876,14 @@ Attempting prediction for YJL062W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR302W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL138C
@@ -17897,28 +17897,28 @@ Attempting prediction for YLL031C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR307W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR199W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR316W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR019W
@@ -17960,14 +17960,14 @@ Attempting prediction for YDR434W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR188C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL139C
@@ -17981,7 +17981,7 @@ Attempting prediction for YDR331W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR335W
@@ -18002,21 +18002,21 @@ Attempting prediction for YDR345C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR343C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL019W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR346C
@@ -18037,7 +18037,7 @@ Attempting prediction for YIL147C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR350C
@@ -18051,14 +18051,14 @@ Attempting prediction for YDR352W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL054W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR106W
@@ -18086,7 +18086,7 @@ Attempting prediction for YDR367W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIR009W
@@ -18149,7 +18149,7 @@ Attempting prediction for YDR377W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL064C
@@ -18219,7 +18219,7 @@ Attempting prediction for YDR411C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR400W
@@ -18324,14 +18324,14 @@ Attempting prediction for YDR437W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR216C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR439W
@@ -18380,14 +18380,14 @@ Attempting prediction for YDR456W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR464W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR463W
@@ -18415,7 +18415,7 @@ Attempting prediction for YDR479C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL118C
@@ -18457,21 +18457,21 @@ Attempting prediction for YDR497C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR498C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL098W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL145W
@@ -18513,7 +18513,7 @@ Attempting prediction for YDR503C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR513W
@@ -18632,7 +18632,7 @@ Attempting prediction for YGL226C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL003W
@@ -18765,7 +18765,7 @@ Attempting prediction for YEL017C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR359C
@@ -18800,7 +18800,7 @@ Attempting prediction for YEL027W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR027W
@@ -18828,7 +18828,7 @@ Attempting prediction for YHR190W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL043W
@@ -18898,7 +18898,7 @@ Attempting prediction for YGR106C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR053W
@@ -18912,7 +18912,7 @@ Attempting prediction for YOL122C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL055C
@@ -19129,7 +19129,7 @@ Attempting prediction for YDL149W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER111C
@@ -19164,7 +19164,7 @@ Attempting prediction for YER120W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAR042W
@@ -19213,7 +19213,7 @@ Attempting prediction for YMR231W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YPL045W
@@ -19241,21 +19241,21 @@ Attempting prediction for YER140W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR154W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER141W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER149C
@@ -19360,21 +19360,21 @@ Attempting prediction for YLR342W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAL030W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR093W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL007C
@@ -19591,7 +19591,7 @@ Attempting prediction for YFL026W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFL034W
@@ -19654,7 +19654,7 @@ Attempting prediction for YFL046W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR264C
@@ -19668,7 +19668,7 @@ Attempting prediction for YFL062W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFR005C
@@ -19682,7 +19682,7 @@ Attempting prediction for YMR238W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YFR014C
@@ -19794,7 +19794,7 @@ Attempting prediction for YGL006W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL014W
@@ -19850,7 +19850,7 @@ Attempting prediction for YLR106C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YNL182C
@@ -20004,7 +20004,7 @@ Attempting prediction for YGL126W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR282C
@@ -20081,7 +20081,7 @@ Attempting prediction for YGL139W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL157W
@@ -20109,7 +20109,7 @@ Attempting prediction for YGL161C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL169W
@@ -20151,7 +20151,7 @@ Attempting prediction for YGL186C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR319C
@@ -20186,7 +20186,7 @@ Attempting prediction for YOR106W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL006C
@@ -20221,7 +20221,7 @@ Attempting prediction for YLL006W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL220W
@@ -20242,7 +20242,7 @@ Attempting prediction for YGL225W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL249W
@@ -20256,7 +20256,7 @@ Attempting prediction for YGL247W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR001C
@@ -20326,28 +20326,28 @@ Attempting prediction for YML072C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL087W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR086C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR026W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR042W
@@ -20410,7 +20410,7 @@ Attempting prediction for YGR055W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR071C
@@ -20466,7 +20466,7 @@ Attempting prediction for YGR105W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR118W
@@ -20522,7 +20522,7 @@ Attempting prediction for YOR197W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR126W
@@ -20536,7 +20536,7 @@ Attempting prediction for YGR151C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YGR152C
@@ -20550,7 +20550,7 @@ Attempting prediction for YGR157W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR171C
@@ -20571,7 +20571,7 @@ Attempting prediction for YGR183C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR198W
@@ -20683,7 +20683,7 @@ Attempting prediction for YGR219W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YGR233C
@@ -20739,7 +20739,7 @@ Attempting prediction for YGR257C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR262C
@@ -20760,7 +20760,7 @@ Attempting prediction for YGR269W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YGR267C
@@ -20802,14 +20802,14 @@ Attempting prediction for YGR295C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL336W;YGR295C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGR286C
@@ -20851,7 +20851,7 @@ Attempting prediction for YHL036W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR012W
@@ -20956,7 +20956,7 @@ Attempting prediction for YHR036W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR031C
@@ -20984,7 +20984,7 @@ Attempting prediction for YHR045W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR053C
@@ -21005,7 +21005,7 @@ Attempting prediction for YKL119C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR055C
@@ -21187,14 +21187,14 @@ Attempting prediction for YHR140W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR142W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR144C
@@ -21229,14 +21229,14 @@ Attempting prediction for YHR181W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL040C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR189W
@@ -21327,7 +21327,7 @@ Attempting prediction for YIL004C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL148W
@@ -21376,14 +21376,14 @@ Attempting prediction for YIL039W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL037C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL042C
@@ -21404,14 +21404,14 @@ Attempting prediction for YIL040W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL017C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL050W
@@ -21467,7 +21467,7 @@ Attempting prediction for YHR155W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL105C
@@ -21593,7 +21593,7 @@ Attempting prediction for YIR014W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIR018W
@@ -21677,7 +21677,7 @@ Attempting prediction for YJL057C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL048C
@@ -21698,7 +21698,7 @@ Attempting prediction for YJL062W-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL070C
@@ -21866,21 +21866,21 @@ Attempting prediction for YJL169W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YJL196C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR126W-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL190C
@@ -21950,7 +21950,7 @@ Attempting prediction for YJL212C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL210W
@@ -21971,21 +21971,21 @@ Attempting prediction for YJR015W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR013W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR044C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR035W
@@ -22006,7 +22006,7 @@ Attempting prediction for YIL013C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR052W
@@ -22097,7 +22097,7 @@ Attempting prediction for YJR116W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR129C
@@ -22125,7 +22125,7 @@ Attempting prediction for YBR235W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR134C
@@ -22181,7 +22181,7 @@ Attempting prediction for YJR161C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR149W
@@ -22209,7 +22209,7 @@ Attempting prediction for YKL006C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL018C-A
@@ -22230,14 +22230,14 @@ Attempting prediction for YKL020C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIR033W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL028W
@@ -22510,7 +22510,7 @@ Attempting prediction for YKL187C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL186C
@@ -22559,7 +22559,7 @@ Attempting prediction for YKL212W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL214C
@@ -22629,7 +22629,7 @@ Attempting prediction for YKR039W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR036C
@@ -22678,14 +22678,14 @@ Attempting prediction for YKR054C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YKR065C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR064W
@@ -22713,7 +22713,7 @@ Attempting prediction for YKR088C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR087C
@@ -22804,7 +22804,7 @@ Attempting prediction for YLL014W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR226C
@@ -22853,14 +22853,14 @@ Attempting prediction for YLL043W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR001C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR068W
@@ -22944,14 +22944,14 @@ Attempting prediction for YLR035C-A
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YLR050C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR045C
@@ -22965,7 +22965,7 @@ Attempting prediction for YLR065C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR060W
@@ -22986,7 +22986,7 @@ Attempting prediction for YLR084C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR091W
@@ -23217,7 +23217,7 @@ Attempting prediction for YLR283W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR281C
@@ -23252,7 +23252,7 @@ Attempting prediction for YLR313C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YLR309C
@@ -23308,14 +23308,14 @@ Attempting prediction for YNR021W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR063C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR376C
@@ -23350,7 +23350,7 @@ Attempting prediction for YLR395C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR405W
@@ -23385,7 +23385,7 @@ Attempting prediction for YLR414C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR014W
@@ -23497,7 +23497,7 @@ Attempting prediction for YML018C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML024W
@@ -23532,7 +23532,7 @@ Attempting prediction for YML038C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML037C
@@ -23553,7 +23553,7 @@ Attempting prediction for YLR081W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML058W
@@ -23567,7 +23567,7 @@ Attempting prediction for YML052W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML060W
@@ -23581,14 +23581,14 @@ Attempting prediction for YMR148W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR147W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YML070W
@@ -23609,14 +23609,14 @@ Attempting prediction for YML116W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR010W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR002W
@@ -23651,7 +23651,7 @@ Attempting prediction for YMR319C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR027W
@@ -23889,14 +23889,14 @@ Attempting prediction for YNR048W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR162C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR167W
@@ -23952,7 +23952,7 @@ Attempting prediction for YMR171C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR175W
@@ -23966,7 +23966,7 @@ Attempting prediction for YMR306W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR174C
@@ -24008,7 +24008,7 @@ Attempting prediction for YMR196W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR195W
@@ -24022,7 +24022,7 @@ Attempting prediction for YPR159W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR200W
@@ -24036,7 +24036,7 @@ Attempting prediction for YMR207C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YMR225C
@@ -24078,14 +24078,14 @@ Attempting prediction for YMR243C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR253C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR251W-A
@@ -24106,7 +24106,7 @@ Attempting prediction for YMR256C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR280C
@@ -24169,14 +24169,14 @@ Attempting prediction for YER166W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR302C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR299C
@@ -24211,21 +24211,21 @@ Attempting prediction for YNL044W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL046W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL058C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL053W
@@ -24267,7 +24267,7 @@ Attempting prediction for YNL095C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL086W
@@ -24295,7 +24295,7 @@ Attempting prediction for YNL103W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YNL100W
@@ -24309,7 +24309,7 @@ Attempting prediction for YNL115C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL108C
@@ -24330,7 +24330,7 @@ Attempting prediction for YNL125C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR177W
@@ -24351,14 +24351,14 @@ Attempting prediction for YNL130C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YHR123W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL167C
@@ -24386,7 +24386,7 @@ Attempting prediction for YNL198C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = False
 
 Attempting prediction for YNL218W
@@ -24414,7 +24414,7 @@ Attempting prediction for YNL238W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL264C
@@ -24435,7 +24435,7 @@ Attempting prediction for YNL257C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL278W
@@ -24449,28 +24449,28 @@ Attempting prediction for YNL280C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR458C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YER044C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL279W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL298W
@@ -24540,14 +24540,14 @@ Attempting prediction for YGR143W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR137C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL327W
@@ -24561,7 +24561,7 @@ Attempting prediction for YNL326C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YLR224W
@@ -24575,7 +24575,7 @@ Attempting prediction for YOR034C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR007C
@@ -24617,21 +24617,21 @@ Attempting prediction for YNR056C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR055C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL007C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR067C
@@ -24645,7 +24645,7 @@ Attempting prediction for YOL020W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL016C
@@ -24659,7 +24659,7 @@ Attempting prediction for YOL027C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL023W
@@ -24701,7 +24701,7 @@ Attempting prediction for YOL047C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL055C
@@ -24729,7 +24729,7 @@ Attempting prediction for YOL060C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL071W
@@ -24764,7 +24764,7 @@ Attempting prediction for YOL092W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL089C
@@ -24778,7 +24778,7 @@ Attempting prediction for YOL101C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL100W
@@ -24883,7 +24883,7 @@ Attempting prediction for YOL137W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOL136C
@@ -24953,7 +24953,7 @@ Attempting prediction for YOR045W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR064C
@@ -24995,21 +24995,21 @@ Attempting prediction for YER019W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR224W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR197C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR083W
@@ -25044,7 +25044,7 @@ Attempting prediction for YOR104W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR120W
@@ -25072,7 +25072,7 @@ Attempting prediction for YOR130C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR156C
@@ -25086,7 +25086,7 @@ Attempting prediction for YOR147W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR167C
@@ -25100,7 +25100,7 @@ Attempting prediction for YOR161C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR179C
@@ -25135,21 +25135,21 @@ Attempting prediction for YOR199W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGL065C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR284C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR193W
@@ -25233,7 +25233,7 @@ Attempting prediction for YOR273C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR288C
@@ -25261,14 +25261,14 @@ Attempting prediction for YOR292C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR297C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR295W
@@ -25422,14 +25422,14 @@ Attempting prediction for YPL060W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR334W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL069C
@@ -25464,7 +25464,7 @@ Attempting prediction for YPL076W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL075W
@@ -25485,7 +25485,7 @@ Attempting prediction for YPL087W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL084W
@@ -25674,14 +25674,14 @@ Attempting prediction for YPL246C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR172C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPL273W
@@ -25709,7 +25709,7 @@ Attempting prediction for YPR003C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR002W
@@ -25863,14 +25863,14 @@ Attempting prediction for YML123C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNL192W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBR123C
@@ -26038,7 +26038,7 @@ Attempting prediction for YDR483W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL032W
@@ -26171,7 +26171,7 @@ Attempting prediction for YDR545W;YLR466W;YLR467W;YOR396W;YIL177C;YJL225C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YLR359W
@@ -26241,35 +26241,35 @@ Attempting prediction for YNL263C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL002W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML012W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAL023C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL095W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL096W
@@ -26283,63 +26283,63 @@ Attempting prediction for YPR113W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR017C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YEL031W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDR297W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL055W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJR143C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YJL117W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKL008C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YNR019W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAL012W
@@ -26451,14 +26451,14 @@ Attempting prediction for YOR175C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YMR134W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YIL136W
@@ -26479,35 +26479,35 @@ Attempting prediction for YHR192W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YPR139C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YAL053W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = SP+TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YCR094W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGR217W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL237W
@@ -26696,7 +26696,7 @@ Attempting prediction for YBL087C;YER117W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YNL102W
@@ -26766,7 +26766,7 @@ Attempting prediction for YCR021C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YGL108C
@@ -26780,14 +26780,14 @@ Attempting prediction for YDR316W-B;YPR158W-B
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YER138C;YAR009C
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YLR337C
@@ -26808,7 +26808,7 @@ Attempting prediction for YOR393W;YPL281C;YMR323W
 No prediction will be run:
 has_verified_seq = False
 DeepTMHMM_class = nan
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YDR143C
@@ -27102,7 +27102,7 @@ Attempting prediction for YAR028W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL002W
@@ -27235,7 +27235,7 @@ Attempting prediction for YDR457W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = GLOB
-structure_exists = nan
+structure_exists = 0
 sequence_matches_structure = False
 
 Attempting prediction for YGR158C
@@ -27270,7 +27270,7 @@ Attempting prediction for YBR038W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YDL161W
@@ -27284,7 +27284,7 @@ Attempting prediction for YJL094C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR181W
@@ -27319,7 +27319,7 @@ Attempting prediction for YBL011W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YML043C
@@ -27375,7 +27375,7 @@ Attempting prediction for YPR075C
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YBL027W
@@ -27403,7 +27403,7 @@ Attempting prediction for YLR077W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YKR043C
@@ -27424,7 +27424,7 @@ Attempting prediction for YGL226W
 No prediction will be run:
 has_verified_seq = True
 DeepTMHMM_class = TM
-structure_exists = 1.0
+structure_exists = 1
 sequence_matches_structure = True
 
 Attempting prediction for YOR095C
@@ -27490,4 +27490,4 @@ Structure used: 0-download-inputs/data-files/AF-Q86ZR7-F1-model_v4.pdb
 
 DeepmTMHMM_class: GLOB
 
-Total execution time is: 1:01:00.592935
+Total execution time is: 1:00:13.347101
