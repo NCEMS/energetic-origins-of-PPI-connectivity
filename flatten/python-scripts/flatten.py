@@ -70,7 +70,7 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID", "Unnamed: 0", "cagiada-dG_x"]
+    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID", "Unnamed: 0", "cagiada-dG_x", "gene"]
 
     ureg = UnitRegistry()
 

@@ -75,7 +75,7 @@ def main():
     nodes_df = nodes_df.apply(lambda row: shift_ptm_sites(row, ptm_columns), axis=1)
 
     # save the result
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-PTMGPT2.pkl")
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2.pkl")
 
 if __name__ == "__main__":
     main()
