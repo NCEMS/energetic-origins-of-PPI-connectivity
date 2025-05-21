@@ -4,3 +4,12 @@
 (2) Add DeepTMHMM predictions for each sequence (DeepTMHMM must be run outside of the pipeline and the path to the results included in the .config)
 (3) Predict signal peptide cleavage sites with SignalP
 (4) Add updated sequence information in "trimmed_sequence" column of the nodes_df
+
+SignalP, when able to access a GPU, will require ~15 min. All other rules in this step require <2 min. 
+
+DeepTMHMM notes:
+
+* The directory `DeepTMHMM-runs` contains the pre-computed results for the S288C yeast open reading frames.
+* The file `command` provides the command used to generate the results in `DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line`
+* To rerun this section, install DockerHub and the image `dtu/deeptmhmm:1.0.24`. Start this container and then run the command in `command`
+* Processing all sequences will require 24-36 hours without a GPU. 
