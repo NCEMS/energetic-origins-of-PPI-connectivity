@@ -19,13 +19,13 @@ followed by the command
 
 3. Download SignalP, Rosetta, FoldX, & PTMGPT2 models
 
-SignalP6.0 fast can be downloaded from (this site)[https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast] after accepting the academic licensing agreement. The contents of the downloaded `signalp-6.0h.fast.tar.gz` should be unpacked into `2-sequence-parsing/python-scripts` to enable the environment associated with the SignalP Snakemake rule to build correctly. For example, you should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. 
+SignalP6.0 fast can be downloaded from [this site](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) after accepting the academic licensing agreement. The contents of the downloaded `signalp-6.0h.fast.tar.gz` should be unpacked into `2-sequence-parsing/python-scripts` to enable the environment associated with the SignalP Snakemake rule to build correctly. For example, you should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. 
 
-Rosetta can be downloaded from (Rosetta Commons)[https://rosettacommons.org/software/download/] free of charge. Insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executable`.
+Rosetta can be downloaded from [Rosetta Commons](https://rosettacommons.org/software/download/) free of charge. Insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executable`.
 
-FoldX can be (downloaded)[https://foldxsuite.crg.eu/] after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`.
+FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`.
 
-PTMGPT2 models (Part 1)[https://zenodo.org/records/11371883] and (Part 2)[https://zenodo.org/records/11362322] can be downloaded from Zenodo. Both of these .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`
+PTMGPT2 models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both of these .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`
 
 4. You can now run the pipeline by entering the command `./run_pipeline.sh <.config file>`
 
@@ -109,3 +109,5 @@ This is the final step in the pipeline; performs some minor cleanup of redundant
 .csv & .pkl files with "*-nodes-final-per-node.csv" ending contain the output annotated dataset on a per-node or per-protein basis (i.e., one row per node or protein)
 
 .csv & .pkl files with "*-nodes-final-per-IDR.csv" ending contain the output annotated dataset flattend over IDRs, giving a file with one row per IDR rather than one row per node
+
+These files can be found in `flatten/processed-data/`
