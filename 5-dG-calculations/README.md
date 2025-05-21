@@ -4,4 +4,4 @@
 * Use Eq. 1 from Ghosh & Dill 2010 to predict dG
 * Use Cagiada ESM-IF based LLM to predict dG
 
-* N.B. - this step will be updated to include new AF2 predictions ASAP
+* N.B. - this step will be updated to include new AF2 predictions ASAP; the .config file contains currently unused flags for AlphaFold databases and scripts. 

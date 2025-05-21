@@ -9,6 +9,7 @@ OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM      = LOCAL_CONFIG["organism"]
 ORGANISM_TAG  = config["organism_label"]
+PTMEXHANGE    = LOCAL_CONFIG["ptmexchange"]
 
 rule all:
     input:
@@ -38,7 +39,7 @@ rule parse_uniprot:
 
 rule parse_ptmexchange:
     input:
-        str(DATA_DIR2 / "Yeast_GSB_phospho_all_prots_0125.csv")
+        str(DATA_DIR2 / PTMEXCHANGE)
     output:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv")
     conda:
