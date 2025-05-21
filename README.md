@@ -1,11 +1,13 @@
 
 ### SETUP
 
-1. You will need to first update `conda` on CyVerse by running the command:
+Running the complete pipeline requires significant CPU and GPU resources. While some steps can be run efficiently on CyVerse, this is not recommended for the complete pipeline. 
+
+1. Update your version of conda:
 
 `conda update -n base -c defaults conda`
 
-(CyVerse appears to have 24.3.0, we need 24.7.1 or later for Snakemake to work correctly)
+(We need 24.7.1 or later for Snakemake to work correctly)
 
 2. Setup a conda environment with Snakemake by running the command
 
@@ -15,17 +17,19 @@ followed by the command
 
 `conda activate snakemake`
 
-These steps are automated in `setup.sh`, so you can just run the command
+3. Download SignalP, Rosetta, & FoldX.
 
-`./setup.sh`
+SignalP6.0 fast can be downloaded from (this site)[https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast] after accepting the academic licensing agreement. The contents of the downloaded `signalp-6.0h.fast.tar.gz` should be unpacked into `2-sequence-parsing/python-scripts` to enable the environment associated with the SignalP Snakemake rule to build correctly. For example, you should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. 
 
-(If running on CyVerse, use `cyverse_setup.sh` instead)
+Rosetta can be downloaded from (Rosetta Commons)[https://rosettacommons.org/software/download/] free of charge. Insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executable`.
 
-3. Download SignalP, Rosetta, & FoldX and insert paths to executables in the config file (see below to identify the steps in which these executables need to be inserted)
-	
+FoldX can be (downloaded)[https://foldxsuite.crg.eu/] after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`.
+
 4. You can now run the pipeline by entering the command `./run_pipeline.sh <.config file>`
 
-The `.config` file contains all commonly changed parameters, including those used to label output files. The current config file to run all steps is config-files/s288c-cagiada.config.
+The `.config` file contains all commonly changed parameters, including those used to label output files. The current config file to run all steps is config-files/s288c.config.
+
+Approximate timings for individual pipeline steps are listed below.
 
 
 ### PIPELINE
@@ -55,13 +59,10 @@ Adds DeepTMHMM annotations (predicts if proteins are TM, secreted, globular, etc
 Adds SignalP6.0 identification of cleavage sites for signal peptides
 
 *TO DO: Add AF2 re-prediction of proteins without signal sequence as needed*
-*TO DO: Add predictions of post-translational modifications made with PTMGPT2*
 
 #### Step 3 - Add UniProt & GO annotations
 
 Parses the UniProt database and inserts annotation information on function, subcellular location, post-translational modifications, and gene ontology terms
-
-*This section of the code should be considered experimental; while a handful of extracted annotations have been manually confirmed, more extensive manual checks are required.*
 
 #### Step 4 - Predict IDRs and their properties
 

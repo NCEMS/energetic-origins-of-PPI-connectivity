@@ -12,8 +12,6 @@ MAP_FILE      = DATA_DIR2 / LOCAL_CONFIG["map_file"]
 FASTA         = DATA_DIR2 / LOCAL_CONFIG["fasta"]
 SIGNALP_FASTA = OUTPUT_DIR / str(OUTPUT_PREFIX + "-" + ORGANISM_TAG + LOCAL_CONFIG["signalp_fasta_suffix"])
 SIGNALP_DIR   = WORK_DIR / LOCAL_CONFIG["signalp_dir"]
-SIGNALP_PATH1 = LOCAL_CONFIG["signalp_path"]
-SIGNALP_PATH2 = WORK_DIR / "python-scripts"
 ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
 rule all:
