@@ -134,7 +134,7 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
 
     # take small subset of nodes for testing purposes
-    nodes_df = nodes_df.head(2)
+    #nodes_df = nodes_df.head(2)
 
     df = nodes_df[["node", sequence_column]].copy()
     df = df[df[sequence_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)].copy()
