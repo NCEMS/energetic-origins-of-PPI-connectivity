@@ -1,0 +1,10 @@
+name: process-LiP-MS
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.3
+  - pandas
+  - pint
+  - pint-pandas
+  - numpy=1.24
