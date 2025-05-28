@@ -32,9 +32,11 @@ STAGES=("1-network-centrality"
 
 #STAGES=("10-translation-speed")
 
-STAGES=("flatten")
+#STAGES=("flatten")
 
-STAGES=("12-LiP-MS" "flatten")
+#STAGES=("12-LiP-MS" "flatten")
+
+STAGES=("12-LiP-MS")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"

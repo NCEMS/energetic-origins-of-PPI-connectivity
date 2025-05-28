@@ -12,18 +12,27 @@ def main():
     parser.add_argument("--output_dir", default="processed-data")
     parser.add_argument("--organism_tag", default="s288c")
     parser.add_argument("--input_nodes")
-    parser.add_argument("--input_lipms")
+    parser.add_argument("--input_refold")
+    parser.add_argument("--input_heatshock")
+    parser.add_argument("--input_recovery")
     args = parser.parse_args()
 
     # load data into memory
-    lipms = pd.read_csv(args.input_lipms)
+    refold = pd.read_csv(args.input_refold)
+    heatshock = pd.read_csv(args.input_heatshock)
+    recovery = pd.read_csv(args.input_recovery)
     nodes_df = pd.read_pickle(args.input_nodes)
 
-    # create the merged pd.DataFrame
-    nodes_df = nodes_df.merge(lipms, how="left", right_on="Protein ID", left_on="node")
+    # create the merged pd.DataFrame including refolding information
+    nodes_df = nodes_df.merge(refold, how="left", right_on="Protein ID", left_on="node")
+    nodes_df = nodes_df.drop("Protein ID", axis=1)
 
-    print(nodes_df.columns)
+    # merge in the heatshock information
+    nodes_df = nodes_df.merge(heatshock, how="left", right_on="Protein ID", left_on="node")
+    nodes_df = nodes_df.drop("Protein ID", axis=1)
 
+    # merge in the recovery information
+    nodes_df = nodes_df.merge(recovery, how="left", right_on="Protein ID", left_on="node")
     nodes_df = nodes_df.drop("Protein ID", axis=1)
 
     # save the result to file
