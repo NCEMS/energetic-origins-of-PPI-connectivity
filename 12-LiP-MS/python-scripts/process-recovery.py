@@ -20,6 +20,7 @@ def main():
 
     # determine if each protein has significant differences between recovery and control
     df["recovery_diff"] = (df["No. of Significant Peptides (Adj. P-value)"] >= Npep_nonrefoldable).astype(int)
+    df.rename(columns={"No. of Significant Peptides (Adj. P-value)":"recovery_NsigPep"}, inplace=True)
 
     # save the output intermediate file
     df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-recovery.csv", index=False)
