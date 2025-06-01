@@ -29,3 +29,6 @@ cyverse-access-token
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores/*
 7-FoldX-scoring/processed-data/scores/*
+
+#
+analysis-notebooks/.ipymb_checkpoints
