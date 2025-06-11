@@ -21,8 +21,8 @@ rule integrate_entanglements:
     conda:
         "env/entanglement.yml"
     params:
-        output_dir = OUTPUT_DIR,
-        organism_tag = ORGANISM_TAG,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
         output_prefix = OUTPUT_PREFIX,
         AF2_data      = str(AF2_DATA),
         exp_data      = str(EXP_DATA)
