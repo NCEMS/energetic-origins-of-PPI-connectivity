@@ -9,39 +9,55 @@ OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 OLIG_DATA      = DATA_DIR2 / LOCAL_CONFIG["oligomer_data"]
+ID_MAP_FILE    = DATA_DIR2 / config["sequence_parsing"]["map_file"]
 
 rule all:
     input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
 
 rule parse_oligomer_info:
     input:
-        #input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
     conda:
         "env/oligomers.yml"
     params:
+        output_dir    = OUTPUT_DIR,  
+        organism_tag  = ORGANISM_TAG, 
+        output_prefix = OUTPUT_PREFIX,
+        oligomer_data = OLIG_DATA,
+        map_file      = ID_MAP_FILE
     output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv"
     shell:
         f"""
+        python {WORK_DIR}/python-scripts/process-oligomers.py \
+        --output_dir     {{params.output_dir}}                \
+        --output_prefix  {{params.output_prefix}}             \
+        --organism_tag   {{params.organism_tag}}              \
+        --oligomer_data  {{params.oligomer_data}}             \
+        --map_file       {{params.map_file}}                  \
+        --nodes          {{input.nodes}}
         """
 
 rule add_oligomer_info:
     input:
-        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
+        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl",
+        input_oligs = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv"
     conda:
         "env/oligomers.yml"
     params:
         output_dir    = OUTPUT_DIR,
         organism_tag  = ORGANISM_TAG,
-        output_prefix = OUTPUT_PREFIX,
-        oligomer_data = OUTPUT_DIR
+        output_prefix = OUTPUT_PREFIX
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-oligomers.py \
-        --input_nodes    {{input.input_nodes}}             \
-        --output_dir     {{params.output_dir}}             \
-        --output_prefix  {{params.output_prefix}}          \
-        --olig_data      {{params.chaperone_data}}         \
+        --input_nodes    {{input.input_nodes}}            \
+        --output_dir     {{params.output_dir}}            \
+        --output_prefix  {{params.output_prefix}}         \
+        --organism_tag   {{params.organism_tag}}          \
+        --olig_data      {{input.input_oligs}}            \
         """

@@ -22,6 +22,7 @@ URLS=(
         "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz"
         "http://purl.obolibrary.org/obo/go.obo"
         "https://www.proteomexchange.org/ptmexchange/Files/Yeast_GSB_phospho_all_prots_0125.csv.gz"
+        "https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/protein2ipr.dat.gz"
 )
 
 # define local files names (must match order of URLs)
@@ -34,6 +35,7 @@ FILENAMES=(
         "uniprot_sprot.xml.gz"
         "go-basic.obo"
         "Yeast_GSB_phospho_all_prots_0125.csv.gz"
+        "protein2ipr.dat.gz"
 )
 
 # function to download a file
