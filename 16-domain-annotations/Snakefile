@@ -1,6 +1,6 @@
 from pathlib import Path
 
-LOCAL_CONFIG   = config["oligomer"]
+LOCAL_CONFIG   = config["domain_annotations"]
 
 DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
 DATA_DIR2      = Path(config["data_dir"])
@@ -8,17 +8,16 @@ WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
-OLIG_DATA      = DATA_DIR2 / LOCAL_CONFIG["oligomer_data"]
-ID_MAP_FILE    = DATA_DIR2 / config["sequence_parsing"]["map_file"]
+DOMAIN_DATA    = DATA_DIR2 / LOCAL_CONFIG["annotations"]
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv",
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-annotations-per-node.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains.pkl"
 
-rule parse_oligomer_info:
+rule parse_domain_info:
     input:
-        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
+        nodes = 
     conda:
         "env/oligomers.yml"
     params:
