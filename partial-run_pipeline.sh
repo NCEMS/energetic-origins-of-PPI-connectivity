@@ -42,7 +42,9 @@ STAGES=("1-network-centrality"
 
 #STAGES=("14-chaperones" "flatten")
 
-STAGES=("15-oligomers")
+#STAGES=("15-oligomers")
+
+STAGES=("16-domain-annotations")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
