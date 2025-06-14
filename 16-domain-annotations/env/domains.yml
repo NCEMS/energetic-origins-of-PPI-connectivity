@@ -8,3 +8,4 @@ dependencies:
   - pint
   - pint-pandas
   - numpy=1.24
+  - tqdm
