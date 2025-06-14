@@ -12,51 +12,71 @@ DOMAIN_DATA    = DATA_DIR2 / LOCAL_CONFIG["annotations"]
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-annotations-per-node.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations-processed.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains.pkl"
 
-rule parse_domain_info:
+rule extract_domain_info:
     input:
-        nodes = 
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
     conda:
-        "env/oligomers.yml"
+        "env/domains.yml"
     params:
         output_dir    = OUTPUT_DIR,  
         organism_tag  = ORGANISM_TAG, 
         output_prefix = OUTPUT_PREFIX,
-        oligomer_data = OLIG_DATA,
-        map_file      = ID_MAP_FILE
+        domain_data   = str(DOMAIN_DATA)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations.csv"
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/process-oligomers.py \
-        --output_dir     {{params.output_dir}}                \
-        --output_prefix  {{params.output_prefix}}             \
-        --organism_tag   {{params.organism_tag}}              \
-        --oligomer_data  {{params.oligomer_data}}             \
-        --map_file       {{params.map_file}}                  \
+        python {WORK_DIR}/python-scripts/extract-InterPro.py \
+        --output_dir     {{params.output_dir}}               \
+        --output_prefix  {{params.output_prefix}}            \
+        --organism_tag   {{params.organism_tag}}             \
+        --domain_data    {{params.domain_data}}              \
         --nodes          {{input.nodes}}
         """
 
-rule add_domain_info:
+rule process_domain_info:
     input:
-        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl",
-        input_oligs = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations.csv"
     conda:
-        "env/oligomers.yml"
+        "env/domains.yml"
     params:
         output_dir    = OUTPUT_DIR,
         organism_tag  = ORGANISM_TAG,
         output_prefix = OUTPUT_PREFIX
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations-processed.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations-processed.pkl"
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/add-oligomers.py \
-        --input_nodes    {{input.input_nodes}}            \
-        --output_dir     {{params.output_dir}}            \
-        --output_prefix  {{params.output_prefix}}         \
-        --organism_tag   {{params.organism_tag}}          \
-        --olig_data      {{input.input_oligs}}            \
+        python {WORK_DIR}/python-scripts/process-InterPro.py \
+        --output_dir     {{params.output_dir}}               \
+        --output_prefix  {{params.output_prefix}}            \
+        --organism_tag   {{params.organism_tag}}             \
+        --input_data     {{input}}
+        """
+
+rule add_domain_info:
+    input:
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl",
+        info  = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations-processed.pkl"
+    conda:
+        "env/domains.yml"
+    params:
+        output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG,
+        output_prefix = OUTPUT_PREFIX
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-InterPro.py \
+        --output_dir     {{params.output_dir}}           \
+        --output_prefix  {{params.output_prefix}}        \
+        --organism_tag   {{params.organism_tag}}         \
+        --domain_data    {{input.info}}                  \
+        --input_nodes    {{input.nodes}}
         """
