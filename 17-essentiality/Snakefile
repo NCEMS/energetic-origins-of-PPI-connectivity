@@ -1,0 +1,76 @@
+from pathlib import Path
+
+LOCAL_CONFIG   = config["essentiality"]
+
+DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
+DATA_DIR2      = Path(config["data_dir"])
+WORK_DIR       = Path(workflow.basedir)
+OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG   = config["organism_label"]
+ESSENTIAL_DATA = DATA_DIR2 / LOCAL_CONFIG["essentiality_data"]
+STRAIN_FILTER  = LOCAL_CONFIG["strain_filter"]
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-fixed.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-processed.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl"
+
+rule fix_input_file:
+    input:
+        str(ESSENTIAL_DATA)
+    conda:
+        "env/essentiality.yml"
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-fixed.csv"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/fix-file.py \
+        --input_file  {{input}}                      \
+        --output_file {{output}}
+        """
+    
+rule process_essentiality:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-fixed.csv"
+    conda:
+        "env/essentiality.yml"
+    params:
+        output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG,
+        output_prefix = OUTPUT_PREFIX,
+        strain_filter = STRAIN_FILTER
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-processed.csv"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/process-essentiality.py \
+        --output_dir     {{params.output_dir}}                   \
+        --output_prefix  {{params.output_prefix}}                \
+        --organism_tag   {{params.organism_tag}}                 \
+        --strain_filter  {{params.strain_filter}}                \
+        --input_data     {{input}}
+        """
+
+rule add_essentiality:
+    input:
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains.pkl",
+        data  = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-processed.csv"
+    conda:
+        "env/essentiality.yml"
+    params:
+        output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG,
+        output_prefix = OUTPUT_PREFIX
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-essentiality.py \
+        --output_dir     {{params.output_dir}}               \
+        --output_prefix  {{params.output_prefix}}            \
+        --organism_tag   {{params.organism_tag}}             \
+        --input_data     {{input.data}}                      \
+        --input_nodes    {{input.nodes}}
+        """

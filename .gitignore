@@ -27,7 +27,7 @@ cyverse-access-token
 !0-download-inputs/data-files/*Recovery*
 
 # SGD annotations of inviable (i.e., essential) proteins
-!0-download-inputs/data-files/inviable_annotations.txt
+!0-download-inputs/data-files/inviable_annotations*
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores/*
