@@ -1,0 +1,2 @@
+python python-scripts/fix-file.py --input_file ../0-download-inputs/data-files/inviable_annotations-mod.txt --output_file processed-data/0-s288c-essentiality-fixed.csv
+python python-scripts/process-essentiality.py --output_prefix 0 --output_dir processed-data --organism_tag s288c --input_data processed-data/0-s288c-essentiality-fixed.csv --strain_filter S288C
