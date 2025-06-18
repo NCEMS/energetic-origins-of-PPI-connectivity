@@ -26,6 +26,15 @@ cyverse-access-token
 !0-download-inputs/data-files/*HeatShock*
 !0-download-inputs/data-files/*Recovery*
 
+# entanglement data
+!0-download-inputs/data-files/Yeast_*_combined_20250530.csv
+
+# chaperone information
+!0-download-inputs/data-files/1-s2.0-S2211124717312160-mmc2.tsv
+
+# oligomer information
+!0-download-inputs/data-files/559292.tsv
+
 # SGD annotations of inviable (i.e., essential) proteins
 !0-download-inputs/data-files/inviable_annotations*
 
