@@ -1,0 +1,59 @@
+from pathlib import Path
+
+LOCAL_CONFIG   = config["Y2H"]
+
+DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
+DATA_DIR2      = Path(config["data_dir"])
+WORK_DIR       = Path(workflow.basedir)
+OUTPUT_PREFIX  = config["output_prefix"]
+Y2H_PREFIX     = "Y2H"
+OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG   = config["organism_label"]
+EDGES          = DATA_DIR2 / LOCAL_CONFIG["edges"]
+NODES          = DATA_DIR2 / LOCAL_CONFIG["nodes"]
+SCRIPT         = LOCAL_CONFIG["centrality_script"]
+COSDISTPATH    = LOCAL_CONFIG["cos_dist_path"]
+TEST_DIR       = LOCAL_CONFIG["test_dir"]
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv",
+        #f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
+        
+rule get_Y2H_centralities:
+    input:
+        edges = str(EDGES),
+        nodes = str(NODES)
+    conda:
+        "../1-network-centrality/env/network-analysis.yml"
+    output:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+        test_dir      = str(TEST_DIR),
+        cosdistpath   = str(COSDISTPATH)
+    shell:
+        f"""
+        python {SCRIPT} \
+        --edges         {{input.edges}} \
+        --nodes         {{input.nodes}} \
+        --output_prefix {{params.output_prefix}} \
+        --output_dir    {{params.output_dir}} \
+        --organism_tag  {{params.organism_tag}} \
+        --test_dir      {{params.test_dir}} \
+        --CosDistPath   {{params.cosdistpath}}
+        """
+
+#rule add_Y2H_centralities:
+#    input:
+#        input_nodes = 
+#        Y2H_nodes = 
+#    conda:
+#        "env/merge-nodes.yml"
+#    output:
+#        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
+#    shell:
+#        f"""
+#        """
