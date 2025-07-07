@@ -1,25 +1,54 @@
 from pathlib import Path
 
-LOCAL_CONFIG   = config["Y2H"]
+LOCAL_CONFIG  = config["Y2H"]
 
-DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
-DATA_DIR2      = Path(config["data_dir"])
-WORK_DIR       = Path(workflow.basedir)
-OUTPUT_PREFIX  = config["output_prefix"]
-Y2H_PREFIX     = "Y2H"
-OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
-ORGANISM_TAG   = config["organism_label"]
-EDGES          = DATA_DIR2 / LOCAL_CONFIG["edges"]
-NODES          = DATA_DIR2 / LOCAL_CONFIG["nodes"]
-SCRIPT         = LOCAL_CONFIG["centrality_script"]
-COSDISTPATH    = LOCAL_CONFIG["cos_dist_path"]
-TEST_DIR       = LOCAL_CONFIG["test_dir"]
+DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
+DATA_DIR2     = Path(config["data_dir"])
+WORK_DIR      = Path(workflow.basedir)
+OUTPUT_PREFIX = config["output_prefix"]
+Y2H_PREFIX    = LOCAL_CONFIG["Y2H_prefix"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG  = config["organism_label"]
+EDGES         = DATA_DIR2 / LOCAL_CONFIG["edges"]
+NODES         = DATA_DIR2 / LOCAL_CONFIG["nodes"]
+SCRIPT        = LOCAL_CONFIG["centrality_script"]
+COSDISTPATH   = LOCAL_CONFIG["cos_dist_path"]
+TEST_DIR      = LOCAL_CONFIG["test_dir"]
 
 rule all:
     input:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv",
         f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv",
-        #f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
-        
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
+
+# final reformatting of edges output from Cytoscape
+rule reformat_edges:
+    input:
+        EDGES
+    conda:
+        "env/merge-nodes.yml"
+    params:
+        from_name       = "source",
+        to_name         = "target",
+        column_to_parse = "name",
+        output_dir      = OUTPUT_DIR,
+        output_prefix   = OUTPUT_PREFIX,
+        organism_tag    = ORGANISM_TAG
+    output:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/reformat-edges.py \
+        --input_edges   {{input}} \
+        --from          {{params.from_name}} \
+        --to            {{params.to_name}} \
+        --column_name   {{params.column_to_parse}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}}
+        """
+
+# compute centralities for Y2H network
 rule get_Y2H_centralities:
     input:
         edges = str(EDGES),
@@ -46,14 +75,25 @@ rule get_Y2H_centralities:
         --CosDistPath   {{params.cosdistpath}}
         """
 
-#rule add_Y2H_centralities:
-#    input:
-#        input_nodes = 
-#        Y2H_nodes = 
-#    conda:
-#        "env/merge-nodes.yml"
-#    output:
-#        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
-#    shell:
-#        f"""
-#        """
+# merge centralities into the existing annotated network
+rule add_Y2H_centralities:
+    input:
+        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl"
+        Y2H_centalities = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+    conda:
+        "env/merge-nodes.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/merge-nodes.py \
+        --input_nodes      {{input.input_nodes}} \
+        --Y2H_centralities {{input.Y2H_centralities}} \
+        --output_dir       {{params.output_dir}} \
+        --output_prefix    {{params.output_prefix}} \
+        --organism_tag     {{params.organism_tag}}
+        """
