@@ -33,6 +33,20 @@ The `.config` file contains all commonly changed parameters, including those use
 
 Approximate timings for individual pipeline steps are listed in the README.md files within subdirectories for each step
 
+5. Optional - if you want to rerun the pipeline from step 0, download additional data for `6-Rosetta-scoring` from:
+
+`/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores`
+
+As well as additional data for `7-FoldX-scoring` from:
+
+`/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores`
+
+And place these directories in `6-Rosetta-scoring/processed-data/scores` and `7-FoldX-scoring/processed-data/scores`
+
+Finally, place the data from:
+
+`/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` in `11-predict-PTMs/processed-data` and you are ready to go without needing to rerun expensive calculations.
+
 
 ### PIPELINE
 

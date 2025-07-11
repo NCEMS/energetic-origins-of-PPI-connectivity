@@ -40,6 +40,7 @@ cyverse-access-token
 
 # CCSB Y2H interaction data from https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt
 !0-download-inputs/data-files/Y2H_*.txt
+!0-download-inputs/data-files/Y2H_*.csv
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores/*
