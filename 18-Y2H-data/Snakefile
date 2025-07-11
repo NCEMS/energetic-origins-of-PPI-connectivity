@@ -32,7 +32,7 @@ rule reformat_edges:
         to_name         = "target",
         column_to_parse = "name",
         output_dir      = OUTPUT_DIR,
-        output_prefix   = OUTPUT_PREFIX,
+        output_prefix   = Y2H_PREFIX,
         organism_tag    = ORGANISM_TAG
     output:
         f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv"
@@ -40,8 +40,8 @@ rule reformat_edges:
         f"""
         python {WORK_DIR}/python-scripts/reformat-edges.py \
         --input_edges   {{input}} \
-        --from          {{params.from_name}} \
-        --to            {{params.to_name}} \
+        --from_name     {{params.from_name}} \
+        --to_name       {{params.to_name}} \
         --column_name   {{params.column_to_parse}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
@@ -51,14 +51,14 @@ rule reformat_edges:
 # compute centralities for Y2H network
 rule get_Y2H_centralities:
     input:
-        edges = str(EDGES),
+        edges = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv",
         nodes = str(NODES)
     conda:
         "../1-network-centrality/env/network-analysis.yml"
     output:
         f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
     params:
-        output_prefix = OUTPUT_PREFIX,
+        output_prefix = Y2H_PREFIX,
         output_dir    = str(OUTPUT_DIR),
         organism_tag  = ORGANISM_TAG,
         test_dir      = str(TEST_DIR),
@@ -78,8 +78,8 @@ rule get_Y2H_centralities:
 # merge centralities into the existing annotated network
 rule add_Y2H_centralities:
     input:
-        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl"
-        Y2H_centalities = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl",
+        Y2H_centralities = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
     conda:
         "env/merge-nodes.yml"
     params:

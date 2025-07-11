@@ -48,6 +48,8 @@ STAGES=("1-network-centrality"
 
 #STAGES=("17-essentiality")
 
+#STAGES=("18-Y2H-data")
+
 STAGES=("flatten")
 
 for STAGE in "${STAGES[@]}"; do
