@@ -21,6 +21,9 @@ cyverse-access-token
 # protein expression data file from 10.1016/j.cels.2017.12.004
 !0-download-inputs/data-files/1-s2.0-S240547121730546X-mmc5.*
 
+# translation efficiency information from https://github.com/schatzlab/scikit-ribo_manuscript/blob/master/Data/skr_weinberg_genesTE.csv
+!0-download-inputs/data-files/skr_weinberg_genesTE.csv
+
 # yeast LiP-MS data
 !0-download-inputs/data-files/*YeastRefolding*
 !0-download-inputs/data-files/*HeatShock*

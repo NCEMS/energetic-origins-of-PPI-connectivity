@@ -14,6 +14,13 @@ STAGES=("0-download-inputs"
         "9-protein-expression"
         "10-translation-speed"
         "11-predict-PTMs"
+        "12-LiP-MS"
+        "13-entanglement"
+        "14-chaperones"
+        "15-oligomers"
+        "16-domain-annotations"
+        "17-essentiality"
+        "18-Y2H-data"
         "flatten"
        )
 
@@ -21,8 +28,8 @@ for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
 
     if [ "$STAGE" == "5-dG-calculations" ]; then
-        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" -j 2 --cores 2 --use-conda --conda-frontend conda || exit 1
+        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" -j 2 --cores 96 --use-conda --conda-frontend conda || exit 1
     else
-        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 4 --use-conda --conda-frontend conda || exit 1
+        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 96 --use-conda --conda-frontend conda || exit 1
     fi
 done
