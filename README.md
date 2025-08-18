@@ -17,6 +17,9 @@ followed by the command
 
 `conda activate snakemake`
 
+Note: This gave me issues on a new Ubuntu machine, try `conda create -n snakemake -c conda-forge -c bioconda "python>=3.11,<3.14" "snakemake>=9,<10" biopython
+` if it fails. 
+
 3. Download SignalP, Rosetta, FoldX, & PTMGPT2 models
 
 SignalP6.0 fast can be downloaded from [this site](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) after accepting the academic licensing agreement. The contents of the downloaded `signalp-6.0h.fast.tar.gz` should be unpacked into `2-sequence-parsing/python-scripts` to enable the environment associated with the SignalP Snakemake rule to build correctly. For example, you should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. 

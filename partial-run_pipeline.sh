@@ -21,6 +21,8 @@ STAGES=("1-network-centrality"
         "3-uniprot-annotation"
          )
 
+STAGES=("0-download-inputs")
+
 #STAGES=("4-idr-properties")
 
 #STAGES=("flatten")
@@ -50,7 +52,7 @@ STAGES=("1-network-centrality"
 
 #STAGES=("18-Y2H-data")
 
-STAGES=("flatten")
+#STAGES=("flatten")
 
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
