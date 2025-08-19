@@ -158,3 +158,9 @@ This is the final step in the pipeline; performs some minor cleanup of redundant
 .csv & .pkl files with "*-nodes-final-per-IDR.csv" ending contain the output annotated dataset flattend over IDRs, giving a file with one row per IDR rather than one row per node
 
 These files can be found in `flatten/processed-data/`
+
+#### Technical notes
+
+Commits pushed on Aug 19 from Aug 18 and Aug 19 convert the entire pipeline to (hopefully) have more robust handling of dependency issues, especially related to pandas/numpy/pint problems. 
+
+The CUDA version used in cagiada-stability.py was also updated. To return to previous version, revert to `be63ba5` (commit message: "Adding Y2H data to pipeline")
