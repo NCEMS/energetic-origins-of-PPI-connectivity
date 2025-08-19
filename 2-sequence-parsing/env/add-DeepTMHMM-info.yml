@@ -2,5 +2,6 @@ name: add-sequence-info
 channels:
   - conda-forge
 dependencies:
+  - python=3.11
   - pandas
   - pytest

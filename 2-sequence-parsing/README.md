@@ -13,3 +13,9 @@ DeepTMHMM notes:
 * The file `command` provides the command used to generate the results in `DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line`
 * To rerun this section, install DockerHub and the image `dtu/deeptmhmm:1.0.24`. Start this container and then run the command in `command`
 * Processing all sequences will require 24-36 hours without a GPU. 
+
+SignalP notes:
+
+* You *must* copy the model weights from the model folder into the signalP folder:
+
+`cp 2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/models/distilled_model_signalp6.pt 2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/signalp/model_weights/`

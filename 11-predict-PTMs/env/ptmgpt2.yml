@@ -1,23 +1,27 @@
 name: ptmgpt2
 channels:
-  - nvidia
   - pytorch
   - conda-forge
-  - defaults
+  - nvidia
 dependencies:
-  - python=3.11.3
-  - pip
-  - pytorch=2.0.1
-  - pytorch-cuda=11.7
-  - scikit-learn=1.2.2
-  - pandas
+  - python=3.11
+  - numpy==2.3.2          # match the writer that made the .pkl
+  - pandas>=2.2.2
+  - pytorch=2.0.1         # from pytorch channel
+  - pytorch-cuda=11.7     # GPU runtime (driver must support 11.7)
+  - scikit-learn>=1.5     # 1.2.2 is not NumPy-2-compatible; bump or remove if unneeded
   - packaging
   - certifi
   - requests
   - tqdm
+  - transformers=4.29.2   # you can install via conda-forge to reduce pip mixing; or leave in pip
+  - tokenizers=0.13.3
+  - ittapi                # <-- provides libittnotify.so (fixes iJIT_NotifyEvent)
+  - libgcc-ng>=12
+  - libstdcxx-ng>=12
+  - pint
+  - pint-pandas
+  - pip
   - pip:
-      - transformers==4.29.2
-      - tokenizers==0.13.3
       - evaluate==0.4.0
       - huggingface_hub==0.16.4
-      - pint-pandas

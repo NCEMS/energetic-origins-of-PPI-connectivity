@@ -17,7 +17,7 @@ followed by the command
 
 `conda activate snakemake`
 
-Note: This gave me issues on a new Ubuntu machine, try `conda create -n snakemake -c conda-forge -c bioconda "python>=3.11,<3.14" "snakemake>=9,<10" biopython
+Note: This gave me issues on a new Ubuntu machine, try `conda create -n snakemake -c conda-forge -c bioconda "python>3.11" "snakemake>=9,<10" biopython
 ` if it fails. 
 
 3. Download SignalP, Rosetta, FoldX, & PTMGPT2 models
