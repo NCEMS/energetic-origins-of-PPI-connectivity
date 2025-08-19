@@ -4,11 +4,44 @@ import time
 import torch
 import numpy as np
 import pandas as pd
+import pint
+import pint_pandas
 import argparse
 import esm
 import pytest
 import typing
 from datetime import datetime
+
+# begin Biotite 1.x compatibility shim
+
+import biotite.structure as _bs
+
+def _filter_backbone_mask(arr, include_oxygen=True):
+    """
+    Drop-in replacement for the old biotite.structure.filter_backbone.
+    Returns a 1-D boolean mask selecting peptide backbone atoms.
+    """
+    names = ["N", "CA", "C"] + (["O"] if include_oxygen else [])
+
+    # Atom names can be shape (atoms,) for AtomArray or (models, atoms) for stacks
+    atom_names = getattr(arr, "atom_name", None)
+    if atom_names is None:
+        # last-resort: try attribute access
+        atom_names = np.asarray(getattr(arr, "atom_name"))
+    # Derive a 1-D mask over the atom axis
+    if getattr(atom_names, "ndim", 1) == 2:
+        base = atom_names[0]          # assume consistent names across models
+    else:
+        base = atom_names
+    mask = np.isin(base, names)
+    # Ensure boolean dtype
+    return mask.astype(bool)
+
+# monkey-patch so "from biotite.structure import filter_backbone" resolves
+_bs.filter_backbone = _filter_backbone_mask
+
+# end Biotite shim
+
 from esm.inverse_folding.util import (
     load_structure,
     extract_coords_from_structure,

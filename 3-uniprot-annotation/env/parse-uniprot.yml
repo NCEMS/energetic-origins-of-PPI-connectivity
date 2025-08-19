@@ -1,9 +1,11 @@
 name: parse-uniprot
 channels:
-  - Bioconda
   - conda-forge
 dependencies:
+  - python=3.10.*
   - pandas
-  - biopython
+  - biopython>=1.83
   - pytest
-  - goatools
+  - pip
+  - pip:
+      - goatools==1.2.3

@@ -1,8 +1,8 @@
 name: add-sequence-info
 channels:
-  - bioconda
   - conda-forge
 dependencies:
+  - python=3.11
   - pandas
-  - biopython
+  - biopython>=1.83
   - pytest

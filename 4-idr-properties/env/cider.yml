@@ -1,9 +1,10 @@
 channels:
-  - bioconda
+  - conda-forge
 dependencies:
+  - python=3.11
   - pip
-  - numpy=1.24
-  - pandas
+  - numpy==2.3.2
+  - pandas>=2.2.2
   - pip:
     - git+https://git@github.com/idptools/sparrow.git
     - tqdm

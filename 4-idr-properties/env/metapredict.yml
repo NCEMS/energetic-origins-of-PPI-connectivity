@@ -4,12 +4,12 @@ channels:
   - pytorch
 
 dependencies:
-  - python=3.11 
-  - numpy=1.24
-  - pandas
-  - pytorch 
-  - scipy 
-  - cython 
+  - python=3.11
+  - numpy==2.3.2
+  - pandas>=2.2.2
+  - pytorch
+  - scipy
+  - cython
   - matplotlib
   - pip
   - pip:
