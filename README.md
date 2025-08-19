@@ -61,6 +61,14 @@ For example,
 
 `.run_pipeline.sh config-files/s288c.config`
 
+If you would like to run a specific pipeline step in isolation, you can use a command like:
+
+`snakemake --snakefile /snakefile/path/Snakefile --configfile /configfile/path/config.config --use-conda --conda-frontend conda -c all`
+
+in which you must replace `/snakefile/path/Snakefile` and `/configfile/path/config.config` with correct relative paths. For example, from the main repo working directory we could run pipeline step 8 in isolation with the command:
+
+`snakemake --snakefile 8-protein-half-life/Snakefile --configfile config-files/s288c.config --use-conda --conda-frontend conda -c all`
+
 #### 0-download-inputs
 
 Downloads the required input data (e.g., protein ORF sequences, ESM-IF weights, etc.) and extracts AlphaFold2 structure sequences. 
@@ -118,6 +126,28 @@ Integrates translation efficiency information computed using scikit-ribo on Wein
 #### 11-predict-PTMs
 
 Runs the model PTMGPT2 to predict post-translational modifications for each protein. Current list of predicted PTMs can be found by checking main() in 11-predict-PTMs/python-scripts/run-PTMGPT2-parallel.py
+
+#### 12-LiP-MS
+
+Adds information on whether or not a protein was found to be able to refold by LiP-MS from the Fried Lab. Data not published, be careful!
+
+#### 13-entanglement
+
+Integrates information on protein entanglement status; currently, only indicates if a protein is or is not entangled
+
+#### 14-chaperones
+
+Adds information on which chaperones a particular node/protein is known to interact with
+
+#### 15-oligomers
+
+Adds information on the oligomer state of nodes; includes whether the protein is a member of a complex with known stoichiometry, unknown stoichiometry, any complex, a homodimer, etc.
+
+#### 16-domain-annotations
+
+#### 17-essentiality
+
+#### 18-Y2H-data
 
 #### flatten
 
