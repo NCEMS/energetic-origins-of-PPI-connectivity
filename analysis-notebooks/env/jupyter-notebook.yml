@@ -1,0 +1,15 @@
+name: energy-jupyter
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - biopython
+  - jupyter
+  - pandas>=2.2.2
+  - numpy==2.3.2
+  - scipy
+  - seaborn
+  - matplotlib
+  - tqdm
+  - scikit-learn
