@@ -57,18 +57,6 @@ def compute_Ghosh_Dill_dG(
         )
     )
 
-    # compute ΔG
-    #dG = dG_df.apply(
-    #    lambda row: (
-    #        row["dH"]
-    #        + row["dCp"] * (T - T_h)
-    #        - T * row["dS"]
-    #        - T * row["dCp"] * np.log(T.magnitude / T_s.magnitude)
-    #    ).to("kilocalorie / mole"),
-    #    axis=1,
-    #)
-    #dG_df["Ghosh-Dill-dG"] = dG.apply(lambda x: x.to("kilocalorie / mole").magnitude)
-
     dG_list = []
     for _, row in dG_df.iterrows():
         deltaG = (
@@ -100,7 +88,7 @@ def main():
         help="Directory where results will be saved (default: 'outputs')",
     )
     parser.add_argument("--output_prefix", default="0_", help="Prefix for output files")
-    parser.add_argument("--seq_column_to_use", default="signalP_trimmed_sequence")
+    parser.add_argument("--seq_column_to_use", default="final_sequence")
     parser.add_argument(
         "--temperature",
         default=303.15,

@@ -3,6 +3,7 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.PDB import PDBParser, PDBIO, Select
+from Bio.PDB.Polypeptide import PPBuilder
 import typing
 from typing import Optional
 import argparse
@@ -197,71 +198,83 @@ def extract_plddt_ca_only(pdb_filename):
 
 
 def compute_mean_plddt(row):
-    if row["structure_exists"] == 1:
-        if pd.isna(row["cleavage_site_start"]):
-            return extract_plddt_ca_only(row["structure_path"])
+    path = row.get("final_structure_path")
+    if path and os.path.isfile(path):
+        return extract_plddt_ca_only(path)
+    return np.nan
+
+
+def select_final_structure(row, af2_dir):
+    """
+    Decide which structure to use: EBI, AF2 replacement, or cleaved AF2.
+    For cleaved sequences, confirms AF2 structure matches the expected trimmed sequence.
+    """
+    node = row["node"]
+    sgd_seq = row.get("signalP_trimmed_sequence")
+
+    # Rule 1: EBI structure is acceptable
+    if (
+        row.get("structure_exists") == 1
+        and pd.isna(row.get("cleavage_site_start"))
+        and row.get("sequence_matches_structure", False)
+    ):
+        return pd.Series([row.get("structure_path"), row.get("structure_sequence"), "EBI"])
+
+    # Rule 2 & 3: Try AF2 structure
+    if af2_dir and isinstance(node, str):
+        af2_path, af2_seq = locate_rescue_structure(node, af2_dir)
+
+        if af2_path is None or af2_seq is None:
+            return pd.Series([None, None, "None"])
+
+        # Make sure both sequences are valid strings
+        if not (isinstance(af2_seq, str) and isinstance(sgd_seq, str)):
+            print(f"[{node}] One or both sequences are not valid strings.")
+            return pd.Series([None, None, "None"])
+
+        af2_clean = af2_seq.strip().upper()
+        sgd_clean = sgd_seq.strip().upper()
+
+        if af2_clean == sgd_clean:
+            source = "AF2-cleaved" if not pd.isna(row.get("cleavage_site_start")) else "AF2"
+            return pd.Series([af2_path, af2_seq, source])
         else:
-            return extract_plddt_ca_only(row["cleaved_structure_path"])
-    else:
-        return np.nan
+            if not pd.isna(row.get("cleavage_site_start")):
+                print(f"[{node}] Cleaved AF2 structure does not match expected trimmed sequence.")
+            else:
+                print(f"[{node}] AF2 structure does not match expected full sequence.")
+            return pd.Series([None, None, "None"])
 
-"""
-def compute_mean_plddt(row):
+    return pd.Series([None, None, "None"])
 
-    if row["structure_exists"] == 1:
-        return extract_plddt_ca_only(row["structure_path"])
-    else:
-        return np.nan
-"""
-"""
-def prepare_alphafold_fasta_dirs(nodes_df: pd.DataFrame, output_dir: str, organism_tag: str, output_prefix: str) -> None:
-    #
-    #Creates AlphaFold2 prediction directories and writes a list of target nodes to a file.
 
-    #Outputs a text file: {output_prefix}-{organism_tag}-alphafold-targets.txt
-    #Each line: one node ID
-    #
+def locate_rescue_structure(node: str, af2_dir: str) -> typing.Tuple[Optional[str], Optional[str]]:
+    """
+    Locate the AlphaFold2 rescue structure (ranked_0.pdb) and extract sequence from it.
 
-    af_base_dir = os.path.join(output_dir, "alphafold")
-    os.makedirs(af_base_dir, exist_ok=True)
+    Args:
+        node (str): The ORF name (e.g. YGR188C) from nodes_df["node"]
+        af2_dir (str): Root directory for AF2 predictions (contains subfolders for each ORF)
 
-    prepared_nodes = set()
+    Returns:
+        Tuple[str or None, str or None]: path to ranked_0.pdb and extracted sequence, or (None, None)
+    """
+    pdb_path = os.path.join(af2_dir, node, "ranked_0.pdb")
 
-    for _, row in nodes_df.iterrows():
-        node_id = str(row["node"])
-        seq = row.get("signalP_trimmed_sequence")
-        cut = row.get("cleavage_site_start")
-        struct_ok = row.get("structure_exists") == 1
-        matches = row.get("sequence_matches_structure")
+    if not os.path.isfile(pdb_path):
+        return None, None
 
-        subdir = os.path.join(af_base_dir, node_id)
-        output_pdb = os.path.join(subdir, "result_model_1_pred_0.pdb")
+    try:
+        # extract sequence from PDB file (AlphaFold2 stores sequence in SEQRES or ATOM lines)
+        parser = PDBParser(QUIET=True)
+        structure = parser.get_structure("af2", pdb_path)
+        ppb = PPBuilder()
+        for pp in ppb.build_peptides(structure):
+            return pdb_path, str(pp.get_sequence())
+    except Exception as e:
+        print(f"Error reading AF2 structure for {node}: {e}")
+        return None, None
 
-        if os.path.exists(output_pdb):
-            continue  # Skip if prediction already exists
-
-        # CASE 1: Cleaved prediction needed
-        if struct_ok and pd.notna(cut) and isinstance(seq, str):
-            prepared_nodes.add(node_id)
-            os.makedirs(subdir, exist_ok=True)
-            fasta_path = os.path.join(subdir, f"{node_id}.fasta")
-            with open(fasta_path, "w") as f:
-                f.write(f">{node_id}\n{seq.strip().upper()}\n")
-
-        # CASE 2: Full-length prediction due to mismatch
-        elif matches is False and isinstance(seq, str) and node_id not in prepared_nodes:
-            prepared_nodes.add(node_id)
-            os.makedirs(subdir, exist_ok=True)
-            fasta_path = os.path.join(subdir, f"{node_id}.fasta")
-            with open(fasta_path, "w") as f:
-                f.write(f">{node_id}\n{seq.strip().upper()}\n")
-
-    # Write target node IDs to file
-    targets_file = os.path.join(output_dir, f"{output_prefix}-{organism_tag}-alphafold-targets.txt")
-    with open(targets_file, "w") as f:
-        for node_id in sorted(prepared_nodes):
-            f.write(f"{node_id}\n")
-"""
 
 def main():
 
@@ -280,6 +293,7 @@ def main():
         help="Directory containing predicted structures for the proteome under consideration",
     )
     parser.add_argument("--organism_tag")
+    parser.add_argument("--AF2_dir", help="Directory container additional AF2 predictions")
     args = parser.parse_args()
 
     # read in the nodes_df from the previous step
@@ -305,6 +319,12 @@ def main():
     # compare sequences between structures and trimmed sequences and add this information to a Boolean column named "sequence_matches_structure"
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 
+    # determine the final structure to use - includes accounting for new AF2 structures
+    nodes_df[["final_structure_path", "final_sequence", "final_structure_source"]] = nodes_df.apply(
+            lambda row: select_final_structure(row, args.AF2_dir),
+            axis=1
+        )
+
     # compute the mean of per-residue pLDDT for each AF2 structure
     nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
 
@@ -314,6 +334,12 @@ def main():
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl"
+    )
+
+    # save a csv file as well (for testing purposes)
+    nodes_df.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.csv",
+        index=False
     )
 
 
