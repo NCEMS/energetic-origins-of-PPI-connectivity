@@ -1,3 +1,11 @@
+### `af2-revamp` branch
+
+This branch includes significant updates to several steps of the pipeline to enable to use of new AF2 structures (i.e., not structures from EBI) for structure-based analyses in the pipeline. 
+
+This branch is a work in progress; `main` should be considered the current production pipeline. 
+
+In addition to the AF2 structure updates, this branch will be used to test updates to the Rosetta relaxation protocol
+
 
 ### SETUP
 
