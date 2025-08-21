@@ -13,6 +13,7 @@ STRUCTURE_DIR = Path(LOCAL_CONFIG["structure_dir"])
 ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
 SEQ_COLUMN    = LOCAL_CONFIG["seq_column"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
+AF2_DIR       = LOCAL_CONFIG["AF2_dir"]
 
 rule all:
     input:
@@ -27,7 +28,8 @@ rule prepare_structures:
         input_dir     = str(STRUCTURE_DIR),
         output_dir    = str(OUTPUT_DIR),
         organism_tag  = ORGANISM_TAG,
-        output_prefix = OUTPUT_PREFIX
+        output_prefix = OUTPUT_PREFIX,
+        AF2_dir       = AF2_DIR
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
     shell:
@@ -37,7 +39,9 @@ rule prepare_structures:
         --input_dir     {{params.input_dir}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
-        --organism_tag  {{params.organism_tag}}
+        --organism_tag  {{params.organism_tag}} \
+        --AF2_dir       {{params.AF2_dir}} \
+        > {WORK_DIR}/prepare-structures.log
         """
 
 rule ghosh_dill_stability:

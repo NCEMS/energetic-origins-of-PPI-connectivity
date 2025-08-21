@@ -46,8 +46,11 @@ cyverse-access-token
 !0-download-inputs/data-files/Y2H_*.csv
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
-6-Rosetta-scoring/processed-data/scores/*
-7-FoldX-scoring/processed-data/scores/*
+6-Rosetta-scoring/processed-data/scores
+6-Rosetta-scoring/scores
+6-Rosetta-scoring/scores-backup
+7-FoldX-scoring/processed-data/scores
+7-FoldX-scoring/scores-backup
 
 #
 analysis-notebooks/.ipynb_checkpoints

@@ -271,15 +271,15 @@ def main():
 
     # parse command-line arguments
     parser = argparse.ArgumentParser(
-        description="Run stability predictions using ESM inverse folding and/or Ghosh & Dill 2010 Eq. 1."
+        description="Run stability predictions using ESM inverse folding model from Cagiada et al."
     )
     parser.add_argument(
-        "--nodes", required=True, help="Output from network-analysis.py"
+        "--nodes", required=True, help="Output from previous pipeline step"
     )
     parser.add_argument(
         "--output_dir",
         default="processed-data",
-        help="Directory where results will be saved (default: 'outputs')",
+        help="Directory where results will be saved (default: 'processed-data')",
     )
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
     parser.add_argument(
@@ -356,15 +356,11 @@ def main():
         print(f"Attempting prediction for {r['node']}")
         if (
             r["has_verified_sequence"] == True
-            and r["DeepTMHMM_class"] not in ["TM", "SP+TM", "BETA"]
-            and r["structure_exists"] == 1
-            and r["sequence_matches_structure"] == True
+            and r["DeepTMHMM_class"] in ["GLOB", "SP"]
+            and pd.notna(r["final_structure_path"])
+            and r["final_structure_source"] != "None"
         ):
-
-            if pd.isna(r["cleavage_site_start"]):
-                structure_path_to_use = r["structure_path"]
-            else:
-                structure_path_to_use = r["cleaved_structure_path"]
+            structure_path_to_use = r["final_structure_path"]
 
             # create cagiada class object for this calculation
             curr_cagiada = cagiada(structure_path_to_use, chainID, r["UniProtKB-AC"])
@@ -376,30 +372,22 @@ def main():
             # clean up GPU memory after each iteration
             torch.cuda.empty_cache()
 
-            print(
-                "Done with ΔG prediction for:",
-                r["UniProtKB-AC"],
-                "SGD name",
-                r["node"],
-                "\n",
-            )
-            print(f"Structure used: {structure_path_to_use}\n")
-            print(f"DeepmTMHMM_class: {r['DeepTMHMM_class']}\n")
+            print("Done with ΔG prediction for:", r["node"])
+            print(f"Structure used: {structure_path_to_use}")
+            print(f"DeepTMHMM_class: {r['DeepTMHMM_class']}")
+            print(f"Structure source: {r['final_structure_source']}\n")
 
         else:
             print(
-                f"No prediction will be run:\n"
-                f"has_verified_seq = {r['has_verified_sequence']}\n"
-                f"DeepTMHMM_class = {r['DeepTMHMM_class']}\n"
-                f"structure_exists = {r['structure_exists']}\n"
-                f"sequence_matches_structure = {r['sequence_matches_structure']}\n"
+                f"Prediction skipped for {r['node']}:\n"
+                f"has_verified_seq       = {r['has_verified_sequence']}\n"
+                f"DeepTMHMM_class         = {r['DeepTMHMM_class']}\n"
+                f"final_structure_path    = {r['final_structure_path']}\n"
+                f"final_structure_source  = {r['final_structure_source']}\n"
             )
 
     print("Total execution time is:", datetime.now() - start)
 
-    #nodes_df.to_pickle(
-    #    f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
-    #)
     nodes_df = nodes_df[["node", "cagiada-dG"]]
     nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-cagiada-dG.csv")
 
