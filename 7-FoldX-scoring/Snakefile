@@ -14,7 +14,7 @@ STRUCTURE_DIR = LOCAL_CONFIG["structure_dir"]
 
 rule all:
     input:
-        str(SCORE_DIR / ".all_scores_done"),
+        str(SCORE_DIR / ".all_foldx_done"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX.pkl")
 
 rule run_FoldX:
@@ -28,7 +28,7 @@ rule run_FoldX:
         exec           = EXEC,
         struc_dir      = STRUCTURE_DIR
     output:
-        str(SCORE_DIR / ".all_scores_done")
+        str(SCORE_DIR / ".all_foldx_done")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-FoldX.py \
@@ -42,7 +42,7 @@ rule run_FoldX:
 rule add_scores_to_nodes:
     input:
         input_nodes       = str(DATA_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta.pkl"),
-        input_done_signal = str(SCORE_DIR / ".all_scores_done")
+        input_done_signal = str(SCORE_DIR / ".all_foldx_done")
     conda:
         "env/run-FoldX.yml"
     params:

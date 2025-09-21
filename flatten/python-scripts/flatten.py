@@ -70,6 +70,10 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
+    junk = nodes_df.columns
+    for j in junk:
+        print (j)
+
     columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID", "Unnamed: 0", "cagiada-dG_x", "gene"]
 
     ureg = UnitRegistry()
@@ -82,8 +86,8 @@ def main():
     # the two columns signalP_trimmed_sequence_x and signalP_trimmed_sequence_y do not match as a result of the merge step
     # inside ghosh-dill.py in step 5; TM protein nodes are dropped out, resulting in these columns being empty
     #if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
-    nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
-    columns_to_drop.append("signalP_trimmed_sequence_y")
+    #nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
+    #columns_to_drop.append("signalP_trimmed_sequence_y")
 
     # extra cagiada-dG column introduced; rename the correct one and drop the other
     nodes_df = nodes_df.rename(columns={"cagiada-dG_y":"cagiada-dG"})
