@@ -1,0 +1,37 @@
+from pathlib import Path
+
+LOCAL_CONFIG  = config["meltome"]
+
+DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
+DATA_DIR2     = Path(config["data_dir"])
+WORK_DIR      = Path(workflow.basedir)
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG  = config["organism_label"]
+MELTOME_DATA  = DATA_DIR2 / LOCAL_CONFIG["meltome_data"]
+
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H-meltome.pkl"
+
+rule add_meltome:
+    input:
+        meltome = str(MELTOME_DATA),
+        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
+    conda:
+        "env/merge-meltome.yml"
+    params:
+        output_dir      = OUTPUT_DIR,
+        output_prefix   = OUTPUT_PREFIX,
+        organism_tag    = ORGANISM_TAG
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H-meltome.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/merge-meltome.py \
+        --nodes         {{input.nodes}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}} \
+        --meltome_data  {{input.meltome}}
+        """
