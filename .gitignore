@@ -45,6 +45,9 @@ cyverse-access-token
 !0-download-inputs/data-files/Y2H_*.txt
 !0-download-inputs/data-files/Y2H_*.csv
 
+# meltome atlas
+!0-download-inputs/data-files/meltome-atlas-ma_0010.txt
+
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores
 6-Rosetta-scoring/scores

@@ -23,9 +23,7 @@ rule run_FoldX:
     conda:
         "env/run-FoldX.yml"
     params:
-        output_prefix  = OUTPUT_PREFIX,
         output_dir     = SCORE_DIR,
-        organism_tag   = ORGANISM_TAG,
         nprocessors    = NPROCS,
         exec           = EXEC,
         struc_dir      = STRUCTURE_DIR
@@ -34,13 +32,11 @@ rule run_FoldX:
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-FoldX.py \
-        --nodes         {{input}} \
-        --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --organism_tag  {{params.organism_tag}} \
-        --nprocessors   {{params.nprocessors}} \
-        --executable    {{params.exec}} \
-        --struc_dir     {{params.struc_dir}}
+        --nodes            {{input}} \
+        --output_dir       {{params.output_dir}} \
+        --nprocessors      {{params.nprocessors}} \
+        --foldx_executable {{params.exec}} \
+        --rosetta_dir      {{params.struc_dir}}
         """
 
 rule add_scores_to_nodes:
