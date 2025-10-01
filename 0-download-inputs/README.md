@@ -32,11 +32,10 @@ After running this step, you should have the following file counts:
 | TOTAL FILES    |12,253           |
 
 
-The following files are provided with the GitHub repository:
+The following 41  files are provided with the GitHub repository:
 
 |Used in step| Filename | Description | Source |
 |:----------:|:---------|:------------|:-------|
-
 |  1 | The_Yeast_Interactome.cys | The Yeast Interactome Cytoscape session file | Downloaded from https://www.yeast-interactome.org/ | 
 |  1 | The_Yeast_Interactome_nodes.csv | List of nodes (proteins) | Extracted from .cys file with Cytoscape |
 |  1 | The_Yeast_Interactome_edges.csv | List of edges (interactions) between nodes | Extracted from .cys file with Cytoscape |
