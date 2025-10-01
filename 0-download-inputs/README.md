@@ -1,6 +1,6 @@
 ### `0-download-inputs`: Download input files used by downstream pipeline steps
 
-* This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`:
+* This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`
 
 * The first rule of the Snakemake pipeline will download and unpack the required files, and the second rule will extract SEQRES records from each AF2 PDB file to create a FASTA file
 
@@ -64,14 +64,14 @@ The following 41 files are distributed with the GitHub repository. In most cases
 
 |Index |Used in step| Filename | Description | Source |
 |:----:|:----------:|:---------|:------------|:-------|
-|1|  2 |orf_trans.fasta|S. cerevisiae protein sequences from Saccharomyces Genome Database| [SGD Archive](http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz)|
-|2|  2 |YEAST_559292_idmapping.dat|| [UniProt](https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz) |
-|3|  3 |uniprot_sprot.xml|| [UniProt](https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz) |
-|4|  3 |go-basic.obo| Open Biomedical Ontologies data file | [OboFoundry](http://purl.obolibrary.org/obo/go.obo) |
-|5|  3 |Yeast_GSB_phospho_all_prots_0125.csv| ProteomeeXchange S. cerevisiae post-translational modifications| [ProteomeeXchange](https://www.proteomexchange.org/ptmexchange/Files/Yeast_GSB_phospho_all_prots_0125.csv.gz) |
-|6|  5 |UP000002311_559292_YEAST_v4.tar|S. cerevisiae AlphaFold2 structure predictions| [EBI](https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000002311_559292_YEAST_v4.tar)|
-|7|  5 |esm_if1_gvp4_t16_142M_UR50.pt| ESM-IF model for Cagiada et al. 2025 stability predictions | [Electronic Research Data Archive](https://sid.erda.dk/share_redirect/eIZVVNEd8B) |
-|8| 16 |protein2ipr.dat| InterPro domain annotations | [InterPro](https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/protein2ipr.dat.gz) |
+|1|  2 | orf_trans.fasta | S. cerevisiae protein sequences from Saccharomyces Genome Database| [SGD Archive](http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz)|
+|2|  2 | YEAST_559292_idmapping.dat | UniProt ID mapping file for S. cerevisiae | [UniProt](https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz) |
+|3|  3 | uniprot_sprot.xml | UniProt database in .xml format| [UniProt](https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz) |
+|4|  3 | go-basic.obo| Open Biomedical Ontologies data file | [OboFoundry](http://purl.obolibrary.org/obo/go.obo) |
+|5|  3 | Yeast_GSB_phospho_all_prots_0125.csv | ProteomeeXchange S. cerevisiae post-translational modifications| [ProteomeeXchange](https://www.proteomexchange.org/ptmexchange/Files/Yeast_GSB_phospho_all_prots_0125.csv.gz) |
+|6|  5 | UP000002311_559292_YEAST_v4.tar | S. cerevisiae AlphaFold2 structure predictions| [EBI](https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000002311_559292_YEAST_v4.tar)|
+|7|  5 | esm_if1_gvp4_t16_142M_UR50.pt | ESM-IF model for Cagiada et al. 2025 stability predictions | [Electronic Research Data Archive](https://sid.erda.dk/share_redirect/eIZVVNEd8B) |
+|8| 16 | protein2ipr.dat| InterPro domain annotations | [InterPro](https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/protein2ipr.dat.gz) |
 
 
 * After running this pipeline step, you should have the following file counts in `0-download-inputs/data-files`:
