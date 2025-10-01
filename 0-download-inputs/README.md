@@ -1,4 +1,4 @@
-### Download input files used by downstream pipeline steps
+### `0-download-inputs`: Download input files used by downstream pipeline steps
 
 This section of the pipeline handles the download of required files to `data-files/`:
 
@@ -16,4 +16,31 @@ This step will require 60-90 min depending on connection speeds and the write sp
 
 *N.B.*: This step will add approximately 7.3 GB of data to the `data-files/` directory.
 
+#### Summary of data files
 
+Some files are distributed with the GitHub repository while others are downloaded when executing the Snakemake pipeline in this direcory. 
+
+After running this step, you should have the following file counts:
+
+| File extension | Number of files |
+|:--------------:|----------------:|
+| pdb            | 6,168           |
+| fasta          | 6,040           |
+| csv            |    20           |
+| xlsx           |    12           |
+| txt            |     5           |
+| tsv            |     4           |
+| dat            |     3           |
+| obo            |     1           |
+| pt             |     1           |
+| xml            |     1           |
+| cys            |     1           |
+| TOTAL FILES    |12,256           |
+
+
+The following files are provided with the GitHub repository:
+
+| Filename | Description | Source |
+|:---------|:------------|:-------|
+|1-s2.0-S2211124714009346-mmc2.xlsx| Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 |
+|1-s2.0-S2211124714009346-mmc2.csv| Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 (reformatted for analysis)
