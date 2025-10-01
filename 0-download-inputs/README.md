@@ -2,9 +2,7 @@
 
 This section of the pipeline handles the download of required files to `data-files/`:
 
-The first rule of the Snakemake pipeline will download the files.
-
-After downloading the files, the second rule will extract SEQRES records from each AF2 PDB file and convert them to fasta format
+The first rule of the Snakemake pipeline will download and unpack the required files, and the second rule will extract SEQRES records from each AF2 PDB file to create a FASTA file
 
 This step will require 60-90 min depending on connection speeds and the write speed of your file system. 
 
@@ -36,16 +34,16 @@ The following 41  files are provided with the GitHub repository:
 
 |Index |Used in step| Filename | Description | Source |
 |:----:|:----------:|:---------|:------------|:-------|
-|1|  1 | The_Yeast_Interactome.cys | The Yeast Interactome Cytoscape session file | Downloaded from https://www.yeast-interactome.org/ | 
+|1|  1 | The_Yeast_Interactome.cys | The Yeast Interactome Cytoscape session file | Downloaded from [The Yeast Interactome](https://www.yeast-interactome.org/) | 
 |2|  1 | The_Yeast_Interactome_nodes.csv | List of nodes (proteins) | Extracted from .cys file with Cytoscape |
 |3|  1 | The_Yeast_Interactome_edges.csv | List of edges (interactions) between nodes | Extracted from .cys file with Cytoscape |
-|4|  4 | DisProt-release_2024_12-with_ambiguous_evidences.tsv | DisProt database version 2024_12 | Downloaded from https://disprot.org/download |
+|4|  4 | DisProt-release_2024_12-with_ambiguous_evidences.tsv | DisProt database version 2024_12 | Downloaded from [DisProt](https://disprot.org/download) |
 |5|  4 | DisProt-release_2024_12-with_ambiguous_evidences-cleaned.tsv | DisProt database version 2024_12 | Cleaned version of DisProt with whitespace cleaned for reading |
 |6|  8 | 1-s2.0-S2211124714009346-mmc2.xlsx | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 |
 |7|  8 | 1-s2.0-S2211124714009346-mmc2.csv | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 (reformatted for analysis) |
 |8|  9 | 1-s2.0-S240547121730546X-mmc5.xlsx | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004, Table S4 |
 |9|  9 | 1-s2.0-S240547121730546X-mmc5.csv | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004, Table S4 (reformatted for analysis)|
-|10| 10 | skr_weinberg_genesTE.csv | Translation efficiency information from scikit-ribo for S. cerevisiae | Downloaded from https://github.com/schatzlab/scikit-ribo_manuscript/blob/master/Data/skr_weinberg_genesTE.csv |
+|10| 10 | skr_weinberg_genesTE.csv | Translation efficiency information from scikit-ribo for S. cerevisiae | Downloaded from [GitHub](https://github.com/schatzlab/scikit-ribo_manuscript/blob/master/Data/skr_weinberg_genesTE.csv) |
 |11| 12 | 20210721_YeastRefold_ProteinSummary_1min_meta.xlsx | LiP-MS data; 1 min after refolding initiated, sample 1 | Fried Lab, unpublished |
 |12| 12 | 20210721_YeastRefold_ProteinSummary_1min_meta.csv | LiP-MS data; 1 min after refolding initiated, sample 1 (reformatted from matched .xlsx) | Fried Lab, unpublished |
 |13| 12 | 20220505_YeastRefolding_ProteinSummary_1min_meta.xlsx | LiP-MS data; 1 min after refolding initiated, sample 2 | Fried Lab, unpublished |
@@ -69,12 +67,11 @@ The following 41  files are provided with the GitHub repository:
 |31| 13 | Yeast_AF_combined_20250530.csv | Entanglement status of proteins from AlphaFold2 structures | O'Brien Lab, unpublished |
 |32| 13 | Yeast_EXP_combined_20250530.csv | Entanglement status of proteins from experimental structures | O'Brien Lab, unpublished |
 |33| 14 | 1-s2.0-S2211124717312160-mmc2.tsv | Chaperones and cochaperones in S. cerevisiae| 10.1016/j.celrep.2017.08.074, Table S1 |
-|34| 15 | 559292.tsv | Complex Portal S. cerevisiae protein complexes | Downloaded from https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/559292.tsv |
+|34| 15 | 559292.tsv | Complex Portal S. cerevisiae protein complexes | Downloaded from [Complex Portal](https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/559292.tsv) |
 |35| 17 | inviable_annotations.txt | Essential yeast proteins from Saccharomyces Genome Database | Downloaded from yeastgenome.org |
 |36| 17 | inviable_annotations-mod.txt | Essential yeast protein from Saccharomyces Genome Database, reformatted | Downloaded from yeastgenome.org |
-|37| 18 | Y2H_union.txt | Yeast two-hybrid protein-protein interaction data | Downloaded from https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt |
+|37| 18 | Y2H_union.txt | Yeast two-hybrid protein-protein interaction data | [Downloaded from CCSB Interactome Database](https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt) |
 |38| 18 | Y2H_union-clean.txt | Yeast two-hybrid data with protein names cleaned | See the program `18-Y2H-data/python-scripts/clean-Y2H-union.py` |
 |39| 18 | Y2H_union-clean_edges.csv | List of edges (interactions) between nodes | Extracted using Cytoscape |
 |40| 18 | Y2H_union-clean_nodes.csv | List of nodes (proteins) | Extracted using Cytoscape |
 |41| 19 | meltome-atlas-ma_0010.txt | Meltome Atlas data for S. cerevisiae proteome | 10.1038/s41592-020-0801-4, extracted from Table S2 |
-
