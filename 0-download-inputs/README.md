@@ -79,16 +79,16 @@ The following 41  files are provided with the GitHub repository:
 
 |Index |Used in step| Filename | Description | Source |
 |:----:|:----------:|:---------|:------------|:-------|
-|1|1| The_Yeast_Interactome.cys | The Yeast Interactome Cytoscape session file | Downloaded from [The Yeast Int<br>eractome](https://www.yeast-<br>interactome.org/) |
-|2|1| The_Yeast_Interactome_nodes.cs<br>v | List of nodes (proteins) | Extracted from .cys file with<br>Cytoscape |
-|3|1| The_Yeast_Interactome_edges.cs<br>v | List of edges (interactions) between nodes | Extracted from .cys file with<br>Cytoscape |
-|4|4| DisProt-release_2024_12-<br>with_ambiguous_evidences.tsv | DisProt database version 2024_12 | Downloaded from [DisProt](http<br>s://disprot.org/download) |
-|5|4| DisProt-release_2024_12-<br>with_ambiguous_evidences-<br>cleaned.tsv | DisProt database version 2024_12 | Cleaned version of DisProt<br>with whitespace cleaned for<br>reading |
-|6|8| 1-s2.0-S2211124714009346-<br>mmc2.xlsx | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065,<br>Table S1 |
-|7|8| 1-s2.0-S2211124714009346-<br>mmc2.csv | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065,<br>Table S1 (reformatted for<br>analysis) |
-|8|9| 1-s2.0-S240547121730546X-<br>mmc5.xlsx | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004,<br>Table S4 |
-|9|9| 1-s2.0-S240547121730546X-<br>mmc5.csv | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004,<br>Table S4 (reformatted for<br>analysis) |
-|10|10| skr_weinberg_genesTE.csv | Translation efficiency information from scikit-ribo for S. cerevisiae | Downloaded from [GitHub](https://github.com/schatzlab/scikit-<br>ribo_manuscript/blob/master/Data/<br>skr_weinberg_genesTE.csv) |
+|1|1| The_Yeast_Interactome.cys | The Yeast Interactome Cytoscape session file | Downloaded from [The Yeast Interactome](https://www.yeast-interactome.org/) |
+|2|1| The_Yeast_Interactome_nodes.cs<br>v | List of nodes (proteins) | Extracted from .cys file with Cytoscape |
+|3|1| The_Yeast_Interactome_edges.cs<br>v | List of edges (interactions) between nodes | Extracted from .cys file with Cytoscape |
+|4|4| DisProt-release_2024_12-<br>with_ambiguous_evidences.tsv | DisProt database version 2024_12 | Downloaded from [DisProt](https://disprot.org/download) |
+|5|4| DisProt-release_2024_12-<br>with_ambiguous_evidences-<br>cleaned.tsv | DisProt database version 2024_12 | Cleaned version of DisProt with whitespace cleaned for reading |
+|6|8| 1-s2.0-S2211124714009346-<br>mmc2.xlsx | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 |
+|7|8| 1-s2.0-S2211124714009346-<br>mmc2.csv | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 (reformatted for analysis) |
+|8|9| 1-s2.0-S240547121730546X-<br>mmc5.xlsx | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004, Table S4 |
+|9|9| 1-s2.0-S240547121730546X-<br>mmc5.csv | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004, Table S4 (reformatted for analysis)|
+|10|10| skr_weinberg_genesTE.csv | Translation efficiency information from scikit-ribo for S. cerevisiae | Downloaded from [GitHub](https://github.com/schatzlab/scikit-ribo_manuscript/blob/master/Data/skr_weinberg_genesTE.csv) |
 |11|12| 20210721_YeastRefold_ProteinSu<br>mmary_1min_meta.xlsx | LiP-MS data; 1 min after refolding initiated, sample 1 | Fried Lab, unpublished |
 |12|12| 20210721_YeastRefold_ProteinSu<br>mmary_1min_meta.csv | LiP-MS data; 1 min after refolding initiated, sample 1 (reformatted from matched .xlsx) | Fried Lab, unpublished |
 |13|12| 20220505_YeastRefolding_Protei<br>nSummary_1min_meta.xlsx | LiP-MS data; 1 min after refolding initiated, sample 2 | Fried Lab, unpublished |
@@ -111,12 +111,12 @@ The following 41  files are provided with the GitHub repository:
 |30|12| 20220314_Recovery_ProteinSummar<br>y_meta.csv | LiP-MS data, normal cells versus cells recovering from heatshock (reformatted from matched .xlsx) | Fried Lab, unpublished |
 |31|13| Yeast_AF_combined_20250530.csv | Entanglement status of proteins from AlphaFold2 structures | O'Brien Lab, unpublished |
 |32|13| Yeast_EXP_combined_20250530.csv | Entanglement status of proteins from experimental structures | O'Brien Lab, unpublished |
-|33|14| 1-s2.0-S2211124717312160-<br>mmc2.tsv | Chaperones and cochaperones in S. cerevisiae | 10.1016/j.celrep.2017.08.074,<br>Table S1 |
-|34|15| 559292.tsv | Complex Portal S. cerevisiae protein complexes | Downloaded from [Complex<br>Portal](https://ftp.ebi.ac.uk/pub/<br>databases/intact/complex/current/<br>complextab/559292.tsv) |
-|35|17| inviable_annotations.txt | Essential yeast proteins from Saccharomyces Genome Database | Downloaded from<br>yeastgenome.org |
-|36|17| inviable_annotations-mod.txt | Essential yeast protein from Saccharomyces Genome Database, reformatted | Downloaded from<br>yeastgenome.org |
-|37|18| Y2H_union.txt | Yeast two-hybrid protein-protein interaction data | [Downloaded from CCSB Interactome<br>Database](https://interactome.dfci.harvard.<br>edu/S_cerevisiae/download/Y2H_union.txt) |
-|38|18| Y2H_union-clean.txt | Yeast two-hybrid data with protein names cleaned | See the program `18-Y2H-data/python-<br>scripts/clean-Y2H-union.py` |
+|33|14| 1-s2.0-S2211124717312160-<br>mmc2.tsv | Chaperones and cochaperones in S. cerevisiae | 10.1016/j.celrep.2017.08.074, Table S1 |
+|34|15| 559292.tsv | Complex Portal S. cerevisiae protein complexes | Downloaded from [Complex Portal](https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/559292.tsv) |
+|35|17| inviable_annotations.txt | Essential yeast proteins from Saccharomyces Genome Database | Downloaded from yeastgenome.org |
+|36|17| inviable_annotations-mod.txt | Essential yeast protein from Saccharomyces Genome Database, reformatted | Downloaded from yeastgenome.org |
+|37|18| Y2H_union.txt | Yeast two-hybrid protein-protein interaction data | [Downloaded from CCSB Interactome Database](https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt) |
+|38|18| Y2H_union-clean.txt | Yeast two-hybrid data with protein names cleaned | See the program `18-Y2H-data/python-scripts/clean-Y2H-union.py` |
 |39|18| Y2H_union-clean_edges.csv | List of edges (interactions) between nodes | Extracted using Cytoscape |
 |40|18| Y2H_union-clean_nodes.csv | List of nodes (proteins) | Extracted using Cytoscape |
-|41|19| meltome-atlas-ma_0010.txt | Meltome Atlas data for S. cerevisiae proteome | 10.1038/s41592-020-0801-4,<br>extracted from Table S2 |
+|41|19| meltome-atlas-ma_0010.txt | Meltome Atlas data for S. cerevisiae proteome | 10.1038/s41592-020-0801-4, extracted from Table S2 |
