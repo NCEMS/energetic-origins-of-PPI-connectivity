@@ -121,7 +121,7 @@ Uses FoldX scoring function to compute various energy parameters including a tot
 
 #### 8-protein-half-life
 
-Integrates protein half-life data from 10.1016/j.celrep.2014.10.065
+Integrates protein half-life data from 10.1016/j.celrep.2014.10.065 & 10.1016/j.celrep.2014.10.065
 
 #### 9-protein-expression
 
