@@ -6,7 +6,7 @@ cyverse-access-token
 # do not copy SignalP into the GitHub repo
 2-sequence-parsing/python-scripts/signalp6_fast
 
-# ignore everything in data-files except Yeast Interactome files
+# ignore everything in data-files except...
 0-download-inputs/data-files/*
 
 # raw and processed files from The Yeast Interactome

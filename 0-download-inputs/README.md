@@ -2,23 +2,17 @@
 
 This section of the pipeline handles the download of required files to `data-files/`:
 
-* orf_trans.fasta - SGD yeast open reading frames
-* UP000002311_559292_YEAST_v4.tar - AlphaFold2 structure predictions for the yeast proteome
-* esm_if1_gvp4_t16_142M_UR50.pt - ESM-IF model used by Cagiada predictor in 5-dG-calculations
-* YEAST_559292_idmapping.dat - Uniprot ID mapping file for yeast
-* uniprot_sprot.xml - UniProt database 2025_01
-* go.obo - Gene Ontology term library
-* Yeast_GSB_phospho_all_prots_0125.csv - PTMeXchange phosphorylation site information for yeast
+The first rule of the Snakemake pipeline will download the files.
 
 After downloading the files, the second rule will extract SEQRES records from each AF2 PDB file and convert them to fasta format
 
 This step will require 60-90 min depending on connection speeds and the write speed of your file system. 
 
-*N.B.*: This step will add approximately 7.3 GB of data to the `data-files/` directory.
+*N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~112 GB of data. 
 
 #### Summary of data files
 
-Some files are distributed with the GitHub repository while others are downloaded when executing the Snakemake pipeline in this direcory. 
+Some files are distributed with the GitHub repository while others are downloaded when running the Snakemake pipeline. 
 
 After running this step, you should have the following file counts:
 
@@ -27,7 +21,7 @@ After running this step, you should have the following file counts:
 | pdb            | 6,168           |
 | fasta          | 6,040           |
 | csv            |    20           |
-| xlsx           |    12           |
+| xlsx           |     9           |
 | txt            |     5           |
 | tsv            |     4           |
 | dat            |     3           |
@@ -35,12 +29,65 @@ After running this step, you should have the following file counts:
 | pt             |     1           |
 | xml            |     1           |
 | cys            |     1           |
-| TOTAL FILES    |12,256           |
+| TOTAL FILES    |12,253           |
 
 
 The following files are provided with the GitHub repository:
 
-| Filename | Description | Source |
-|:---------|:------------|:-------|
-|1-s2.0-S2211124714009346-mmc2.xlsx| Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 |
-|1-s2.0-S2211124714009346-mmc2.csv| Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 (reformatted for analysis)
+|Used in step| Filename | Description | Source |
+|:----------:|:---------|:------------|:-------|
+
+| 14 | 1-s2.0-S2211124717312160-mmc2.tsv | Chaperones and cochaperones in S. cerevisiae| 10.1016/j.celrep.2017.08.074, Table S1 |
+
+|  9 | 1-s2.0-S240547121730546X-mmc5.xlsx | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004, Table S4 |
+|  9 | 1-s2.0-S240547121730546X-mmc5.csv | Protein expression in S. cerevisiae | 10.1016/j.cels.2017.12.004, Table S4 (reformatted for analysis)|
+
+|  8 | 1-s2.0-S2211124714009346-mmc2.xlsx | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 |
+|  8 | 1-s2.0-S2211124714009346-mmc2.csv | Protein half-lives in S. cerevisiae | 10.1016/j.celrep.2014.10.065, Table S1 (reformatted for analysis) |
+
+| 12 | 20210721_YeastRefold_ProteinSummary_1min_meta.csv |
+| 12 | 20210721_YeastRefold_ProteinSummary_1min_meta.xlsx |
+
+
+| 12 | 20210721_YeastRefold_ProteinSummary_2hr_meta.csv |
+| 12 | 20210721_YeastRefold_ProteinSummary_5min_meta.csv |
+
+| 12 | 20220314_HeatShock_ProteinSummary_meta.csv |
+| 12 | 20220314_HeatShock_ProteinSummary_meta.xlsx |
+| 12 | 20220314_Recovery_ProteinSummary_meta.csv |
+| 12 | 20220314_Recovery_ProteinSummary_meta.xlsx |
+
+| 12 | 20220505_YeastRefolding_ProteinSummary_1min_duplicate_meta.csv |
+| 12 | 20220505_YeastRefolding_ProteinSummary_1min_duplicate_meta.xlsx |
+| 12 | 20220505_YeastRefolding_ProteinSummary_1min_meta.csv |
+| 12 | 20220505_YeastRefolding_ProteinSummary_1min_meta.xlsx |
+| 12 | 20220505_YeastRefolding_ProteinSummary_2hr_meta.csv |
+| 12 | 20220505_YeastRefolding_ProteinSummary_2hr_meta.xlsx |
+| 12 | 20220505_YeastRefolding_ProteinSummary_5min_duplicate_meta.csv |
+| 12 | 20220505_YeastRefolding_ProteinSummary_5min_duplicate_meta.xlsx |
+| 12 | 20220505_YeastRefolding_ProteinSummary_5min_meta.csv |
+| 12 | 20220505_YeastRefolding_ProteinSummary_5min_meta.xlsx |
+
+| 15 | 559292.tsv | DisProt database version 2024_12 | Downloaded from https://disprot.org/download |
+
+| DisProt-release_2024_12-with_ambiguous_evidences.tsv |
+| DisProt-release_2024_12-with_ambiguous_evidences-cleaned.tsv |
+
+| The_Yeast_Interactome.cys |
+| The_Yeast_Interactome_edges.csv |
+| The_Yeast_Interactome_nodes.csv |
+
+| Y2H_union-clean.txt |
+| Y2H_union-clean_edges.csv |
+| Y2H_union-clean_nodes.csv |
+| Y2H_union.txt |
+
+| Yeast_AF_combined_20250530.csv |
+| Yeast_EXP_combined_20250530.csv |
+
+| inviable_annotations-mod.txt |
+| inviable_annotations.txt |
+
+| meltome-atlas-ma_0010.txt |
+
+| skr_weinberg_genesTE.csv |
