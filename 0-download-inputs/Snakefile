@@ -1,5 +1,6 @@
 from pathlib import Path
 
+# load configfile section for this pipeline
 LOCAL_CONFIG = config["download_inputs"]
 
 # global variables
