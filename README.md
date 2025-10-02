@@ -1,4 +1,4 @@
-### `af2-revamp` DESCRIPTION
+### `af2-revamp` description
 
 This branch includes significant updates to several steps of the pipeline to:
 
@@ -28,8 +28,8 @@ To perform 1., keep reading below and follow the instructions in the section **R
 The top-level directory of the repository contains 23 sub-directories and 2 files. The 23 subdirectories are listed below in Table 1. The two files are the `README.md` file you are reading now and the helper script `run-pipeline.sh`, which automates running the entire pipeline end-to-end with one command. 
 
 **Table 1. Repository directories and files**
-|Step #| Name | Description |
-|-----+|+----+|+------------|
+|Step Number| Name | Description |
+|-----:|:----:|:------------|
 |1|0-download-inputs| Download, unpack, and pre-process inputs |
 |2|1-network-centrality| Compute network centrality metrics |
 |3|2-sequence-parsing| Add sequence information, predict transmembrane proteins, predict signal sequences |
@@ -76,7 +76,7 @@ Nearly all dependency issues will be handled by Snakemake automatically. However
 If you want to rerun everything, follow the download instructions in the table below to setup SignalP, Rosetta, FoldX, and PTMGPT2.
 
 | Step Number | Description | Instructions |
-|------------+|+-----------+|+------------+| 
+|------------:|:-----------:|:------------:| 
 | 2 |SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. |
 | 6 |Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
 | 7 | FoldX for structure scoring | FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`. |
@@ -85,7 +85,7 @@ If you want to rerun everything, follow the download instructions in the table b
 If you want to use existing date for yeast, follow the instructions in the table below to download it from CyVerse.
 
 | Step Number | Description | Instructions |
-|------------+|+-----------+|+------------+|
+|------------:|:-----------:|:------------:|
 | 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores` and place the files in `6-Rosetta-scoring/processed-data/scores` |
 | 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores` and place the files in `7-FoldX-scoring/processed-data/scores` |
 |11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` and place the contents in `11-predict-PTMs/processed-data`|
@@ -104,7 +104,7 @@ Most pipeline steps include simple procedures like loading, cleaning, and mergin
 The main computational bottlenecks are:
 
 | Step Number | Description | Time |
-|------------+|+-----------+|+----+|
+|------------:|:-----------:|:----:|
 |           0 | Download, unpacking, and pre-processing of input data | Requires up to 2 hours depending on connection speeds and rewrite speed of drive |
 |           5 | dG prediction from structure with Cagiada et al. 2025 method | ~4 h on A16; ~45 min on RTX 6000 Ada Gene |
 |           6 | Rosetta structure relxation & scoring | ~24 days with 96 Intel(R) Xeon(R) w9-3495X CPUs with N = 10 replicates per protein |
