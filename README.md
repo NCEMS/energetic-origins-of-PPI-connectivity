@@ -92,8 +92,8 @@ If you want to use existing date for yeast, follow the instructions in the table
 
 ##### Using `gocommands` to get data from the CyVerse Data Store
 
-Visit this page and follow the installation instructions for your system. Once installed, you should have the executable `gocmd` in folder where you ran the installation command. 
-Once you have `gocmd` available in your system, you can download data from CyVerse like so:
+Visit [this page](https://learning.cyverse.org/ds/gocommands/installation) and follow the installation instructions for your system. Once installed, you should have the executable `gocmd` in the folder where you ran the installation command. 
+With `gocmd` available in your system, you can download data from CyVerse like so:
 
 `gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores 6-Rosetta-scoring/processed-data/scores`
 
