@@ -1,95 +1,98 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# NOTE WELL - the Yeast Interactome dataset must be downloaded in .cys format and then exported as an edge graph
-#             for analysis in Python with NetworkX. The xgmml file format was not working for me.
+DIR="${1:-}"
+MANIFEST="${2:-}"
 
-# set the download directory
-DIR=$1
-
-# make sure it exists
-mkdir -p "$DIR"
-
-# also create directory for processed data (not being used right now!)
-#mkdir -p processed-data
-
-# files to download
-URLS=(
-	"http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz"
-	"https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000002311_559292_YEAST_v4.tar"
-	"https://sid.erda.dk/share_redirect/eIZVVNEd8B"
-	"https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/YEAST_559292_idmapping.dat.gz"
-        "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz"
-        "http://purl.obolibrary.org/obo/go.obo"
-        "https://www.proteomexchange.org/ptmexchange/Files/Yeast_GSB_phospho_all_prots_0125.csv.gz"
-        "https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/protein2ipr.dat.gz"
-)
-
-# define local files names (must match order of URLs)
-FILENAMES=(
-	"orf_trans.fasta.gz"
-	"UP000002311_559292_YEAST_v4.tar"
-	"esm_if1_gvp4_t16_142M_UR50.pt"
-	"YEAST_559292_idmapping.dat.gz"
-        "uniprot_sprot.xml.gz"
-        "go-basic.obo"
-        "Yeast_GSB_phospho_all_prots_0125.csv.gz"
-        "protein2ipr.dat.gz"
-)
-
-# function to download a file
-download_file() {
-	local url="$1"
-	local output="$2"
-
-	# Use curl if available, otherwise use wget
-	if command -v curl &>/dev/null; then
-		curl -L --retry 5 --retry-delay 10 -o "$output" "$url"
-	elif command -v wget &>/dev/null; then
-		wget --tries=5 --wait=10 --retry-connrefused -O "$output" "$url"
-	else
-		echo "Error: Neither curl nor wget are available." >&2
-		exit 1
-	fi
-}
-
-# function to extract compressed files
-extract_file() {
-	local file="$1"
-
-	if [[ "$file" == *.tar.gz || "$file" == *.tgz ]]; then
-		echo "Extracting TAR.GZ: $file"
-		tar -xzf "$file" -C "$DIR" && rm "$file"
-	elif [[ "$file" == *.tar ]]; then
-		echo "Extracting TAR: $file"
-		tar -xf "$file" -C "$DIR" && rm "$file"
-	elif [[ "$file" == *.gz && "$file" != *.tar.gz ]]; then
-		echo "Extracting GZ: $file"
-		gunzip "$file"
-	else
-		echo "No extraction needed: $file"
-	fi
-}
-
-# ensure URLS and FILENAMES arrays have the same length
-if [[ ${#URLS[@]} -ne ${#FILENAMES[@]} ]]; then
-	echo "Error: The number of URLs does not match the number of filenames." >&2
-	exit 1
+if [[ -z "${DIR}" || -z "${MANIFEST}" ]]; then
+  echo "Usage: $0 <TARGET_DIR> <MANIFEST_TSV>" >&2
+  exit 1
 fi
 
-# loop through URLs and download each file with the specified name
-for i in "${!URLS[@]}"; do
-	url="${URLS[$i]}"
-	filename="$DIR/${FILENAMES[$i]}"
-	download_file "$url" "$filename"
-	extract_file "$filename"
+mkdir -p "${DIR}"
+
+have_cmd() { command -v "$1" >/dev/null 2>&1; }
+
+download_file() {
+  local url="$1" out="$2"
+  if have_cmd curl; then
+    curl -L --retry 5 --retry-delay 10 -o "$out" "$url"
+  elif have_cmd wget; then
+    wget --tries=5 --wait=10 --retry-connrefused -O "$out" "$url"
+  else
+    echo "Error: Neither curl nor wget are available." >&2
+    exit 1
+  fi
+}
+
+extract_file() {
+  local file="$1" mode="${2:-auto}"
+
+  # If user forces 'none', skip.
+  if [[ "${mode}" == "none" ]]; then
+    echo "No extraction (forced): ${file}"
+    return 0
+  fi
+
+  # Infer mode if 'auto'
+  if [[ "${mode}" == "auto" ]]; then
+    if [[ "$file" == *.tar.gz || "$file" == *.tgz ]]; then
+      mode="tar.gz"
+    elif [[ "$file" == *.tar ]]; then
+      mode="tar"
+    elif [[ "$file" == *.gz ]]; then
+      mode="gz"
+    else
+      mode="none"
+    fi
+  fi
+
+  case "${mode}" in
+    tar.gz)
+      echo "Extracting TAR.GZ: ${file}"
+      tar -xzf "${file}" -C "${DIR}" && rm -f "${file}"
+      ;;
+    tar)
+      echo "Extracting TAR: ${file}"
+      tar -xf "${file}" -C "${DIR}" && rm -f "${file}"
+      ;;
+    gz)
+      echo "Extracting GZ: ${file}"
+      gunzip -f "${file}"
+      ;;
+    none)
+      echo "No extraction needed: ${file}"
+      ;;
+    *)
+      echo "Unknown extract mode '${mode}' for file '${file}'" >&2
+      exit 1
+      ;;
+  esac
+}
+
+# read manifest
+while IFS=$'\t' read -r url filename extract || [[ -n "${url}${filename}${extract}" ]]; do
+  # skip blank lines & comment
+  [[ -z "${url:-}" ]] && continue
+  [[ "${url:0:1}" == "#" ]] && continue
+
+  # default extract
+  extract="${extract:-auto}"
+
+  out="${DIR}/${filename}"
+  echo "Downloading: ${url} -> ${out}"
+  download_file "${url}" "${out}"
+  extract_file "${out}" "${extract}"
+done < "${MANIFEST}"
+
+shopt -s nullglob
+for gz in "${DIR}"/*.gz; do
+  echo "Post-pass gunzip: ${gz}"
+  gunzip -f "${gz}" || true
 done
+shopt -u nullglob
 
-# unpack the PDB files from AF2
-gunzip $DIR/*gz
+# clean-up of *.cif from AF2 downloads
+find "${DIR}" -maxdepth 1 -type f -name '*.cif' -print -delete
 
-# remove the .cif files, we will not need them
-rm $DIR/*cif
-
-touch "$DIR/.all_files_downloaded"
-
-echo "All files downloaded and saved to $DIR with custom filenames."
+echo "All files processed into ${DIR}"
