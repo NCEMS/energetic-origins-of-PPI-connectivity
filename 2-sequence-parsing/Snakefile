@@ -3,10 +3,11 @@ from pathlib import Path
 LOCAL_CONFIG  = config["sequence_parsing"]
 
 WORK_DIR      = Path(workflow.basedir)
-DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
+INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
 DATA_DIR2     = Path(config["data_dir"])
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 ORGANISM_TAG  = config["organism_label"]
 MAP_FILE      = DATA_DIR2 / LOCAL_CONFIG["map_file"]
 FASTA         = DATA_DIR2 / LOCAL_CONFIG["fasta"]
@@ -24,7 +25,7 @@ rule all:
         
 rule add_sequences:
     input:
-        nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"),
+        nodes = str(INPUT_NODES),
         fasta = str(FASTA)
     conda:
         str(WORK_DIR / "env/add-sequence-info.yml")
@@ -117,9 +118,10 @@ rule SignalP_trim:
         nodes         = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
         output_dir    = str(OUTPUT_DIR),
         output_prefix = OUTPUT_PREFIX,
-        organism_tag  = ORGANISM_TAG
+        organism_tag  = ORGANISM_TAG,
+        output_suffix = OUTPUT_SUFFIX
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/parse-sequences-by-SignalP-output.py \
@@ -127,5 +129,6 @@ rule SignalP_trim:
         --output_dir          {{params.output_dir}} \
         --output_prefix       {{params.output_prefix}} \
         --organism_tag        {{params.organism_tag}} \
-        --signalP_predictions {{input}}
+        --signalP_predictions {{input}} \
+        --output_suffix       {{params.output_suffix}}
         """

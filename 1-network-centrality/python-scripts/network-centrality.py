@@ -251,6 +251,9 @@ def main():
         "--output_dir", default="processed-data", help="Output directory"
     )
     parser.add_argument(
+        "--output_suffix", default="step1", help="Output suffix for final annotated nodes from this step"
+    )
+    parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
     parser.add_argument(
@@ -299,7 +302,7 @@ def main():
 
     # save the output to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality.csv",
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.csv",
         index=False,
         na_rep=None,
     )

@@ -5,6 +5,7 @@ LOCAL_CONFIG  = config["network_centrality"]
 WORK_DIR      = Path(workflow.basedir)
 DATA_DIR      = WORK_DIR / config["data_dir"]
 OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 ORGANISM_TAG  = config["organism_label"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
@@ -25,17 +26,19 @@ rule network_centrality:
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = str(OUTPUT_DIR),
+        output_suffix = OUTPUT_SUFFIX
         organism_tag  = ORGANISM_TAG,
         test_dir      = str(TEST_DIR),
         cosdistpath   = str(COSDISTPATH)
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/network-centrality.py \
         --edges         {{input.edges}} \
         --nodes         {{input.nodes}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}} \
         --test_dir      {{params.test_dir}} \
