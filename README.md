@@ -1,21 +1,125 @@
-### `af2-revamp` branch
+### `af2-revamp` DESCRIPTION
 
-This branch includes significant updates to several steps of the pipeline to enable to use of new AF2 structures (i.e., not structures from EBI) for structure-based analyses in the pipeline. 
+This branch includes significant updates to several steps of the pipeline to:
+
+* (i) enable the use of new AF2 structures (i.e., not structures from EBI) for structure-based analyses in the pipeline,
+* (ii) run multiple replicates within Rosetta (and score them with Rosetta and FoldX),
+* (iii) incorporate Meltome Atlas protein thermal stability data,
+* (iv) wrap in analysis notebooks that formalize the generation of publication figures
 
 This branch is a work in progress; `main` should be considered the current production pipeline. 
 
-In addition to the AF2 structure updates, this branch will be used to test updates to the Rosetta relaxation protocol
+### Introduction
 
+This repository includes the code required to create the annotated yeast interactome dataset created for the **Energetic Origins of Connectivity Within Protein Interaction Networks** Working Group (NSF-NCEMS).
+
+The pipeline itself is actually a modular ensemble of pipelines that can be recombined by modifying the configuration file to run with different organisms that may have a different set of available data. 
+
+There are several different ways to use this repository:
+
+1. Reproduce the data product associated with this Working Group's work on the yeast protein-protein interaction (PPI) network
+2. Add data to the yeast data product
+3. Use this pipeline to annotate a new organism
+
+To perform 1., keep reading below and follow the instructions in the section **Running the pipeline now**. To perform 2., contact Dan Nissley at `dan182@psu.edu` and request permission to create a development branch. To perform 3., you will need to create a new configuration file chaining together the specific pipeline steps you want with new data paths; see **Running with different organisms**. 
+
+### Files and directories
+
+The top-level directory of the repository contains 23 sub-directories and 2 files. The 23 subdirectories are listed below in Table 1. The two files are the `README.md` file you are reading now and the helper script `run-pipeline.sh`, which automates running the entire pipeline end-to-end with one command. 
+
+**Table 1. Repository directories and files**
+|Step #| Name | Description |
+|-----+|+----+|+------------|
+|1|0-download-inputs| Download, unpack, and pre-process inputs |
+|2|1-network-centrality| Compute network centrality metrics |
+|3|2-sequence-parsing| Add sequence information, predict transmembrane proteins, predict signal sequences |
+|4|3-uniprot-annotation| Add UniProt localization, post-translational modification, etc. data |
+|5|4-idr-properties| Predict disordered regions and their sequence and dynamical properties |
+|6|5-dG-calculations| Predict dG for each protein with empirical model and ESM-IF generative model |
+|7|6-Rosetta-scoring| Relax AlphaFold2 structures with Rosetta and score |
+|8|7-FoldX-scoring| Score structures with FoldX |
+|9|8-protein-half-life| Add protein half-life data |
+|10|9-protein-expression| Add protein expression data |
+|11|10-translation-speed| Add protein translation efficiency data from `scikit-ribo`|
+|12|11-predict-PTMs| Predict post-translational modifications with PTMGPT2 |
+|13|12-LiP-MS| Add limited proteolysis mass spec data |
+|14|13-entanglement| Add entanglement data |
+|15|14-chaperones| Add chaperone data |
+|16|15-oligomers| Add oligomerization state/complex membership data from Complex Portal |
+|17|16-domain-annotations| Add domain annotations from InterPro|
+|18|17-essentiality| Add SGD protein essentiality information |
+|19|18-Y2H-data| Add yeast two-hybrid data from Yu et al. 2008 |
+|20|19-meltome-atlas| Add Meltome Atlas thermal stability data |
+|21|flatten| Effective final pipeline step that post-processes the annotated node network for easy analysis |
+|N/A|analysis-notebooks| Contains Jupyter notebooks used to create the figures in the manuscript |
+|N/A|config-files| Contains the configuration file used to generate the annotated yeast interactome |
+
+Each of these 23 sub-directories contains its own README.md explaining its contents and purpose in more detail. 
+
+### Computational requirements, dependencies, and benchmarks
+
+#### Requirements
+
+This repository uses a series of Snakemake pipelines to assemble an annotated protein-protein interaction network. Each individual pipeline consists of discrete Python and bash processing steps (rules within Snakemake). 
+
+To run the complete pipeline, you will need:
+
+1. An internet connection to download obligate input files
+2. ~250 GB of storage space (for all inputs and outputs)
+3. A CUDA-enabled GPU for Cagiada et al. 2025 ESM-IF-based dG predictions & PTMGPT2 post-translational modification prediciton
+4. 60-120 CPUs to enable Rosetta relaxation of protein structures in a reasonable timeframe
+
+#### Dependencies
+
+Nearly all dependency issues will be handled by Snakemake automatically. However, if you want to rerun all pipeline steps you will need to download and install additional software. Converesly, if you want to skip some steps and use pre-generated data to save time, you will need to download it from CyVerse. 
+
+If you want to rerun everything, follow the download instructions in the table below to setup SignalP, Rosetta, FoldX, and PTMGPT2.
+
+| Step Number | Description | Instructions |
+|------------+|+-----------+|+------------+| 
+| 2 |SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. |
+| 6 |Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
+| 7 | FoldX for structure scoring | FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`. |
+| 8 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path` |
+
+If you want to use existing date for yeast, follow the instructions in the table below to download it from CyVerse.
+
+| Step Number | Description | Instructions |
+|------------+|+-----------+|+------------+|
+| 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores` and place the files in `6-Rosetta-scoring/processed-data/scores` |
+| 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores` and place the files in `7-FoldX-scoring/processed-data/scores` |
+|11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` and place the contents in `11-predict-PTMs/processed-data`|
+
+##### Using `gocommands` to get data from the CyVerse Data Store
+
+Visit this page and follow the installation instructions for your system. Once installed, you should have the executable `gocmd` in folder where you ran the installation command. 
+Once you have `gocmd` available in your system, you can download data from CyVerse like so:
+
+`gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores 6-Rosetta-scoring/processed-data/scores`
+
+#### Benchmarks
+
+Most pipeline steps include simple procedures like loading, cleaning, and merging datasets together. Some, however, require more heavy-duty computation. 
+
+The main computational bottlenecks are:
+
+| Step Number | Description | Time |
+|------------+|+-----------+|+----+|
+|           0 | Download, unpacking, and pre-processing of input data | Requires up to 2 hours depending on connection speeds and rewrite speed of drive |
+|           5 | dG prediction from structure with Cagiada et al. 2025 method | ~4 h on A16; ~45 min on RTX 6000 Ada Gene |
+|           6 | Rosetta structure relxation & scoring | ~24 days with 96 Intel(R) Xeon(R) w9-3495X CPUs with N = 10 replicates per protein |
+|          11 | Prediction of post-translational modifications with PTMGPT2 | ~ 60 h on 2 x RTX 6000 Ada Gene GPUs in coarse-grain parallel |
+|          16 | Extract domain annotations from ~100 GB file | Depending on file system, 5 min - 1 h |
+
+As you will read below (see the section **Running the pipeline now** below), you can skip these expensive calculations if you just want to rerun the pipeline as-is. If you are running for a new organism/new proteins, these calculations are a one-time cost. 
 
 ### SETUP
 
-Running the complete pipeline requires significant CPU and GPU resources. While some steps can be run efficiently on CyVerse, this is not recommended for the complete pipeline. 
+The pipeline for assembling the final data product is in fact an ensemble of pipelines. You will need to install `conda` and then setup a top-level environment with Snakemake. 
 
 1. Update your version of conda:
 
 `conda update -n base -c defaults conda`
-
-(We need 24.7.1 or later for Snakemake to work correctly)
 
 2. Setup a conda environment with Snakemake by running the command
 
@@ -25,49 +129,24 @@ followed by the command
 
 `conda activate snakemake`
 
-Note: This gave me issues on a new Ubuntu machine, try `conda create -n snakemake -c conda-forge -c bioconda "python>3.11" "snakemake>=9,<10" biopython
-` if it fails. 
+Note: This gave me issues on a new Ubuntu machine; if you have any problems, try `conda create -n snakemake -c conda-forge -c bioconda "python>3.11" "snakemake>=9,<10" biopython
+`.
 
-3. Download SignalP, Rosetta, FoldX, & PTMGPT2 models
+3. Download SignalP, Rosetta, FoldX, & PTMGPT2 models (see **Dependencies** section above)
 
-SignalP6.0 fast can be downloaded from [this site](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) after accepting the academic licensing agreement. The contents of the downloaded `signalp-6.0h.fast.tar.gz` should be unpacked into `2-sequence-parsing/python-scripts` to enable the environment associated with the SignalP Snakemake rule to build correctly. For example, you should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. 
-
-Rosetta can be downloaded from [Rosetta Commons](https://rosettacommons.org/software/download/) free of charge. Insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executable`.
-
-FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`.
-
-PTMGPT2 models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both of these .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`
-
-4. You can now run the pipeline by entering the command `./run_pipeline.sh <.config file>`
+4. You can now run the pipeline by entering the command `./run-pipeline.sh <.config file>`
 
 The `.config` file contains all commonly changed parameters, including those used to label output files. The current config file to run all steps is `config-files/s288c.config`.
 
-Approximate timings for individual pipeline steps are listed in the README.md files within subdirectories for each step
-
-5. Optional - if you want to rerun the pipeline from step 0, download additional data for `6-Rosetta-scoring` from:
-
-`/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores`
-
-As well as additional data for `7-FoldX-scoring` from:
-
-`/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores`
-
-And place these directories in `6-Rosetta-scoring/processed-data/scores` and `7-FoldX-scoring/processed-data/scores`
-
-Finally, place the data from:
-
-`/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` in `11-predict-PTMs/processed-data` and you are ready to go without needing to rerun expensive calculations.
-
-
-### PIPELINE
+### Run the pipeline now
 
 You can run the pipeline with the command:
 
-`./run_pipeline.sh [.config file]`
+`./run-pipeline.sh [.config file]`
 
 For example, 
 
-`.run_pipeline.sh config-files/s288c.config`
+`./run-pipeline.sh config-files/s288c.config`
 
 If you would like to run a specific pipeline step in isolation, you can use a command like:
 
@@ -77,97 +156,7 @@ in which you must replace `/snakefile/path/Snakefile` and `/configfile/path/conf
 
 `snakemake --snakefile 8-protein-half-life/Snakefile --configfile config-files/s288c.config --use-conda --conda-frontend conda -c all`
 
-#### 0-download-inputs
-
-Downloads the required input data (e.g., protein ORF sequences, ESM-IF weights, etc.) and extracts AlphaFold2 structure sequences. 
-
-Note that some required files are not downloaded at runtime but are distributed with this GitHub repo.
-
-#### 1-network-centrality
-
-Uses NetworkX to annotate network with centrality metrics; note that weighted k-shell calculation results are included in 0-download-inputs/data-files/The_Yeast_Interactom_nodes.csv.
-
-#### 2-sequence-parsing
-
-Adds sequence information as possible to each node 
-
-Adds DeepTMHMM annotations (predicts if proteins are TM, secreted, globular, etc.; this step is precomputed using the DeepTMHMM Docker container)
-
-Adds SignalP6.0 identification of cleavage sites for signal peptides
-
-#### 3-uniprot-annotation
-
-Parses the UniProt .xml database and inserts annotation information on function, subcellular location, post-translational modifications, and gene ontology terms.
-
-PTMeXchange phosphorlyation sites are also integrated. 
-
-#### 4-idr-properties
-
-Predicts IDRs (metapredict v3.0) and annotates each of them with sequence- (CIDER) and ensemble-based (ALBATROSS) parameters using SPARROW. 
-
-#### 5-dG-calculations
-
-Uses Eq. 1 from Ghosh & Dill 2010 to predict dG for each protein sequence (minus cleaved signal sequences)
-
-If requested in the .config file, will also run Cagiada stability predictions (required ~1 h for entire Yeast Interactome dataset on an RTX4500 GPU)
-
-#### 6-Rosetta-scoring
-
-Takes AF2 structures (with signal sequences cleaved as necessary) and runs Rosetta FastRelax on each of them, generating a single relaxed pose and Rosetta scoring function data
-
-#### 7-FoldX-scoring
-
-Uses FoldX scoring function to compute various energy parameters including a total stability for each of the poses generated by Rosetta FastRelax. 
-
-#### 8-protein-half-life
-
-Integrates protein half-life data from 10.1016/j.celrep.2014.10.065 & 10.1016/j.celrep.2014.10.065
-
-#### 9-protein-expression
-
-Integrates protein expression data from 10.1016/j.cels.2017.12.004
-
-#### 10-translation-speed
-
-Integrates translation efficiency information computed using scikit-ribo on Weinberg 2016 dataset
-
-#### 11-predict-PTMs
-
-Runs the model PTMGPT2 to predict post-translational modifications for each protein. Current list of predicted PTMs can be found by checking main() in 11-predict-PTMs/python-scripts/run-PTMGPT2-parallel.py
-
-#### 12-LiP-MS
-
-Adds information on whether or not a protein was found to be able to refold by LiP-MS from the Fried Lab. Data not published, be careful!
-
-#### 13-entanglement
-
-Integrates information on protein entanglement status; currently, only indicates if a protein is or is not entangled
-
-#### 14-chaperones
-
-Adds information on which chaperones a particular node/protein is known to interact with
-
-#### 15-oligomers
-
-Adds information on the oligomer state of nodes; includes whether the protein is a member of a complex with known stoichiometry, unknown stoichiometry, any complex, a homodimer, etc.
-
-#### 16-domain-annotations
-
-#### 17-essentiality
-
-#### 18-Y2H-data
-
-#### flatten
-
-This is the final step in the pipeline; performs some minor cleanup of redundant columns and saves the database in two forms with two file types for each form:
-
-.csv & .pkl files with "*-nodes-final-per-node.csv" ending contain the output annotated dataset on a per-node or per-protein basis (i.e., one row per node or protein)
-
-.csv & .pkl files with "*-nodes-final-per-IDR.csv" ending contain the output annotated dataset flattend over IDRs, giving a file with one row per IDR rather than one row per node
-
-These files can be found in `flatten/processed-data/`
-
-#### Technical notes
+#### Branch notes
 
 Commits pushed on Aug 19 from Aug 18 and Aug 19 convert the entire pipeline to (hopefully) have more robust handling of dependency issues, especially related to pandas/numpy/pint problems. 
 
