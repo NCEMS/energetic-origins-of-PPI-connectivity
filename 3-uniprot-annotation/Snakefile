@@ -5,7 +5,10 @@ LOCAL_CONFIG  = config["uniprot_annotation"]
 WORK_DIR      = Path(workflow.basedir)
 DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
 DATA_DIR2     = Path(config["data_dir"])
+INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
+OBO_FILE      = LOCAL_CONFIG["obo_file"]
 OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM      = LOCAL_CONFIG["organism"]
 ORGANISM_TAG  = config["organism_label"]
@@ -15,7 +18,7 @@ rule all:
     input:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv"),
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
 rule parse_uniprot:
     input:
@@ -25,7 +28,8 @@ rule parse_uniprot:
     params:
         output_dir   = str(OUTPUT_DIR),
         organism     = ORGANISM,
-        output_file  = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
+        output_file  = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
+        obo_file     = OBO_FILE
     output:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
     shell:
@@ -33,7 +37,8 @@ rule parse_uniprot:
         python {WORK_DIR}/python-scripts/parse-uniprot.py \
         --input_file    {{input.uniprot}} \
         --output_file   {{params.output_file}} \
-        --organism      "{{params.organism}}"
+        --organism      "{{params.organism}}" \
+        --obo_file      {{params.obo_file}}
         """
 
 
@@ -45,12 +50,16 @@ rule parse_ptmexchange:
     conda:
         "env/parse-uniprot.yml"
     shell:
-        f"python {WORK_DIR}/python-scripts/extract-additional-ptms.py --input {{input}} --output {{output}}"
+        f"""
+        python {WORK_DIR}/python-scripts/extract-additional-ptms.py \
+        --input {{input}} \
+        --output {{output}}
+        """
 
 
 rule add_uniprot_info:
     input:
-        nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv"),
+        nodes = INPUT_NODES,
         unipr = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
         ptmeX = str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv")
     conda:
@@ -58,9 +67,10 @@ rule add_uniprot_info:
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = str(OUTPUT_DIR),
-        organism_tag  = ORGANISM_TAG
+        organism_tag  = ORGANISM_TAG,
+        output_suffix = OUTPUT_SUFFIX
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-uniprot-info.py \
@@ -68,6 +78,7 @@ rule add_uniprot_info:
         --uniprot       {{input.unipr}} \
         --ptmexchange   {{input.ptmeX}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}}
         """

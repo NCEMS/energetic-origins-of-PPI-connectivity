@@ -3,11 +3,9 @@ import pandas as pd
 import argparse
 import re
 from goatools.obo_parser import GODag
+import typing
 
-# sloppy hardcoding but I just want this to work
-go_dag = GODag("0-download-inputs/data-files/go-basic.obo")
-
-def parse_entry(entry, target_organism):
+def parse_entry(entry, target_organism, go_dag):
 
     ns = {"ns": "https://uniprot.org/uniprot"}
     organism_name = entry.findtext("ns:organism/ns:name[@type='scientific']", namespaces=ns)
@@ -96,7 +94,22 @@ def parse_entry(entry, target_organism):
     }
 
 
-def parse_uniprot_xml(xml_file, organism_filter):
+def parse_uniprot_xml(xml_file: str, organism_filter: str, obo_path: str) -> pd.DataFrame:
+    """
+    Parse the uniprot_sprot.xml file to find all entries for a particular organism
+
+    Args:
+        xml_file (str): path to the uniprot_sprot.xml file
+        organism_filter (str): the organism for which you want to find entries
+        obo_path (str): path to the Open Biomedical Ontologies (OBO) text-based ontology file with GO term descriptions
+
+    Returns:
+        pd.DataFrame
+
+    """
+
+    go_dag = GODag(obo_path)
+
     ns = {"ns": "https://uniprot.org/uniprot"}
     entries = []
 
@@ -108,19 +121,7 @@ def parse_uniprot_xml(xml_file, organism_filter):
         if event == "end" and elem.tag == "{https://uniprot.org/uniprot}entry":
             entry_name = elem.findtext("ns:name", namespaces=ns)
             organism = elem.findtext("ns:organism/ns:name[@type='scientific']", namespaces=ns)
-
-            #if entry_name == "ACEA_YEAST":
-            #    print(f"✅ Found target entry: {entry_name}")
-            #    print(f"Organism: {organism}")
-            #    for ft in elem.findall("ns:feature", namespaces=ns):
-            #        if ft.attrib.get("type") == "modified residue":
-            #            position = ft.find("ns:location/ns:position", namespaces=ns)
-            #            desc = ft.findtext("ns:description", default="", namespaces=ns)
-            #            pos_val = position.attrib["position"] if position is not None else "?"
-            #            print(f"Feature: modified residue at {pos_val}")
-            #            print(f"Description: '{desc}'")
-
-            record = parse_entry(elem, organism_filter)
+            record = parse_entry(elem, organism_filter, go_dag)
             if record:
                 entries.append(record)
 
@@ -130,15 +131,16 @@ def parse_uniprot_xml(xml_file, organism_filter):
 
 
 def main():
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_file", type=str, required=True)
     parser.add_argument("--output_file", type=str, required=True)
     parser.add_argument("--organism", type=str, required=True)
+    parser.add_argument("--obo_file", type=str, required=True)
     args = parser.parse_args()
 
-    df = parse_uniprot_xml(args.input_file, args.organism)
+    df = parse_uniprot_xml(args.input_file, args.organism, args.obo_file)
     df.to_csv(args.output_file, index=False)
-
 
 if __name__ == "__main__":
     main()
