@@ -3,7 +3,7 @@ from pathlib import Path
 LOCAL_CONFIG  = config["uniprot_annotation"]
 
 WORK_DIR      = Path(workflow.basedir)
-DATA_DIR2     = Path(config["data_dir"])
+DATA_DIR      = Path(config["data_dir"])
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OBO_FILE      = LOCAL_CONFIG["obo_file"]
 OUTPUT_PREFIX = config["output_prefix"]
@@ -21,14 +21,14 @@ rule all:
 
 rule parse_uniprot:
     input:
-        uniprot = str(DATA_DIR2 / "uniprot_sprot.xml")
+        uniprot = str(DATA_DIR / "uniprot_sprot.xml")
     conda:
         "env/parse-uniprot.yml"
     params:
         output_dir   = str(OUTPUT_DIR),
         organism     = ORGANISM,
         output_file  = str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
-        obo_file     = OBO_FILE
+        obo_file     = str(DATA_DIR / OBO_FILE)
     output:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv")
     shell:
@@ -43,7 +43,7 @@ rule parse_uniprot:
 
 rule parse_ptmexchange:
     input:
-        str(DATA_DIR2 / PTMEXCHANGE)
+        str(DATA_DIR / PTMEXCHANGE)
     output:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv")
     conda:
