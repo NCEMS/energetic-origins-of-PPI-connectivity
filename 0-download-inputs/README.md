@@ -78,7 +78,7 @@ The following 41 files are distributed with the GitHub repository. In most cases
 
 | File extension | Number of files |
 |:--------------:|----------------:|
-| pdb            | 6,168           |
+| pdb            | 6,039           |
 | fasta          | 6,040           |
 | csv            |    20           |
 | xlsx           |    12           |
@@ -89,4 +89,6 @@ The following 41 files are distributed with the GitHub repository. In most cases
 | pt             |     1           |
 | xml            |     1           |
 | cys            |     1           |
-| TOTAL FILES    |12,255           |
+| TOTAL FILES    |12,126           |
+
+* Once pipeline step `2-sequence-parsing` is executed, an additional 149 PDB files will be added corresponding to truncated AlphaFold2 PDBs with signal sequences removed. This brings the number of PDB files to 6,168 and the total number of files to 12,255.
