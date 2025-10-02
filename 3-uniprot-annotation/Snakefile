@@ -3,7 +3,6 @@ from pathlib import Path
 LOCAL_CONFIG  = config["uniprot_annotation"]
 
 WORK_DIR      = Path(workflow.basedir)
-DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
 DATA_DIR2     = Path(config["data_dir"])
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OBO_FILE      = LOCAL_CONFIG["obo_file"]
