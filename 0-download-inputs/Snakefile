@@ -7,7 +7,7 @@ DATA_DIR          = Path(config["data_dir"]).resolve()
 SCRIPTS_DIR       = WORK_DIR / "bash-scripts"
 DOWNLOAD_SCRIPT   = SCRIPTS_DIR / "download-inputs.sh"
 EXTRACTSEQ_SCRIPT = SCRIPTS_DIR / "extract-seqres.sh"
-MANIFEST          = Path(LOCAL_CONFIG["manifest"]).resolve()
+MANIFEST          = Path(LOCAL_CONFIG["file_manifest"]).resolve()
 
 rule all:
     input:
