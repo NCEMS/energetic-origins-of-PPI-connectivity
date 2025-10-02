@@ -124,7 +124,6 @@ rule SignalP_trim:
         output_suffix = OUTPUT_SUFFIX,
         output_prefix = OUTPUT_PREFIX,
         organism_tag  = ORGANISM_TAG,
-        output_suffix = OUTPUT_SUFFIX
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
     shell:
