@@ -3,9 +3,10 @@ import typing
 import argparse
 import re
 
+
 def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
     """
-    Function that reads in a pre-processed annotation file from UniProt and adds selected information it to nodes_df
+    Function that reads in a pre-processed annotation file from UniProt and adds selected information from it to nodes_df
 
     Args:
         nodes_df (pd.DataFrame): nodes DataFrame so far; must contain mapped UniProt IDs for this to work (added by process_nodes)
@@ -34,6 +35,7 @@ def add_UniProt_info(nodes_df: pd.DataFrame, uniprot_data: str) -> pd.DataFrame:
         how="left",
     ).drop(columns=["PrimaryAccession"])
 
+
 def add_PTM_exchange_info(nodes_df: pd.DataFrame, ptm_file: str) -> pd.DataFrame:
     """
     Adds Gold, Silver, and Bronze PTM annotations from PTMeXchange to nodes_df.
@@ -56,28 +58,33 @@ def add_PTM_exchange_info(nodes_df: pd.DataFrame, ptm_file: str) -> pd.DataFrame
         accession = row["UniProtKB-AC"]
         ptms = row["additional_PTMs"].split(";")
         for ptm in ptms:
-            match = re.match(r"([STYACDEFGHIKLMNPQRVW]{1}\d+)\((Gold|Silver|Bronze)\)", ptm.strip())
+            match = re.match(
+                r"([STYACDEFGHIKLMNPQRVW]{1}\d+)\((Gold|Silver|Bronze)\)", ptm.strip()
+            )
             if match:
                 site, category = match.groups()
                 expanded_rows.append((accession, site, category))
 
-    expanded_df = pd.DataFrame(expanded_rows, columns=["UniProtKB-AC", "site", "category"])
+    expanded_df = pd.DataFrame(
+        expanded_rows, columns=["UniProtKB-AC", "site", "category"]
+    )
 
     # aggregate sites by UniProt ID and category
-    categorized = expanded_df.groupby(["UniProtKB-AC", "category"])["site"].apply(
-        lambda x: ";".join(sorted(set(x)))
-    ).unstack(fill_value="")
+    categorized = (
+        expanded_df.groupby(["UniProtKB-AC", "category"])["site"]
+        .apply(lambda x: ";".join(sorted(set(x))))
+        .unstack(fill_value="")
+    )
 
     # rename columns
-    categorized = categorized.rename(columns={
-        "Gold": "ptm_gold",
-        "Silver": "ptm_silver",
-        "Bronze": "ptm_bronze"
-    }).reset_index()
+    categorized = categorized.rename(
+        columns={"Gold": "ptm_gold", "Silver": "ptm_silver", "Bronze": "ptm_bronze"}
+    ).reset_index()
 
     merged = nodes_df.merge(categorized, on="UniProtKB-AC", how="left")
 
     return merged
+
 
 def main():
 

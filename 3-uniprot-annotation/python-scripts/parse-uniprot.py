@@ -1,21 +1,52 @@
+import typing
+from typing import Optional, Dict
+from xml.etree.ElementTree import Element
 import xml.etree.ElementTree as ET
 import pandas as pd
 import argparse
 import re
 from goatools.obo_parser import GODag
-import typing
 
-def parse_entry(entry, target_organism, go_dag):
+
+def parse_entry(
+    entry: Element, target_organism: str, go_dag: GODag
+) -> Optional[Dict[str, Optional[str]]]:
+    """
+    Parse a UniProt <entry> element, filter by organism, and extract selected fields.
+
+    Args:
+        entry (Element): The <entry> XML element from the UniProt XML.
+        target_organism (str): Scientific name to filter entries on (e.g., "Saccharomyces cerevisiae").
+        go_dag (GODag): GOATOOLS GO DAG object used to map GO IDs to human-readable names.
+
+    Returns:
+        Optional[Dict[str, Optional[str]]]: A dictionary with parsed fields if the entry's organism
+            matches `target_organism`; otherwise None. Keys:
+            - "EntryName"
+            - "PrimaryAccession"
+            - "ProteinName"
+            - "Organism"
+            - "Sequence"
+            - "GO_terms"
+            - "GO_terms_human_readable"
+            - "parsed_PTMs"
+            - "parsed_functions"
+            - "localization_keywords"
+    """
 
     ns = {"ns": "https://uniprot.org/uniprot"}
-    organism_name = entry.findtext("ns:organism/ns:name[@type='scientific']", namespaces=ns)
+    organism_name = entry.findtext(
+        "ns:organism/ns:name[@type='scientific']", namespaces=ns
+    )
 
     if organism_name != target_organism:
         return None
 
     accession = entry.findtext("ns:accession", namespaces=ns)
     entry_name = entry.findtext("ns:name", namespaces=ns)
-    protein_name = entry.findtext("ns:protein/ns:recommendedName/ns:fullName", namespaces=ns)
+    protein_name = entry.findtext(
+        "ns:protein/ns:recommendedName/ns:fullName", namespaces=ns
+    )
     sequence = entry.findtext("ns:sequence", namespaces=ns)
 
     # extract GO terms
@@ -32,7 +63,11 @@ def parse_entry(entry, target_organism, go_dag):
     ]
 
     # extract FT-based PTMs
-    ptm_keywords = {"modified residue", "lipid moiety-binding region", "glycosylation site"}
+    ptm_keywords = {
+        "modified residue",
+        "lipid moiety-binding region",
+        "glycosylation site",
+    }
     ft_ptms = []
     for ft in entry.findall("ns:feature", namespaces=ns):
         ft_type = ft.attrib.get("type")
@@ -47,7 +82,9 @@ def parse_entry(entry, target_organism, go_dag):
                 begin = ft.find("ns:location/ns:begin", namespaces=ns)
                 end = ft.find("ns:location/ns:end", namespaces=ns)
                 if begin is not None and end is not None:
-                    position = f"{begin.attrib.get('position')}-{end.attrib.get('position')}"
+                    position = (
+                        f"{begin.attrib.get('position')}-{end.attrib.get('position')}"
+                    )
                 else:
                     position = "?"
 
@@ -66,7 +103,9 @@ def parse_entry(entry, target_organism, go_dag):
 
     # extract subcellular location comments
     subcell_locs = []
-    for comment in entry.findall("ns:comment[@type='subcellular location']", namespaces=ns):
+    for comment in entry.findall(
+        "ns:comment[@type='subcellular location']", namespaces=ns
+    ):
         for subloc in comment.findall("ns:subcellularLocation", namespaces=ns):
             loc = subloc.findtext("ns:location", namespaces=ns)
             topology = subloc.findtext("ns:topology", namespaces=ns)
@@ -94,7 +133,9 @@ def parse_entry(entry, target_organism, go_dag):
     }
 
 
-def parse_uniprot_xml(xml_file: str, organism_filter: str, obo_path: str) -> pd.DataFrame:
+def parse_uniprot_xml(
+    xml_file: str, organism_filter: str, obo_path: str
+) -> pd.DataFrame:
     """
     Parse the uniprot_sprot.xml file to find all entries for a particular organism
 
@@ -104,7 +145,7 @@ def parse_uniprot_xml(xml_file: str, organism_filter: str, obo_path: str) -> pd.
         obo_path (str): path to the Open Biomedical Ontologies (OBO) text-based ontology file with GO term descriptions
 
     Returns:
-        pd.DataFrame
+        pd.DataFrame containing one row with EntryName, PrimaryAccession, etc for each protein in uniprot_sprot.xml matching the organism_filter
 
     """
 
@@ -120,7 +161,9 @@ def parse_uniprot_xml(xml_file: str, organism_filter: str, obo_path: str) -> pd.
     for event, elem in context:
         if event == "end" and elem.tag == "{https://uniprot.org/uniprot}entry":
             entry_name = elem.findtext("ns:name", namespaces=ns)
-            organism = elem.findtext("ns:organism/ns:name[@type='scientific']", namespaces=ns)
+            organism = elem.findtext(
+                "ns:organism/ns:name[@type='scientific']", namespaces=ns
+            )
             record = parse_entry(elem, organism_filter, go_dag)
             if record:
                 entries.append(record)
@@ -141,6 +184,7 @@ def main():
 
     df = parse_uniprot_xml(args.input_file, args.organism, args.obo_file)
     df.to_csv(args.output_file, index=False)
+
 
 if __name__ == "__main__":
     main()
