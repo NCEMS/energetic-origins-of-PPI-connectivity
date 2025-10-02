@@ -17,11 +17,11 @@ ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
 rule all:
     input:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"),
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs-{OUTPUT_SUFFIX}.csv"),
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-DeepTMHMM-{OUTPUT_SUFFIX}.csv"),
         str(SIGNALP_FASTA),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"),
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
         
 rule add_sequences:
     input:
@@ -32,16 +32,18 @@ rule add_sequences:
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = str(OUTPUT_DIR),
+        output_suffix = OUTPUT_SUFFIX,
         id_mappings   = str(MAP_FILE),
         organism_tag  = ORGANISM_TAG
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs-{OUTPUT_SUFFIX}.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-sequence-info.py \
         --nodes         {{input.nodes}} \
         --fasta         {{input.fasta}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}} \
         --id_mappings   {{params.id_mappings}}
@@ -49,29 +51,31 @@ rule add_sequences:
 
 rule add_DeepTMHMM:
     input:
-        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs.csv"),
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs-{OUTPUT_SUFFIX}.csv"),
         preds = str(WORK_DIR / "DeepTMHMM-runs" / f"{ORGANISM_TAG}-results" / f"all-predictions-{ORGANISM_TAG}.3line")
     conda:
         str(WORK_DIR / "env/add-DeepTMHMM-info.yml")
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = str(OUTPUT_DIR),
+        output_suffix = OUTPUT_SUFFIX,
         organism_tag  = ORGANISM_TAG
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-DeepTMHMM-{OUTPUT_SUFFIX}.csv")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-DeepTMHMM-info.py \
         --nodes         {{input.nodes}} \
         --DeepTMHMM     {{input.preds}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}}
         """
 
 rule prepare_SignalP_sequences:
     input:
-        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv")
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-DeepTMHMM-{OUTPUT_SUFFIX}.csv")
     conda:
         str(WORK_DIR / "env/prepare-SignalP-fasta.yml")
     params:
@@ -115,8 +119,9 @@ rule SignalP_trim:
     conda:
         str(WORK_DIR / "env/signalp_trim.yml")
     params:
-        nodes         = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM.csv"),
+        nodes         = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-DeepTMHMM-{OUTPUT_SUFFIX}.csv"),
         output_dir    = str(OUTPUT_DIR),
+        output_suffix = OUTPUT_SUFFIX,
         output_prefix = OUTPUT_PREFIX,
         organism_tag  = ORGANISM_TAG,
         output_suffix = OUTPUT_SUFFIX
