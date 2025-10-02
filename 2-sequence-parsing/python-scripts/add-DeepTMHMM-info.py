@@ -54,7 +54,7 @@ def parse_model_output(lines: List[str]) -> dict[str, dict[str, str, str]]:
         mask = lines[i + 2].strip()
         i += 3
 
-        # Extract gene_id and classification (e.g., SP, TM, GLOB)
+        # extract gene_id and classification (e.g., SP, TM, GLOB)
         parts = header[1:].split("|")
         gene_id = parts[0].strip()
         class_label = parts[1].strip() if len(parts) > 1 else "UNKNOWN"
@@ -140,6 +140,11 @@ def main():
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
+        "--output_suffix",
+        default="step2",
+        help="Suffix to be applied to output file",
+    )
+    parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
     args = parser.parse_args()
@@ -156,7 +161,7 @@ def main():
 
     # save the updated df to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM.csv",
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-DeepTMHMM-{args.output_suffix}.csv",
         index=False,
     )
 

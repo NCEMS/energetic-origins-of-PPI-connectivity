@@ -65,6 +65,11 @@ def main():
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
+        "--output_suffix",
+        default="step2",
+        help="Suffix to be applied to output file",
+    )
+    parser.add_argument(
         "--organism_tag", default="s288c", help="Tag to label the organism for this run"
     )
     parser.add_argument(
@@ -82,7 +87,7 @@ def main():
 
     # write the updated nodes_df to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP.csv",
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.csv",
         index=False,
     )
 

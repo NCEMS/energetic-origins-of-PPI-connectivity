@@ -76,6 +76,11 @@ def main():
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
+        "--output_suffix",
+        default="step2",
+        help="Suffix to be applied to output file",
+    )
+    parser.add_argument(
         "--id_mappings",
         default="../0-download-inputs/data-files/YEAST_559292_idmapping.dat",
         help="File containing UniProt ID mappings to current identifier",
@@ -100,7 +105,7 @@ def main():
 
     # write the updated nodes_df to file
     nodes_df.to_csv(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs.csv",
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-seqs-{args.output_suffix}.csv",
         index=False,
     )
 
