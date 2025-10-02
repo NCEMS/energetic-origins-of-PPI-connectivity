@@ -90,6 +90,8 @@ If you want to use existing date for yeast, follow the instructions in the table
 | 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores` and place the files in `7-FoldX-scoring/processed-data/scores` |
 |11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` and place the contents in `11-predict-PTMs/processed-data`|
 
+Check the step-specific subdirectories for any additional setup instructions for SignalP, Rosetta, FoldX, and PTMGPT2.
+
 ##### Using `gocommands` to get data from the CyVerse Data Store
 
 Visit [this page](https://learning.cyverse.org/ds/gocommands/installation) and follow the installation instructions for your system. Once installed, you should have the executable `gocmd` in the folder where you ran the installation command. 
