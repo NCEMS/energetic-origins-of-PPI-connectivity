@@ -21,6 +21,7 @@ STAGES=("0-download-inputs"
         "16-domain-annotations"
         "17-essentiality"
         "18-Y2H-data"
+        "19-meltome-atlas"
         "flatten"
        )
 
