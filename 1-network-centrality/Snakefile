@@ -26,7 +26,7 @@ rule network_centrality:
     params:
         output_prefix = OUTPUT_PREFIX,
         output_dir    = str(OUTPUT_DIR),
-        output_suffix = OUTPUT_SUFFIX
+        output_suffix = OUTPUT_SUFFIX,
         organism_tag  = ORGANISM_TAG,
         test_dir      = str(TEST_DIR),
         cosdistpath   = str(COSDISTPATH)
