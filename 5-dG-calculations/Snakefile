@@ -3,8 +3,9 @@ from pathlib import Path
 LOCAL_CONFIG  = config["dG_predictions"]
 
 WORK_DIR      = Path(workflow.basedir)
-DATA_DIR1     = Path(LOCAL_CONFIG["input_dir"])
+INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
 TEMPERATURE   = LOCAL_CONFIG["temperature"]
@@ -17,11 +18,11 @@ AF2_DIR       = LOCAL_CONFIG["AF2_dir"]
 
 rule all:
     input:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
 
 rule prepare_structures:
     input:
-        nodes = str(DATA_DIR1 / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl")
+        nodes = INPUT_NODES
     conda:
         "env/prepare-structures.yml"
     params:
@@ -56,7 +57,7 @@ rule ghosh_dill_stability:
         temperature    = TEMPERATURE,
         seq_column     = SEQ_COLUMN
     output:
-        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/ghosh-dill-stability.py \
@@ -71,7 +72,7 @@ rule ghosh_dill_stability:
 
 rule cagiada_stability:
     input:
-        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl")
+        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
     conda:
         "env/cagiada-stability.yml"
     params:
@@ -83,7 +84,6 @@ rule cagiada_stability:
         test_dir       = TEST_DIR,
         run_cagiada    = RUN_CAGIADA
     output:
-        #str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
         csv = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
     shell:
         f"""
@@ -101,12 +101,12 @@ rule cagiada_stability:
 
 rule merge_cagiada_with_nodes:
     input:
-        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"),
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl"),
         cagiada = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
     conda:
         "env/cagiada-stability.yml"
     output:
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/merge-cagiada.py \

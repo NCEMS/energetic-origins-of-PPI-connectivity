@@ -37,7 +37,8 @@ def main():
         default="processed-data",
         help="Directory where results will be saved",
     )
-    parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
+    parser.add_argument("--output_prefix", default="0", help="Prefix for output file")
+    parser.add_argument("--output_suffix", default="0", help="Suffix for output file")
     parser.add_argument(
         "--organism_tag",
         help="Organism label for this run")
@@ -56,7 +57,7 @@ def main():
 
     nodes_df = add_expression(nodes_df, expression_df, merge_col1, merge_col2, expression_df_cols)
 
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl")
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl")
 
 if __name__ == "__main__":
     main()

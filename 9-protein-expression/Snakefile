@@ -2,7 +2,8 @@ from pathlib import Path
 
 LOCAL_CONFIG  = config["protein_expression"]
 
-DATA_DIR      = Path(LOCAL_CONFIG["input_dir"])
+INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
@@ -11,26 +12,28 @@ EXPRESSION_DB = Path(LOCAL_CONFIG["expression_db"])
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
 rule add_expression:
     input:
-        f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife.pkl"
+        INPUT_NODES
     conda:
         "env/add-protein-expression.yml"
     params:
         output_prefix  = OUTPUT_PREFIX,
+        output_suffix  = OUTPUT_SUFFIX,
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG,
         expression_db  = str(EXPRESSION_DB)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-expression.py \
         --nodes         {{input}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --organism_tag  {{params.organism_tag}} \
         --expression_db {{params.expression_db}}
         """
