@@ -1,12 +1,10 @@
 ### Parse UniProt database and add GO terms and additional annotation to each protein
 
-Read in the file `uniprot_sprot.xml` and parse it to extract:
+This pipeline will:
 
-* Subcellular location data
-* Function annotations
-* Post-translational modifications
-* GO terms
+1. Extract records from `uniprot_sprot.xml` for your organism of choice
+2. Process these records to get subcellular location, function annotation, post-translational modifications, and GO terms
+3. Optionally, process and integrate ProteomeXchange post-translational modification data
+4. Output an updated annotated node pd.DataFrame
 
-Read in the file `Yeast_GSB_phospho_all_prots_0125.csv` and parse it to extract:
-
-* Yeast phosphorylation sites from mass spectrometry data on PTMeXchange
+The UniProt search and ProteomeXchange data used are controlled by `../config-files/s288c.config`
