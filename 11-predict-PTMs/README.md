@@ -1,6 +1,6 @@
 ### Predict post-translation modifications
 
-* Runs the model PTMGPT2 to predict the locations of 19 different post-translational modifications
+* Runs the model PTMGPT2 to predict the locations of 19 different post-translational modifications within each protein sequence
 
 * Predictions are run on SignalP-trimmed sequences, but residue indices are mapped back to the original numbering for the untruncated sequence. 
 

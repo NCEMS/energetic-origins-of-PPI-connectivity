@@ -1,5 +1,7 @@
 ### Add sequence information and DeepTMHMM annotations to nodes
 
+This pipeline will:
+
 (1) Add sequence information for genes as possible (sourced from SGD)
 (2) Add DeepTMHMM predictions for each sequence (DeepTMHMM currently must be run outside of the pipeline and the path to the results included in the .config)
 (3) Predict signal peptide cleavage sites with SignalP
