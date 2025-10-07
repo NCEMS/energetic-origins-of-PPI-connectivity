@@ -18,7 +18,7 @@ rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-IDRs.pkl"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-albatross.pkl"),
-        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-step5.pkl")
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
 
 rule predict_IDRs:
     input:
