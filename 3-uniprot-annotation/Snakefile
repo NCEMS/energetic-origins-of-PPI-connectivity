@@ -15,7 +15,7 @@ ORGANISM_TAG  = config["organism_label"]
 # optional flag to determine if we want to integrate ptmexchange data
 USE_PTMEX     = bool(LOCAL_CONFIG.get("use_ptmexchange", True))
 PTMEXCHANGE   = LOCAL_CONFIG["ptmexchange"]
-PTMEX_INPUT   = (DATA_DIR2 / PTMEXCHANGE) if PTMEXCHANGE else None
+PTMEX_INPUT   = (DATA_DIR / PTMEXCHANGE) if PTMEXCHANGE else None
 PTMEX_OUT     = OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv"
 HAVE_PTMEX    = bool(USE_PTMEX and PTMEXCHANGE and PTMEX_INPUT.exists())
 
