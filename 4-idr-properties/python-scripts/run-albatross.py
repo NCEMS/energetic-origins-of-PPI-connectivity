@@ -86,11 +86,11 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
 
     # run albatross
-    # nodes_df = run_albatross(nodes_df)
     nodes_df["albatross"] = nodes_df.apply(run_albatross, axis=1)
 
+    # save the intermediate file
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-albatross.pkl"
     )
 
 
