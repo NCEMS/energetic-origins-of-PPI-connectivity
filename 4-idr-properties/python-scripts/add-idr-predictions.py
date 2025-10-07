@@ -270,7 +270,7 @@ def main():
 
     # write the output file
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-IDRs.pkl"
     )
 
 

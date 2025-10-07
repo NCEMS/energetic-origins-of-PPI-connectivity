@@ -65,6 +65,7 @@ def main():
     )
     parser.add_argument("--output_dir", help="Path to output directory")
     parser.add_argument("--output_prefix", help="Prefix to be applied to output file")
+    parser.add_argument("--output_suffix", help="Suffix to be applied to output file")
     parser.add_argument("--organism_tag", help="Label for the organism for this run")
     args = parser.parse_args()
 
@@ -75,9 +76,9 @@ def main():
     tqdm.pandas(desc="Extracting CIDER properties")
     nodes_df["cider"] = nodes_df.progress_apply(run_cider, axis=1)
 
-    # Save updated DataFrame
+    # save updated DataFrame
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
     )
 
 
