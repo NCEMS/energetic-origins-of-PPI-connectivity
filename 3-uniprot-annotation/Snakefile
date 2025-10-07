@@ -73,21 +73,6 @@ else:
             f"{WORK_DIR}/python-scripts/make-empty-ptmexchange.py"
 
 
-rule parse_ptmexchange:
-    input:
-        str(DATA_DIR / PTMEXCHANGE)
-    output:
-        str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv")
-    conda:
-        "env/parse-uniprot.yml"
-    shell:
-        f"""
-        python {WORK_DIR}/python-scripts/extract-additional-ptms.py \
-        --input {{input}} \
-        --output {{output}}
-        """
-
-
 rule add_uniprot_info:
     input:
         nodes = INPUT_NODES,
