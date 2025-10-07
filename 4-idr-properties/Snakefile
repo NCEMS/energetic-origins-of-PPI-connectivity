@@ -2,6 +2,7 @@ from pathlib import Path
 
 LOCAL_CONFIG     = config["idr_properties"]
 
+DATA_DIR         = Path(config["data_dir"])
 WORK_DIR         = Path(workflow.basedir)
 INPUT_NODES      = Path(LOCAL_CONFIG["input_nodes"])
 OUTPUT_PREFIX    = config["output_prefix"]
@@ -11,8 +12,8 @@ ORGANISM_TAG     = config["organism_label"]
 MIN_IDR_LENGTH   = LOCAL_CONFIG["min_idr_length"]
 DISORDER_RESI    = LOCAL_CONFIG["disorder_resi_cut"]
 SEQ_COLUMN       = LOCAL_CONFIG["seq_column"]
-DISPROT          = LOCAL_CONFIG["disprot_database"]
-DISPROT_ORGANISM = LOCAL_CONFIG["disprot_organism"]
+DISPROT          = DATA_DIR / LOCAL_CONFIG["disprot_database"]
+DISPROT_ORGANISM = DATA_DIR / LOCAL_CONFIG["disprot_organism"]
 
 rule all:
     input:

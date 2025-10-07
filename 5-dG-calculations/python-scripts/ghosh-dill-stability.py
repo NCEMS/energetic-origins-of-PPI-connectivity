@@ -105,7 +105,7 @@ def main():
     nodes_df["cagiada-dG"] = None
 
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-GhoshDill.pkl"
     )
 
 
