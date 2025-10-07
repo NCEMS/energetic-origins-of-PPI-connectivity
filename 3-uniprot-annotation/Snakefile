@@ -11,12 +11,18 @@ OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM      = LOCAL_CONFIG["organism"]
 ORGANISM_TAG  = config["organism_label"]
+
+# optional flag to determine if we want to integrate ptmexchange data
+USE+PTMEX     = bool(LOCAL_CONFIG.get("use_ptmexchange", True))
 PTMEXCHANGE   = LOCAL_CONFIG["ptmexchange"]
+PTMEX_INPUT   = (DATA_DIR2 / PTMEXCHANGE) if PTMEXCHANGE else None
+PTMEX_OUT     = OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv"
+HAVE_PTMEX    = bool(USE_PTMEX and PTMEXCHANGE and PTMEX_INPUT.exists())
 
 rule all:
     input:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
-        str(OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv"),
+        str(PTMEX_OUT),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
 rule parse_uniprot:
@@ -39,6 +45,32 @@ rule parse_uniprot:
         --organism      "{{params.organism}}" \
         --obo_file      {{params.obo_file}}
         """
+
+if HAVE_PTMEX:
+    rule parse_ptmexchange:
+        input:
+            str(PTMEX_INPUT)
+        output:
+            str(PTMEX_OUT)
+        conda:
+            "env/parse-uniprot.yml"
+        shell:
+            f"""
+            python {WORK_DIR}/python-scripts/extract-additional-ptms.py \
+            --input {{input}} \
+            --output {{output}}
+            """
+else:
+    rule ptmexchange_placeholder:
+        output:
+            str(PTMEX_OUT)
+        conda:
+            "env/parse-uniprot.yml"   # needs pandas/python; reuse your env
+        params:
+            # adjust columns if your downstream expects a different schema
+            header = "Protein,PTM_residue,Protein_pos,PTM_FLR_category"
+        script:
+            f"{WORK_DIR}/python-scripts/make-empty-ptmexchange.py"
 
 
 rule parse_ptmexchange:
