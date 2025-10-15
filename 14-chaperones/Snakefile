@@ -2,38 +2,41 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["chaperone"]
 
-DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
-DATA_DIR2      = Path(config["data_dir"])
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
+DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_SUFFIX  = config["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
-CHAP_DATA      = DATA_DIR2 / LOCAL_CONFIG["chaperone_data"]
-EDGES          = DATA_DIR2 / config["network_centrality"]["edges"]
+CHAP_DATA      = DATA_DIR / LOCAL_CONFIG["chaperone_data"]
+EDGES          = DATA_DIR / config["network_centrality"]["edges"]
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
 rule get_chaperone_info:
     input:
-        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement.pkl"
+        input_nodes = INPUT_NODES
     conda:
         "env/chaperones.yml"
     params:
         output_dir     = OUTPUT_DIR,
         organism_tag   = ORGANISM_TAG,
         output_prefix  = OUTPUT_PREFIX,
+        output_suffix  = OUTPUT_SUFFIX,
         chaperone_data = str(CHAP_DATA),
         edges          = str(EDGES)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-chaperones.py \
         --input_nodes    {{input.input_nodes}}             \
         --output_dir     {{params.output_dir}}             \
         --output_prefix  {{params.output_prefix}}          \
+        --output_suffix  {{params.output_suffix}}          \
         --chap_data      {{params.chaperone_data}}         \
         --edges          {{params.edges}}
         """

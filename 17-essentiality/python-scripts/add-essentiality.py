@@ -2,6 +2,7 @@ import os, sys
 import argparse
 import pandas as pd
 
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -23,7 +24,10 @@ def main():
 
     nodes_df["essentiality_details"] = nodes_df["node"].map(details_dict)
 
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl")
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl"
+    )
+
 
 if __name__ == "__main__":
     main()

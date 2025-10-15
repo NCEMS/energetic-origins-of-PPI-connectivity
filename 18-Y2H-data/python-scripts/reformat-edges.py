@@ -1,11 +1,21 @@
 import pandas as pd
 import argparse
 import re
+import typing
 
-def extract_edge(df, col_name, out1, out2):
+
+def extract_edge(df: pd.DataFrame, col_name: str, out1: str, out2: str) -> pd.DataFrame:
     """
-    Extracts two protein identifiers from a column and adds them to new columns.
+    Args
+        df (pd.DataFrame): input edge dataframe
+        col_name (str): initial column name from which from and to nodes will be extracted
+        out1 (str): output name for the "from" column
+        out2 (str): output name for the "to" column
+
+    Returns
+        Updated pd.DataFrame object with "from" and "to" for each node
     """
+
     def extract_ids(s):
         # Extract all alphanumeric strings starting with Y and followed by 6 characters (e.g., YJL092W)
         temp = s.split()
@@ -14,6 +24,7 @@ def extract_edge(df, col_name, out1, out2):
 
     df[[out1, out2]] = df[col_name].apply(lambda x: pd.Series(extract_ids(x)))
     return df
+
 
 def main():
     # Parse arguments
@@ -34,6 +45,7 @@ def main():
     # Write output
     output_path = f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-edges-reformatted.csv"
     df.to_csv(output_path, index=False)
+
 
 if __name__ == "__main__":
     main()

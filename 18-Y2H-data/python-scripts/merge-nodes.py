@@ -1,12 +1,28 @@
 import pandas as pd
 import argparse
+import typing
 
-def prefix_y2h_columns(df):
-    df = df.rename(columns={
-        col: ("Y2H" + col if col.startswith("_") else "Y2H_" + col)
-        for col in df.columns if col != "node"
-    })
+
+def prefix_y2h_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+
+    Rename columns to include "Y2H_" prefix for clarity in output
+
+    Args
+        df (pd.DataFrame): the input dataframe object to have the column names updates
+
+    Returns
+        The updated pd.DataFrame object with renamed nodes
+    """
+    df = df.rename(
+        columns={
+            col: ("Y2H" + col if col.startswith("_") else "Y2H_" + col)
+            for col in df.columns
+            if col != "node"
+        }
+    )
     return df
+
 
 def main():
     # Parse arguments
@@ -15,6 +31,7 @@ def main():
     parser.add_argument("--Y2H_centralities")
     parser.add_argument("--output_dir")
     parser.add_argument("--output_prefix")
+    parser.add_argument("--output_suffix")
     parser.add_argument("--organism_tag")
     args = parser.parse_args()
 
@@ -29,8 +46,9 @@ def main():
     df1 = df1.merge(df2, on="node", how="left")
 
     # write output
-    output_path = f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential-Y2H.pkl"
+    output_path = f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
     df1.to_pickle(output_path)
+
 
 if __name__ == "__main__":
     main()

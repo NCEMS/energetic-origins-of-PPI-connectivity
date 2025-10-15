@@ -2,14 +2,35 @@ import os
 import sys
 import argparse
 import pandas as pd
+from typing import Dict, Iterable, Any
 
-def get_domain_source(domain_id, prefix_to_source):
+def get_domain_source(domain_id: str, prefix_to_source: Dict[str, str]) -> str:
+    """
+    Determine the domain source based on prefix.
+
+    Args:
+        domain_id: The domain annotation ID (e.g., "PF00001").
+        prefix_to_source: Mapping of annotation ID prefixes to source names.
+
+    Returns:
+        The source name corresponding to the prefix, or "Other" if not matched.
+    """
     for prefix in prefix_to_source:
         if domain_id.startswith(prefix):
             return prefix_to_source[prefix]
     return "Other"
 
-def build_domain_summary(group, sources):
+def build_domain_summary(group: pd.DataFrame, sources" Iterable[str]) -> pd.Series:
+    """
+    Build a summary of domains for a given UniProtKB-AC group.
+
+    Args:
+        group: Subset of the domain dataframe for a single UniProtKB-AC.
+        sources: Iterable of source names to summarize (e.g., ["Pfam", "SMART"]).
+
+    Returns:
+        A pandas Series with counts and domain ranges for each source.
+    """
     result = {}
     for source in sources:
         sub = group[group["Source"] == source]
@@ -68,7 +89,7 @@ def main():
 
     summary_df = pd.DataFrame(summary_rows)
 
-    # Reorder columns so UniProt_ID is first
+    # reorder columns so UniProt_ID is first
     cols = ["UniProtKB-AC"] + [col for col in summary_df.columns if col != "UniProtKB-AC"]
     summary_df = summary_df[cols]
 

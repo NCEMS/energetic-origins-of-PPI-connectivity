@@ -2,9 +2,10 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["oligomer"]
 
-DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
-DATA_DIR2      = Path(config["data_dir"])
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
+DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
+OUTPUT_SUFFIX  = config["output_suffix"]
 OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
@@ -14,11 +15,11 @@ ID_MAP_FILE    = DATA_DIR2 / config["sequence_parsing"]["map_file"]
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv",
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
 rule parse_oligomer_info:
     input:
-        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl"
+        nodes = INPUT_NODES
     conda:
         "env/oligomers.yml"
     params:
@@ -42,22 +43,24 @@ rule parse_oligomer_info:
 
 rule add_oligomer_info:
     input:
-        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones.pkl",
+        input_nodes = INPUT_NODES,
         input_oligs = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-oligomers-per-node.csv"
     conda:
         "env/oligomers.yml"
     params:
         output_dir    = OUTPUT_DIR,
         organism_tag  = ORGANISM_TAG,
-        output_prefix = OUTPUT_PREFIX
+        output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-oligomers.py \
         --input_nodes    {{input.input_nodes}}            \
         --output_dir     {{params.output_dir}}            \
         --output_prefix  {{params.output_prefix}}         \
+        --output_suffix  {{params.output_suffix}}         \
         --organism_tag   {{params.organism_tag}}          \
         --olig_data      {{input.input_oligs}}            \
         """
