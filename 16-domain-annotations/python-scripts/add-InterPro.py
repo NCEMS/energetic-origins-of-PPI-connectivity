@@ -7,6 +7,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--output_prefix", required=True)
+    parser.add_argument("--output_suffix", required=True)
     parser.add_argument("--output_dir", default="processed-data")
     parser.add_argument("--organism_tag", default="s288c")
     parser.add_argument("--input_nodes", required=True)
@@ -18,7 +19,7 @@ def main():
 
     nodes_df = nodes_df.merge(domain_df, on="UniProtKB-AC", how="left")
 
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains.pkl")
+    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl")
 
 if __name__ == "__main__":
     main()

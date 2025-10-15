@@ -18,7 +18,7 @@ def main():
 
     # read in the nodes_df information
     nodes_df = pd.read_pickle(args.nodes)
-    uniprot_ids = set(nodes_df["UniProtKB-AC"])    
+    uniprot_ids = set(nodes_df["UniProtKB-AC"])
 
     with open(args.domain_data, "r") as f:
         total_lines = sum(1 for _ in f)
