@@ -1,4 +1,4 @@
-### Run FoldX scoring 
+### `7-FoldX-scoring`: Run FoldX scoring 
 
 * Runs FoldX scoring on Rosetta-relaxed poses.
 

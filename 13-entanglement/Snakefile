@@ -2,10 +2,11 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["entanglement"]
 
-DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
-DATA_DIR2      = Path(config["data_dir"])
+INPUT_NODES    = (LOCAL_CONFIG["input_nodes"]
+DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_SUFFIX  = config["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 AF2_DATA       = DATA_DIR2 / LOCAL_CONFIG["AF2_data"]
@@ -13,21 +14,22 @@ EXP_DATA       = DATA_DIR2 / LOCAL_CONFIG["exp_data"]
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
 rule integrate_entanglements:
     input:
-        input_nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS.pkl"
+        input_nodes = INPUT_NODES
     conda:
         "env/entanglement.yml"
     params:
         output_dir    = str(OUTPUT_DIR),
         organism_tag  = ORGANISM_TAG,
         output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
         AF2_data      = str(AF2_DATA),
         exp_data      = str(EXP_DATA)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/integrate-entanglement.py \
@@ -35,6 +37,7 @@ rule integrate_entanglements:
         --output_dir     {{params.output_dir}}    \
         --organism_tag   {{params.organism_tag}}  \
         --output_prefix  {{params.output_prefix}} \
+        --output_suffix  {{params.output_suffix}} \
         --AF2_data       {{params.AF2_data}}      \
         --exp_data       {{params.exp_data}}
         """

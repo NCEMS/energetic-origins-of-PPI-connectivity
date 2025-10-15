@@ -2,9 +2,10 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["translation_speed"]
 
-DATA_DIR       = Path(LOCAL_CONFIG["input_dir"])
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_SUFFIX  = config["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 RAW_DATA_DIR   = Path(LOCAL_CONFIG["raw_data_dir"])
@@ -12,26 +13,28 @@ DATA_FILE      = RAW_DATA_DIR / LOCAL_CONFIG["data_file"]
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
 rule add_translation_efficiency:
     input:
-        nodes = f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl",
+        nodes = input_nodes,
         data  = DATA_FILE
     conda:
         "env/add-translation-speed.yml"
     params:
         output_prefix  = OUTPUT_PREFIX,
+        output_suffix  = OUTPUT_SUFFIX,
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-translation-speed.py \
         --nodes            {{input.nodes}} \
         --output_dir       {{params.output_dir}} \
         --output_prefix    {{params.output_prefix}} \
+        --output_suffix    {{params.output_suffix}} \
         --organism_tag     {{params.organism_tag}} \
         --input_file       {{input.data}}
         """

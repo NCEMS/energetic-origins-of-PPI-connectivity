@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import argparse
 from tqdm import tqdm
+
 tqdm.pandas()
 from torch.utils.data import DataLoader, Dataset
 from transformers import DataCollatorForSeq2Seq
@@ -146,7 +147,9 @@ def inference(input_seq, tokenizer_pth, model_pth, chars: list):
     return json_results
 
 
-def run_inference_on_row(row, model_path, tokenizer_path, target_residues, sequence_column):
+def run_inference_on_row(
+    row, model_path, tokenizer_path, target_residues, sequence_column
+):
 
     result = inference(
         input_seq=row[sequence_column],
@@ -256,7 +259,7 @@ def main():
     # run each model in series
     for model_name in model_list:
 
-        print (f"Running predictions for {model_name}")
+        print(f"Running predictions for {model_name}")
 
         model_path = Path(args.gpt_model_path) / model_name
 
@@ -270,13 +273,16 @@ def main():
 
         all_results.extend(results.tolist())
 
-        print ("\n")
+        print("\n")
 
     # convert to a pd.DataFrame
     results_df = pd.DataFrame(all_results)
 
     # save output from all PTMGPT2 predictions to an intermediate .csv file
-    results_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-PTMGPT2-predictions.csv", index=False)
+    results_df.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-PTMGPT2-predictions.csv",
+        index=False,
+    )
 
 
 if __name__ == "__main__":

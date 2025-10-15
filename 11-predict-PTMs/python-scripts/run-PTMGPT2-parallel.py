@@ -10,6 +10,7 @@ tqdm.pandas()
 
 # Note well - this program assumes that you have two CUDA-enabled GPUs with IDs {0, 1}
 
+
 def find_subsequences(sequence: str, chars: list, left=10, right=10):
     subsequences = []
     length = len(sequence)
@@ -17,17 +18,21 @@ def find_subsequences(sequence: str, chars: list, left=10, right=10):
         if c in chars:
             start = max(0, i - left)
             end = min(length, i + right + 1)
-            subsequences.append({
-                "Seq": sequence[start:end],
-                "Pos": i + 1,
-                "text": f"<startoftext>SEQUENCE:{sequence[start:end]}\nLABEL:"
-            })
+            subsequences.append(
+                {
+                    "Seq": sequence[start:end],
+                    "Pos": i + 1,
+                    "text": f"<startoftext>SEQUENCE:{sequence[start:end]}\nLABEL:",
+                }
+            )
     return subsequences
 
 
 def load_model(mdl_pth):
     config = GPT2Config.from_pretrained(mdl_pth)
-    model = GPT2LMHeadModel.from_pretrained(mdl_pth, config=config, ignore_mismatched_sizes=True)
+    model = GPT2LMHeadModel.from_pretrained(
+        mdl_pth, config=config, ignore_mismatched_sizes=True
+    )
     return model.cuda().eval()  # Move to GPU
 
 
@@ -58,11 +63,15 @@ def inference(input_seq, tokenizer, model, chars: list, model_name: str):
     return {
         "Sequence": input_seq,
         "Type": model_name,
-        "Results": [{sub["Pos"]: label} for sub, label in zip(sub_sequences, predicted_labels)]
+        "Results": [
+            {sub["Pos"]: label} for sub, label in zip(sub_sequences, predicted_labels)
+        ],
     }
 
 
-def run_inference_on_row(row, model_path, tokenizer_path, target_residues, sequence_column):
+def run_inference_on_row(
+    row, model_path, tokenizer_path, target_residues, sequence_column
+):
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, padding_side="left")
     model = load_model(model_path)
     return {
@@ -74,12 +83,23 @@ def run_inference_on_row(row, model_path, tokenizer_path, target_residues, seque
             tokenizer=tokenizer,
             model=model,
             chars=target_residues,
-            model_name=model_path.name
-        )
+            model_name=model_path.name,
+        ),
     }
 
 
-def run_inference_gpu(gpu_id, df, model_list, type_dict, tokenizer_path, sequence_column, model_root_path, output_dir, output_prefix, organism_tag):
+def run_inference_gpu(
+    gpu_id,
+    df,
+    model_list,
+    type_dict,
+    tokenizer_path,
+    sequence_column,
+    model_root_path,
+    output_dir,
+    output_prefix,
+    organism_tag,
+):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     tokenizer_path = Path(tokenizer_path)
     output_dir = Path(output_dir)
@@ -92,12 +112,15 @@ def run_inference_gpu(gpu_id, df, model_list, type_dict, tokenizer_path, sequenc
         results = df.progress_apply(
             run_inference_on_row,
             axis=1,
-            args=(model_path, tokenizer_path, target_residues, sequence_column)
+            args=(model_path, tokenizer_path, target_residues, sequence_column),
         )
-        #results_all.extend(results.tolist())
-        #print(f"[GPU {gpu_id}] Done: {model_name}")
+        # results_all.extend(results.tolist())
+        # print(f"[GPU {gpu_id}] Done: {model_name}")
         df_model = pd.DataFrame(results.tolist())
-        model_file = output_dir / f"{output_prefix}-{organism_tag}-{model_name.replace(' ', '_').replace('(', '').replace(')', '').replace(',', '')}_part{gpu_id}.csv"
+        model_file = (
+            output_dir
+            / f"{output_prefix}-{organism_tag}-{model_name.replace(' ', '_').replace('(', '').replace(')', '').replace(',', '')}_part{gpu_id}.csv"
+        )
         df_model.to_csv(model_file, index=False)
         print(f"[GPU {gpu_id}] Saved: {model_file}")
 
@@ -115,50 +138,91 @@ def main():
     args = parser.parse_args()
 
     model_list = [
-        "Acetylation (K)", "Amidation (V)", "Formylation (K)", "Glutarylation (K)", "Glutathionylation (C)",
-        "Hydroxylation (K)", "Hydroxylation (P)", "Malonylation (K)", "Methylation (K)", "Methylation (R)",
-        "N-linked Glycosylation (N)", "O-linked Glycosylation (S,T)", "Phosphorylation (S,T)", "Phosphorylation (Y)",
-        "Succinylation (K)", "Sumoylation (K)", "S-nitrosylation (C)", "S-palmitoylation (C)", "Ubiquitination (K)"
+        "Acetylation (K)",
+        "Amidation (V)",
+        "Formylation (K)",
+        "Glutarylation (K)",
+        "Glutathionylation (C)",
+        "Hydroxylation (K)",
+        "Hydroxylation (P)",
+        "Malonylation (K)",
+        "Methylation (K)",
+        "Methylation (R)",
+        "N-linked Glycosylation (N)",
+        "O-linked Glycosylation (S,T)",
+        "Phosphorylation (S,T)",
+        "Phosphorylation (Y)",
+        "Succinylation (K)",
+        "Sumoylation (K)",
+        "S-nitrosylation (C)",
+        "S-palmitoylation (C)",
+        "Ubiquitination (K)",
     ]
 
     type_dict = {
-        "Acetylation (K)": ["K"], "Amidation (V)": ["V"], "Formylation (K)": ["K"],
-        "Glutarylation (K)": ["K"], "Glutathionylation (C)": ["C"], "Hydroxylation (K)": ["K"],
-        "Hydroxylation (P)": ["P"], "Malonylation (K)": ["K"], "Methylation (K)": ["K"],
-        "Methylation (R)": ["R"], "N-linked Glycosylation (N)": ["N"], "O-linked Glycosylation (S,T)": ["S", "T"],
-        "Phosphorylation (S,T)": ["S", "T"], "Phosphorylation (Y)": ["Y"], "Succinylation (K)": ["K"],
-        "Sumoylation (K)": ["K"], "S-nitrosylation (C)": ["C"], "S-palmitoylation (C)": ["C"], "Ubiquitination (K)": ["K"]
+        "Acetylation (K)": ["K"],
+        "Amidation (V)": ["V"],
+        "Formylation (K)": ["K"],
+        "Glutarylation (K)": ["K"],
+        "Glutathionylation (C)": ["C"],
+        "Hydroxylation (K)": ["K"],
+        "Hydroxylation (P)": ["P"],
+        "Malonylation (K)": ["K"],
+        "Methylation (K)": ["K"],
+        "Methylation (R)": ["R"],
+        "N-linked Glycosylation (N)": ["N"],
+        "O-linked Glycosylation (S,T)": ["S", "T"],
+        "Phosphorylation (S,T)": ["S", "T"],
+        "Phosphorylation (Y)": ["Y"],
+        "Succinylation (K)": ["K"],
+        "Sumoylation (K)": ["K"],
+        "S-nitrosylation (C)": ["C"],
+        "S-palmitoylation (C)": ["C"],
+        "Ubiquitination (K)": ["K"],
     }
 
     sequence_column = "signalP_trimmed_sequence_x"
     nodes_df = pd.read_pickle(args.nodes)
 
-    # take small subset of nodes for testing purposes
-    #nodes_df = nodes_df.head(2)
-
     df = nodes_df[["node", sequence_column]].copy()
-    df = df[df[sequence_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)].copy()
-    print (f"Dropping {len(nodes_df) - len(df)} rows with missing or invalid sequences.")
+    df = df[
+        df[sequence_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)
+    ].copy()
+    print(f"Dropping {len(nodes_df) - len(df)} rows with missing or invalid sequences.")
 
-    df1 = df.iloc[:len(df)//2].reset_index(drop=True)
-    df2 = df.iloc[len(df)//2:].reset_index(drop=True)
+    df1 = df.iloc[: len(df) // 2].reset_index(drop=True)
+    df2 = df.iloc[len(df) // 2 :].reset_index(drop=True)
 
     with mp.get_context("spawn").Pool(2) as pool:
         results_split = pool.starmap(
             run_inference_gpu,
             [
-                (0, df1, model_list, type_dict, args.tokenizer_path, sequence_column, args.gpt_model_path, args.output_dir, args.output_prefix, args.organism_tag),
-                (1, df2, model_list, type_dict, args.tokenizer_path, sequence_column, args.gpt_model_path, args.output_dir, args.output_prefix, args.organism_tag),
-            ]
+                (
+                    0,
+                    df1,
+                    model_list,
+                    type_dict,
+                    args.tokenizer_path,
+                    sequence_column,
+                    args.gpt_model_path,
+                    args.output_dir,
+                    args.output_prefix,
+                    args.organism_tag,
+                ),
+                (
+                    1,
+                    df2,
+                    model_list,
+                    type_dict,
+                    args.tokenizer_path,
+                    sequence_column,
+                    args.gpt_model_path,
+                    args.output_dir,
+                    args.output_prefix,
+                    args.organism_tag,
+                ),
+            ],
         )
-
-    #all_results = [item for sublist in results_split for item in sublist]
-    #results_df = pd.DataFrame(all_results)
-    #output_dir = Path(args.output_dir)
-    #output_dir.mkdir(parents=True, exist_ok=True)
-    #output_file = output_dir / f"{args.output_prefix}-{args.organism_tag}-PTMGPT2-predictions.csv"
-    #results_df.to_csv(output_file, index=False)
-    #print (f"Saved: {output_file}")
 
 
 if __name__ == "__main__":
