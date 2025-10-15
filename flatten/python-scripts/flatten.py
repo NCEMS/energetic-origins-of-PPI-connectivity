@@ -7,6 +7,7 @@ from pint import UnitRegistry
 import pint_pandas
 import numpy as np
 
+
 def flatten_nodes(nodes_df: pd.DataFrame, nested_columns: List[str]) -> pd.DataFrame:
     """
     Takes a nodes_df pd.DataFrame and flattens it such that each row corresponds to one IDR
@@ -43,7 +44,7 @@ def flatten_nodes(nodes_df: pd.DataFrame, nested_columns: List[str]) -> pd.DataF
                 else:
                     new_row[col] = value
 
-            new_row['IDR_index'] = idr_index
+            new_row["IDR_index"] = idr_index
             flattened_rows.append(new_row)
 
     idr_df = pd.DataFrame(flattened_rows)
@@ -54,9 +55,7 @@ def flatten_nodes(nodes_df: pd.DataFrame, nested_columns: List[str]) -> pd.DataF
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--nodes", required=True, help="Input nodes file"
-    )
+    parser.add_argument("--nodes", required=True, help="Input nodes file")
     parser.add_argument(
         "--output_dir",
         default="processed-data",
@@ -64,38 +63,53 @@ def main():
     )
     parser.add_argument("--output_prefix", default="0", help="Prefix for output files")
     parser.add_argument(
-        "--organism_tag",
-        help="Organism label for this run")
+        "--output_suffix", default="final", help="Suffix for output files"
+    )
+    parser.add_argument("--organism_tag", help="Organism label for this run")
     args = parser.parse_args()
 
     nodes_df = pd.read_pickle(args.nodes)
 
     junk = nodes_df.columns
     for j in junk:
-        print (j)
+        print(j)
 
-    columns_to_drop = ["ENSG", "Systematic Name", "dH", "dCp", "dS", "ID", "Unnamed: 0", "cagiada-dG_x", "gene"]
+    columns_to_drop = [
+        "ENSG",
+        "Systematic Name",
+        "dH",
+        "dCp",
+        "dS",
+        "ID",
+        "Unnamed: 0",
+        "cagiada-dG_x",
+        "gene",
+    ]
 
     ureg = UnitRegistry()
 
-    #nodes_df["Ghosh-Dill-dG"] = nodes_df['Ghosh-Dill-dG'].apply(lambda x: ureg(x).to_base_units().magnitude)
+    # nodes_df["Ghosh-Dill-dG"] = nodes_df['Ghosh-Dill-dG'].apply(lambda x: ureg(x).to_base_units().magnitude)
     nodes_df["Ghosh-Dill-dG"] = nodes_df["Ghosh-Dill-dG"].apply(
-        lambda x: x.to("kilocalorie / mole").magnitude if isinstance(x, pint.Quantity) else x
+        lambda x: (
+            x.to("kilocalorie / mole").magnitude if isinstance(x, pint.Quantity) else x
+        )
     )
 
     # the two columns signalP_trimmed_sequence_x and signalP_trimmed_sequence_y do not match as a result of the merge step
     # inside ghosh-dill.py in step 5; TM protein nodes are dropped out, resulting in these columns being empty
-    #if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
-    #nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
-    #columns_to_drop.append("signalP_trimmed_sequence_y")
+    # if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
+    # nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
+    # columns_to_drop.append("signalP_trimmed_sequence_y")
 
     # extra cagiada-dG column introduced; rename the correct one and drop the other
-    nodes_df = nodes_df.rename(columns={"cagiada-dG_y":"cagiada-dG"})
+    nodes_df = nodes_df.rename(columns={"cagiada-dG_y": "cagiada-dG"})
 
     nodes_df = nodes_df.drop(columns=columns_to_drop)
 
     # save as a pickle file with reprocessed columns
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-node.pkl")
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
+    )
 
     # format disorder_predictions as a list
     nodes_df["disorder_predictions"] = nodes_df["disorder_predictions"].apply(
@@ -103,16 +117,24 @@ def main():
     )
 
     # save to a .csv file
-    nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-node.csv", index=False)
+    nodes_df.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.csv",
+        index=False,
+    )
 
     # reformat to expand dictionaries across N IDRs
     nested_columns = ["albatross", "cider", "IDR_sequences"]
 
     flat_nodes_df = flatten_nodes(nodes_df, nested_columns)
 
-    flat_nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-IDR.csv", index=False)
+    flat_nodes_df.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-per-IDR-{args.output_suffix}.csv",
+        index=False,
+    )
 
-    flat_nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-final-per-IDR.pkl")
+    flat_nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-per-IDR-{args.output_suffix}.pkl"
+    )
 
 
 if __name__ == "__main__":
