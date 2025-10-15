@@ -71,7 +71,7 @@ To run the complete pipeline, you will need:
 
 #### Dependencies
 
-Nearly all dependency issues will be handled by Snakemake automatically. However, if you want to rerun all pipeline steps you will need to download and install additional software. Converesly, if you want to skip some steps and use pre-generated data to save time, you will need to download it from CyVerse. 
+Nearly all dependency issues will be handled by Snakemake automatically by building conda environments based on the files in each pipeline's `env` subdirectory. However, if you want to rerun all pipeline steps you will need to download and install additional software. Converesly, if you want to skip some steps and use pre-generated data to save time, you will need to download it from CyVerse. 
 
 If you want to rerun everything, follow the download instructions in the table below to setup SignalP, Rosetta, FoldX, and PTMGPT2.
 

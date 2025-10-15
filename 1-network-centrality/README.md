@@ -1,4 +1,4 @@
-### Annotate network with centrality metrics
+### `1-network-centrality`: Annotate network with centrality metrics
 
 This pipeline step computes the following centrality metrics using a single Snakemake rule. 
 

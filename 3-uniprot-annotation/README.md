@@ -1,4 +1,4 @@
-### Parse UniProt database and add GO terms and additional annotation to each protein
+### `3-uniprot-annotation`: Parse UniProt database and add GO terms and additional annotation to each protein
 
 This pipeline will:
 

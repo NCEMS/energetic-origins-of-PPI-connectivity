@@ -1,4 +1,4 @@
-### Add sequence information and DeepTMHMM annotations to nodes
+### `2-sequence-parsing`: Add sequence information and DeepTMHMM annotations to nodes
 
 This pipeline will:
 

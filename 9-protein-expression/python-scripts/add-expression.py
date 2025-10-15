@@ -6,7 +6,14 @@ import argparse
 import typing
 from typing import List
 
-def add_expression(nodes_df: pd.DataFrame, expression_df: pd.DataFrame, merge_col1, merge_col2, expression_df_cols) -> pd.DataFrame:
+
+def add_expression(
+    nodes_df: pd.DataFrame,
+    expression_df: pd.DataFrame,
+    merge_col1,
+    merge_col2,
+    expression_df_cols,
+) -> pd.DataFrame:
     """
     Merge protein expression information into the nodes_df
 
@@ -22,16 +29,17 @@ def add_expression(nodes_df: pd.DataFrame, expression_df: pd.DataFrame, merge_co
     """
 
     expression_df = expression_df[expression_df_cols]
-    nodes_df = nodes_df.merge(expression_df, how="left", left_on=merge_col1, right_on=merge_col2)
+    nodes_df = nodes_df.merge(
+        expression_df, how="left", left_on=merge_col1, right_on=merge_col2
+    )
 
     return nodes_df
+
 
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--nodes", required=True, help="Input nodes file"
-    )
+    parser.add_argument("--nodes", required=True, help="Input nodes file")
     parser.add_argument(
         "--output_dir",
         default="processed-data",
@@ -39,9 +47,7 @@ def main():
     )
     parser.add_argument("--output_prefix", default="0", help="Prefix for output file")
     parser.add_argument("--output_suffix", default="0", help="Suffix for output file")
-    parser.add_argument(
-        "--organism_tag",
-        help="Organism label for this run")
+    parser.add_argument("--organism_tag", help="Organism label for this run")
     parser.add_argument("--expression_db")
     args = parser.parse_args()
 
@@ -49,15 +55,24 @@ def main():
 
     expression_df = pd.read_csv(args.expression_db)
 
-    expression_df_cols = ["Systematic Name", "Mean molecules per cell", "Median molecules per cell"]
+    expression_df_cols = [
+        "Systematic Name",
+        "Mean molecules per cell",
+        "Median molecules per cell",
+    ]
 
     merge_col1 = "node"
 
     merge_col2 = "Systematic Name"
 
-    nodes_df = add_expression(nodes_df, expression_df, merge_col1, merge_col2, expression_df_cols)
+    nodes_df = add_expression(
+        nodes_df, expression_df, merge_col1, merge_col2, expression_df_cols
+    )
 
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl")
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
+    )
+
 
 if __name__ == "__main__":
     main()

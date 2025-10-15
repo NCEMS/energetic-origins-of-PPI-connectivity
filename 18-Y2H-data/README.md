@@ -1,4 +1,4 @@
-### Add Y2H-derived PPI network to the existing network
+### `18-Y2H-data`: Add Y2H-derived PPI network to the existing network
 
 Note well: this piece of the pipeline breaks the automated flow; you must have already cleaned (see below) the input data and run it through Cytoscape to get `_wkshell` before running this step
 

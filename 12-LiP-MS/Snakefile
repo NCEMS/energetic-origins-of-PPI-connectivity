@@ -2,10 +2,11 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["LiP_MS"]
 
-DATA_DIR1      = Path(LOCAL_CONFIG["input_dir"])
-DATA_DIR2      = Path(config["data_dir"])
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
+DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_SUFFIX  = config["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 REFOLDING1_1   = LOCAL_CONFIG["refolding1_1"]
@@ -29,14 +30,14 @@ rule all:
 
 rule process_refolding:
     input:
-        refolding1_1   = str(DATA_DIR2 / REFOLDING1_1),
-        refolding5_1   = str(DATA_DIR2 / REFOLDING5_1),
-        refolding120_1 = str(DATA_DIR2 / REFOLDING120_1),
-        refolding1_2   = str(DATA_DIR2 / REFOLDING1_2),
-        refolding1_2_2 = str(DATA_DIR2 / REFOLDING1_2_2),        
-        refolding5_2   = str(DATA_DIR2 / REFOLDING5_2),
-        refolding5_2_2 = str(DATA_DIR2 / REFOLDING5_2_2),
-        refolding120_2 = str(DATA_DIR2 / REFOLDING120_2)
+        refolding1_1   = str(DATA_DIR / REFOLDING1_1),
+        refolding5_1   = str(DATA_DIR / REFOLDING5_1),
+        refolding120_1 = str(DATA_DIR / REFOLDING120_1),
+        refolding1_2   = str(DATA_DIR / REFOLDING1_2),
+        refolding1_2_2 = str(DATA_DIR / REFOLDING1_2_2),        
+        refolding5_2   = str(DATA_DIR / REFOLDING5_2),
+        refolding5_2_2 = str(DATA_DIR / REFOLDING5_2_2),
+        refolding120_2 = str(DATA_DIR / REFOLDING120_2)
     conda:
         "env/process-LiP-MS.yml"
     params:
@@ -64,7 +65,7 @@ rule process_refolding:
 
 rule process_heatshock:
     input:
-        heatshock = str(DATA_DIR2 / HEATSHOCK)
+        heatshock = str(DATA_DIR / HEATSHOCK)
     conda:
         "env/process-LiP-MS.yml"
     params:
@@ -85,7 +86,7 @@ rule process_heatshock:
 
 rule process_recovery:
     input:
-        recovery = str(DATA_DIR2 / RECOVERY)
+        recovery = str(DATA_DIR / RECOVERY)
     conda:
         "env/process-LiP-MS.yml"
     params:
@@ -109,21 +110,23 @@ rule merge_results:
         refol = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-refolding.csv",
         heats = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-recovery.csv",
         recov = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-heatshock.csv",
-        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2.pkl"
+        nodes = INPUT_NODES
     conda:
         "env/process-LiP-MS.yml"
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     params:
         output_dir = OUTPUT_DIR,
         organism_tag = ORGANISM_TAG,
-        output_prefix = OUTPUT_PREFIX
+        output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX
     shell:
         f"""
         python {WORK_DIR}/python-scripts/merge-LiP-MS.py \
         --output_dir      {{params.output_dir}}            \
         --organism_tag    {{params.organism_tag}}          \
         --output_prefix   {{params.output_prefix}}         \
+        --output_suffix   {{params.output_suffix}}         \
         --input_nodes     {{input.nodes}}                  \
         --input_refold    {{input.refol}}                  \
         --input_heatshock {{input.heats}}                  \

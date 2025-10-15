@@ -6,35 +6,40 @@ import pint
 import pint_pandas
 from collections import defaultdict
 
+
 def get_size(row):
-    if row['unknown_stoichiometry'] != 1:
-        if pd.isna(row['stoichiometry']) or row['stoichiometry'].strip() == '':
+    if row["unknown_stoichiometry"] != 1:
+        if pd.isna(row["stoichiometry"]) or row["stoichiometry"].strip() == "":
             return 0
-        values = map(int, row['stoichiometry'].split(';'))
+        values = map(int, row["stoichiometry"].split(";"))
         return sum(values)
     else:
         return np.nan
 
+
 def ID_homomer(row):
-    num_subunits = len(row['complex_string'].split(';'))
+    num_subunits = len(row["complex_string"].split(";"))
     if num_subunits == 1:
         return 1
     else:
         return 0
 
+
 def ID_homomers_by_size(node, df_complex, N):
-    matches = df_complex[df_complex['complex_string'].str.contains(node)]
+    matches = df_complex[df_complex["complex_string"].str.contains(node)]
     for _, row in matches.iterrows():
-        if row['oligomer_size'] == N and row['homomer'] == 1:
+        if row["oligomer_size"] == N and row["homomer"] == 1:
             return 1
     return 0
 
+
 def ID_heteromers_by_size(node, df_complex, N):
-    matches = df_complex[df_complex['complex_string'].str.contains(node)]
+    matches = df_complex[df_complex["complex_string"].str.contains(node)]
     for _, row in matches.iterrows():
-        if row['oligomer_size'] == N and row['homomer'] != 1:
+        if row["oligomer_size"] == N and row["homomer"] != 1:
             return 1
     return 0
+
 
 def build_node_complex_maps(df_complex):
     node_to_complex_ids = defaultdict(set)
@@ -48,6 +53,7 @@ def build_node_complex_maps(df_complex):
             node_to_complex_ids[p].add(idx)
             node_to_partners[p].update(set(proteins) - {p})
     return node_to_complex_ids, node_to_partners
+
 
 def count_unknown_stoichiometry_complexes(df_complex):
     node_to_unknown_count = defaultdict(int)
@@ -63,8 +69,10 @@ def count_unknown_stoichiometry_complexes(df_complex):
 
     return node_to_unknown_count
 
+
 def is_node_in_any_complex(node, df_complex):
-    return int(df_complex['complex_string'].str.contains(node).any())
+    return int(df_complex["complex_string"].str.contains(node).any())
+
 
 def main():
 
@@ -85,7 +93,9 @@ def main():
     olig_df = pd.read_csv(args.oligomer_data, sep="\t")
 
     # read in and filter the UniProt ID mapping file
-    id_map = pd.read_csv(args.map_file, sep="\t", header=None, names=["ID","ID-type","mapped-ID"])
+    id_map = pd.read_csv(
+        args.map_file, sep="\t", header=None, names=["ID", "ID-type", "mapped-ID"]
+    )
     id_map = id_map[id_map["ID-type"] == "Gene_OrderedLocusName"]
 
     # process the complex db to get complex participants and stoichiometry for each line in the database
@@ -103,7 +113,7 @@ def main():
             stoichiometry.append(temp)
             if temp == "0":
                 unknown = True
-    
+
         mapped_complex = []
         for p in complex_proteins:
             try:
@@ -114,20 +124,27 @@ def main():
 
         unknown_stoich.append(unknown)
 
-        #print (i, protein_list, complex_proteins, mapped_complex, stoichiometry, unknown)
+        # print (i, protein_list, complex_proteins, mapped_complex, stoichiometry, unknown)
         all_complexes.append(mapped_complex)
         all_stoich.append(stoichiometry)
 
-    out = open(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-oligomers-temp.csv", "w")
+    out = open(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-oligomers-temp.csv",
+        "w",
+    )
     out.write("complex_string,stoichiometry,unknown_stoichiometry\n")
-    for i in range (0, len(all_complexes)):
-        out.write(f"{';'.join(all_complexes[i])},{';'.join(all_stoich[i])},{int(unknown_stoich[i])}\n")
+    for i in range(0, len(all_complexes)):
+        out.write(
+            f"{';'.join(all_complexes[i])},{';'.join(all_stoich[i])},{int(unknown_stoich[i])}\n"
+        )
     out.close()
 
     ###
 
     # read in the temp data, overwriting the difficult to parse olig_df
-    olig_df = pd.read_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-oligomers-temp.csv")
+    olig_df = pd.read_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-oligomers-temp.csv"
+    )
 
     # compute the size of the oligomer
     olig_df["oligomer_size"] = olig_df.apply(get_size, axis=1)
@@ -140,42 +157,66 @@ def main():
     ## homomers
 
     # homodimers
-    nodes["homodimer"] = nodes["node"].apply(lambda x: ID_homomers_by_size(x, olig_df, 2))
+    nodes["homodimer"] = nodes["node"].apply(
+        lambda x: ID_homomers_by_size(x, olig_df, 2)
+    )
 
     # homotrimers
-    nodes["homotrimer"] = nodes["node"].apply(lambda x: ID_homomers_by_size(x, olig_df, 3))
+    nodes["homotrimer"] = nodes["node"].apply(
+        lambda x: ID_homomers_by_size(x, olig_df, 3)
+    )
 
     # homotetramers
-    nodes["homotetramer"] = nodes["node"].apply(lambda x: ID_homomers_by_size(x, olig_df, 4))
-    
+    nodes["homotetramer"] = nodes["node"].apply(
+        lambda x: ID_homomers_by_size(x, olig_df, 4)
+    )
+
     ## heteromers
 
     # heterodimers
-    nodes["heterodimer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 2))
+    nodes["heterodimer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 2)
+    )
 
     # heterotrimers
-    nodes["heterotrimer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 3))
+    nodes["heterotrimer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 3)
+    )
 
     # heterotetramers
-    nodes["heterotetramer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 4))
+    nodes["heterotetramer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 4)
+    )
 
     # heteropentamers
-    nodes["heteropentamer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 5))
+    nodes["heteropentamer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 5)
+    )
 
     # heterohexamers
-    nodes["heterohexamer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 6))
+    nodes["heterohexamer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 6)
+    )
 
     # heteroheptamers
-    nodes["heteroheptamer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 7))
+    nodes["heteroheptamer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 7)
+    )
 
     # heterooctamers
-    nodes["heterooctamer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 8))
+    nodes["heterooctamer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 8)
+    )
 
     # heterononamers
-    nodes["heterononamer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 9))
+    nodes["heterononamer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 9)
+    )
 
     # heterodecamers
-    nodes["heterodecamer"] = nodes["node"].apply(lambda x: ID_heteromers_by_size(x, olig_df, 10))
+    nodes["heterodecamer"] = nodes["node"].apply(
+        lambda x: ID_heteromers_by_size(x, olig_df, 10)
+    )
 
     ## additional information
 
@@ -183,19 +224,30 @@ def main():
     node_to_unknown_counts = count_unknown_stoichiometry_complexes(olig_df)
 
     # is the node in any complex
-    nodes["in_complex"] = nodes["node"].apply(lambda x: is_node_in_any_complex(x, olig_df))
+    nodes["in_complex"] = nodes["node"].apply(
+        lambda x: is_node_in_any_complex(x, olig_df)
+    )
 
     # list of nodes this node forms a complex with
-    nodes["complex_partners"] = nodes["node"].apply(lambda x: ";".join(sorted(node_to_partners.get(x, set()))))
+    nodes["complex_partners"] = nodes["node"].apply(
+        lambda x: ";".join(sorted(node_to_partners.get(x, set())))
+    )
 
     # total number of complexes with unknown stoichiometry containing this node
-    nodes["complex_count_unknown"] = nodes["node"].apply(lambda x: node_to_unknown_counts.get(x, 0))
+    nodes["complex_count_unknown"] = nodes["node"].apply(
+        lambda x: node_to_unknown_counts.get(x, 0)
+    )
 
     # total number of complexes including this node
-    nodes["complex_count"] = nodes["node"].apply(lambda x: len(node_to_complex_ids.get(x, set())))
+    nodes["complex_count"] = nodes["node"].apply(
+        lambda x: len(node_to_complex_ids.get(x, set()))
+    )
 
     ### save the result to file
-    nodes.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-oligomers-per-node.csv", index=False)
+    nodes.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-processed-oligomers-per-node.csv",
+        index=False,
+    )
 
 
 if __name__ == "__main__":

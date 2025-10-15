@@ -2,7 +2,7 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["predict_PTMs"]
 
-DATA_DIR       = Path(LOCAL_CONFIG["input_dir"])
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
@@ -16,16 +16,14 @@ PTM_NAMES      = [ "Acetylation_K", "Amidation_V", "Formylation_K", "Glutarylati
 
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2.pkl",
-        #f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-PTMGPT2.pkl",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions-processed.csv"
 
 
 rule predict_PTMs:
     input:
-        data = f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl"
-        #data = f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr.pkl"
+        INPUT_NODES
     conda:
         "env/ptmgpt2.yml"
     params:
@@ -39,7 +37,7 @@ rule predict_PTMs:
     shell:
         f"""
         python {WORK_DIR}/python-scripts/run-PTMGPT2-parallel.py \
-        --nodes          {{input.data}} \
+        --nodes          {{input}} \
         --output_dir     {{params.output_dir}} \
         --output_prefix  {{params.output_prefix}} \
         --organism_tag   {{params.organism_tag}} \
@@ -58,7 +56,6 @@ rule combine_PTMs:
         import re
         from collections import defaultdict
 
-        # Build mapping of ptm name to part files
         parts = defaultdict(list)
         for f in input:
             ptm = re.sub(r"_part[01]\.csv$", "", os.path.basename(f))
@@ -83,16 +80,17 @@ rule merge_all_PTMs:
 rule process_PTMs:
     input:
         ptms = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv",
-        nodes = f"{DATA_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed.pkl"
+        nodes = INPUT_NODES
     conda:
         "env/ptmgpt2.yml"
     params:
         output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
         output_dir    = str(OUTPUT_DIR),
         organism_tag  = ORGANISM_TAG        
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions-processed.csv",
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2.pkl"
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
         f"""
         python {WORK_DIR}/python-scripts/process-PTMGPT2.py \
@@ -100,5 +98,6 @@ rule process_PTMs:
         --nodes         {{input.nodes}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --organism_tag  {{params.organism_tag}}
         """

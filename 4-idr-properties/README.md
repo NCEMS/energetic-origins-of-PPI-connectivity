@@ -1,4 +1,4 @@
-### Predict IDRs and annotate them with sequence- and ensemble-based properties
+### `4-idr-properties`: Predict IDRs and annotate them with sequence- and ensemble-based properties
 
 * Run metapredict v3.0 on the `trimmed_sequence` of each protein and extract IDR sequences
 * For each IDR sequence, run ALBATROSS to extract properties of the conformation ensemble

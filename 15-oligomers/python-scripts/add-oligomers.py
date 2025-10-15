@@ -5,6 +5,7 @@ import numpy as np
 import pint
 import pint_pandas
 
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -23,9 +24,12 @@ def main():
 
     # merge the nodes_df and olig_df on node
     nodes_df = nodes_df.merge(olig_df, on="node", how="left")
-    
+
     # save the updated nodes_df to file
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl")
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers.pkl"
+    )
+
 
 if __name__ == "__main__":
     main()

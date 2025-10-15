@@ -1,4 +1,4 @@
-### Run Rosetta FastRelax and scoring
+### `6-Rosetta-scoring`: Run Rosetta FastRelax and scoring
 
 * Uses the protein structures from AF2 as inputs to a Rosetta FastRelax protocol with the ref2015 scoring function
 
