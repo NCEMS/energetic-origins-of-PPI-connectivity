@@ -8,7 +8,8 @@ OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
-HALFLIFE_DB   = Path(LOCAL_CONFIG["halflife_db"])
+HALFLIFE_DB1   = Path(LOCAL_CONFIG["halflife_db1"])
+HALFLIFE_DB2   = Path(LOCAL_CONFIG["halflife_db2"])
 
 rule all:
     input:
@@ -24,7 +25,8 @@ rule add_half_life:
         output_suffix  = OUTPUT_SUFFIX,
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG,
-        halflife_db    = str(HALFLIFE_DB)
+        halflife_db1    = str(HALFLIFE_DB1),
+        halflife_db2    = str(HALFLIFE_DB2)
     output:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
@@ -35,5 +37,6 @@ rule add_half_life:
         --output_prefix {{params.output_prefix}} \
         --output_suffix {{params.output_suffix}} \
         --organism_tag  {{params.organism_tag}} \
-        --halflife_db   {{params.halflife_db}} 
+        --halflife_db1  {{params.halflife_db1}} \
+        --halflife_db2  {{params.halflife_db2}}
         """

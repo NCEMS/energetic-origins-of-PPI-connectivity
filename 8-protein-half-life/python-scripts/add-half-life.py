@@ -7,7 +7,7 @@ import typing
 from typing import List
 
 
-def add_halflife(
+def add_halflife_db1(
     nodes_df: pd.DataFrame,
     halflife_df: pd.DataFrame,
     merge_col1,
@@ -60,23 +60,23 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    halflife_df = pd.read_csv(args.halflife_db)
-
-    halflife_df_cols = [
+    # ADD FIRST HALF-LIFE DATABASE HERE
+    halflife_df1 = pd.read_csv(args.halflife_db)
+    halflife_df1_cols = [
         "ENSG",
         "Degradation rates (min-1)",
         "R2 (quality of curve fitting)",
         "t1/2 (min)",
     ]
-
     merge_col1 = "node"
-
     merge_col2 = "ENSG"
-
-    nodes_df = add_halflife(
-        nodes_df, halflife_df, merge_col1, merge_col2, halflife_df_cols
+    nodes_df = add_halflife_db1(
+        nodes_df, halflife_df1, merge_col1, merge_col2, halflife_df1_cols
     )
 
+    # ADD SECOND HALF-LIFE DATABASE HERE
+
+    # output the results to file
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
     )
