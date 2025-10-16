@@ -5,7 +5,7 @@ LOCAL_CONFIG  = config["Rosetta_scoring"]
 INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
 WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
-OUTPUT_SUFFIX = config["output_suffix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 SCORE_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"] / "scores"
 ORGANISM_TAG  = config["organism_label"]
@@ -41,7 +41,7 @@ rule run_Rosetta:
         --organism_tag     {{params.organism_tag}} \
         --nprocessors      {{params.nprocessors}} \
         --relax_executable {{params.relax_exec}} \
-        --nstruc           {{params.nstruc}}
+        --nstruct          {{params.nstruc}}
         """
 
 rule add_scores_to_nodes:
@@ -68,5 +68,5 @@ rule add_scores_to_nodes:
         --output_prefix {{params.output_prefix}} \
         --output_suffix {{params.output_suffix}} \
         --organism_tag  {{params.organism_tag}} \
-        --nstruc        {{params.nstruc}}
+        --nstruct       {{params.nstruc}}
         """

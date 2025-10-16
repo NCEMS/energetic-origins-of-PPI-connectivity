@@ -77,16 +77,16 @@ If you want to rerun everything, follow the download instructions in the table b
 
 | Step Number | Description | Instructions |
 |------------:|:-----------:|:------------:| 
-| 2 |SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. See `2-sequence-parsing/README.md` for additional setup steps.|
-| 6 |Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
+| 2 | SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. See `2-sequence-parsing/README.md` for additional setup steps.|
+| 6 | Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
 | 7 | FoldX for structure scoring | FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`. |
 | 8 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path` |
 
-If you want to use existing date for yeast, follow the instructions in the table below to download it from CyVerse.
+If you want to use existing data for yeast, follow the instructions in the table below to download it from CyVerse.
 
 | Step Number | Description | Instructions |
 |------------:|:-----------:|:------------:|
-| 0           | EBI AlphaFold2 v4 yeast structures | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/0-download-inputs/UP000002311_559292_YEAST_v4-PDBs.tar` |
+| 0           | EBI AlphaFold2 v4 yeast structures | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/0-download-inputs/UP000002311_559292_YEAST_v4-PDBs.tar` and extract its contents into `0-download-inputs/data-files` before running that pipeline step |
 | 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores` and place the files in `6-Rosetta-scoring/processed-data/scores` |
 | 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores` and place the files in `7-FoldX-scoring/processed-data/scores` |
 |11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` and place the contents in `11-predict-PTMs/processed-data`|
@@ -158,9 +158,3 @@ If you would like to run a specific pipeline step in isolation, you can use a co
 in which you must replace `/snakefile/path/Snakefile` and `/configfile/path/config.config` with correct relative paths. For example, from the main repo working directory we could run pipeline step 8 in isolation with the command:
 
 `snakemake --snakefile 8-protein-half-life/Snakefile --configfile config-files/s288c.config --use-conda --conda-frontend conda -c all`
-
-#### Branch notes
-
-Commits pushed on Aug 19 from Aug 18 and Aug 19 convert the entire pipeline to (hopefully) have more robust handling of dependency issues, especially related to pandas/numpy/pint problems. 
-
-The CUDA version used in cagiada-stability.py was also updated. To return to previous version, revert to `be63ba5` (commit message: "Adding Y2H data to pipeline")
