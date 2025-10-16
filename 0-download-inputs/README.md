@@ -64,6 +64,10 @@ The following 43 files are distributed with the GitHub repository. In most cases
 
 * The pipeline will download and unpack the following files:
 
+Before running the pipeline, you must download `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/0-download-inputs/UP000002311_559292_YEAST_v4-PDBs.tar` using `gocommands` (see `../README.md`) and place its contents in `data-files`
+
+Then, execute the pipeline with Snakemake to download and unpack (as needed) the following files:
+
 |Index |Used in step| Filename | Description | Source |
 |:----:|:----------:|:---------|:------------|:-------|
 |1|  2 | orf_trans.fasta | S. cerevisiae protein sequences from Saccharomyces Genome Database| [SGD Archive](http://sgd-archive.yeastgenome.org/sequence/S288C_reference/orf_protein/orf_trans.fasta.gz)|
@@ -74,9 +78,7 @@ The following 43 files are distributed with the GitHub repository. In most cases
 |6|  5 | esm_if1_gvp4_t16_142M_UR50.pt | ESM-IF model for Cagiada et al. 2025 stability predictions | [Electronic Research Data Archive](https://sid.erda.dk/share_redirect/eIZVVNEd8B) |
 |7| 16 | protein2ipr.dat| InterPro domain annotations | [InterPro](https://ftp.ebi.ac.uk/pub/databases/interpro/releases/latest/protein2ipr.dat.gz) |
 
-You will need to download `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/0-download-inputs/UP000002311_559292_YEAST_v4-PDBs.tar` using `gocommands` (see `../README.md`) and place it in `data-files`
-
-* After running this pipeline step, you should have the following file counts in `0-download-inputs/data-files`:
+* After running this pipeline step and downloading the AlphaFold2 structures, you should have the following file counts in `0-download-inputs/data-files`:
 
 | File extension | Number of files |
 |:--------------:|----------------:|
