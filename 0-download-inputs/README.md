@@ -8,7 +8,7 @@
 
 `snakemake --snakefile 0-download-inputs/Snakefile --configfile config-files/s288c.config --c all --use-conda --conda-frontend conda`
 
-* This pipeline will require 60-90 min depending on connection speeds and the write speed of your file system. 
+* This pipeline will require 15-60 min depending on connection speeds and the write speed of your file system. 
 
 *N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~112 GB of data. 
 
