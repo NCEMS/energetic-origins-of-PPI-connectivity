@@ -86,7 +86,8 @@ If you want to use existing date for yeast, follow the instructions in the table
 
 | Step Number | Description | Instructions |
 |------------:|:-----------:|:------------:|
-| 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores` and place the files in `6-Rosetta-scoring/processed-data/scores` |
+| 0           | EBI AlphaFold2 v4 yeast structures | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/0-download-inputs/UP000002311_559292_YEAST_v4-PDBs.tar` |
+| 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores` and place the files in `6-Rosetta-scoring/processed-data/scores` |
 | 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores` and place the files in `7-FoldX-scoring/processed-data/scores` |
 |11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` and place the contents in `11-predict-PTMs/processed-data`|
 
