@@ -5,31 +5,45 @@ LOCAL_CONFIG      = config["download_inputs"]
 WORK_DIR          = Path(workflow.basedir)
 DATA_DIR          = Path(config["data_dir"]).resolve()
 SCRIPTS_DIR       = WORK_DIR / "bash-scripts"
-DOWNLOAD_SCRIPT   = SCRIPTS_DIR / "download-inputs.sh"
 EXTRACTSEQ_SCRIPT = SCRIPTS_DIR / "extract-seqres.sh"
-MANIFEST          = Path(LOCAL_CONFIG["file_manifest"]).resolve()
+UNPACK_SCRIPT     = SCRIPTS_DIR / "unpack-files.sh"
+GOCMD             = Path(LOCAL_CONFIG["gocommands"])
+CYVERSE_DIR       = Path(LOCAL_CONFIG["cyverse_directory"])
 
 rule all:
     input:
         str(DATA_DIR / ".all_files_downloaded"),
+        str(DATA_DIR / ".all_files_unpacked"),
         str(DATA_DIR / ".all_fasta_created")
 
-# download inputs
+# download data from CyVerse with gocommands
 rule download_inputs:
     input: []
     params:
-        script     = str(DOWNLOAD_SCRIPT),
-        target_dir = str(DATA_DIR),
-        manifest   = str(MANIFEST)
+        gocmd       = GOCMD,
+        cyverse_dir = CYVERSE_DIR,
+        output_dir  = WORK_DIR
     output:
         str(DATA_DIR / ".all_files_downloaded")
     shell:
-        "bash {params.script} {params.target_dir} {params.manifest} && touch {output}"
+        "{params.gocmd} get --progress {params.cyverse_dir} {params.output_dir} && touch {output}"
 
-# extract FASTA from PDB 
-rule create_fasta:
+# unpack compressed/archived files
+rule unpack_files:
     input:
         str(DATA_DIR / ".all_files_downloaded")
+    params:
+        output_dir = DATA_DIR,
+        script     = UNPACK_SCRIPT
+    output:
+        str(DATA_DIR / ".all_files_unpacked")
+    shell:
+        "bash {params.script} {params.output_dir} && touch {output}"
+
+# extract fasta sequences from PDB files
+rule create_fasta:
+    input:
+        str(DATA_DIR / ".all_files_unpacked")
     output:
         str(DATA_DIR / ".all_fasta_created")
     params:
