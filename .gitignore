@@ -9,48 +9,6 @@ cyverse-access-token
 # ignore everything in data-files except...
 0-download-inputs/data-files/*
 
-# raw and processed files from The Yeast Interactome
-!0-download-inputs/data-files/The_Yeast_Interactome*
-
-# DisProt raw & processed files
-!0-download-inputs/data-files/DisProt*
-
-# protein half-life data file from 10.1016/j.celrep.2014.10.065
-!0-download-inputs/data-files/1-s2.0-S2211124714009346-mmc2.*
-
-# protein half-life data file from 10.1016/j.cels.2017.08.008
-!0-download-inputs/data-files/1-s2.0-S2405471217303411-mmc2.*
-
-# protein expression data file from 10.1016/j.cels.2017.12.004
-!0-download-inputs/data-files/1-s2.0-S240547121730546X-mmc5.*
-
-# translation efficiency information from https://github.com/schatzlab/scikit-ribo_manuscript/blob/master/Data/skr_weinberg_genesTE.csv
-!0-download-inputs/data-files/skr_weinberg_genesTE.csv
-
-# yeast LiP-MS data
-!0-download-inputs/data-files/*YeastRefold*
-!0-download-inputs/data-files/*HeatShock*
-!0-download-inputs/data-files/*Recovery*
-
-# entanglement data
-!0-download-inputs/data-files/Yeast_*_combined_20250530.csv
-
-# chaperone information
-!0-download-inputs/data-files/1-s2.0-S2211124717312160-mmc2.tsv
-
-# oligomer information
-!0-download-inputs/data-files/559292.tsv
-
-# SGD annotations of inviable (i.e., essential) proteins
-!0-download-inputs/data-files/inviable_annotations*
-
-# CCSB Y2H interaction data from https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt
-!0-download-inputs/data-files/Y2H_*.txt
-!0-download-inputs/data-files/Y2H_*.csv
-
-# meltome atlas
-!0-download-inputs/data-files/meltome-atlas-ma_0010.txt
-
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores
 6-Rosetta-scoring/scores
