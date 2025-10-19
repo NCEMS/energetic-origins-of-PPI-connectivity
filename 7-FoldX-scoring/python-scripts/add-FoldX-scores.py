@@ -92,50 +92,71 @@ def list_replicate_files(score_dir: Path, stems: List[str], nstruct: Optional[in
 
 def parse_foldx_fxout(path: Path) -> Optional[float]:
     """
-    Parse FoldX *.fxout to get total energy (case/space-insensitive column match).
-    Typical fxout is tab-separated with a header containing 'Total energy'.
+    Parse FoldX *.fxout to get total energy.
+    Handles both:
+      1) Headered (TSV) files with a 'Total energy' column.
+      2) Headerless single-line files: '<pdb>\t<total_energy>\t...'
     """
     try:
         with open(path, "r") as f:
-            lines = [ln.strip("\n") for ln in f if ln.strip()]
+            # keep non-empty lines
+            lines = [ln.rstrip("\n") for ln in f if ln.strip()]
     except Exception:
         return None
+    if not lines:
+        return None
 
-    # find header line (tab- or space-separated)
+    # --- Try headered format first (any line that looks like a header) ---
     header_idx = None
     headers = []
     for i, ln in enumerate(lines):
-        # fxout often starts with a header line of columns
         parts = re.split(r"\s*\t\s*|\s{2,}", ln.strip())
-        if len(parts) > 1 and any("total" in h.lower() for h in parts):
+        if len(parts) > 1 and any("energy" in h.lower() for h in parts):
             header_idx = i
             headers = parts
             break
-    if header_idx is None:
+
+    if header_idx is not None:
+        norm = [re.sub(r"[\s_]+", " ", h).strip().lower() for h in headers]
+        try:
+            col_idx = norm.index("total energy")
+        except ValueError:
+            col_idx = next((j for j, h in enumerate(norm) if "total" in h and "energy" in h), None)
+            if col_idx is None:
+                return None
+        # take first data row with a numeric value
+        for ln in lines[header_idx + 1:]:
+            row = re.split(r"\s*\t\s*|\s{2,}", ln.strip())
+            if col_idx < len(row):
+                try:
+                    return float(row[col_idx])
+                except Exception:
+                    continue
         return None
 
-    # normalize header names
-    norm = [re.sub(r"[\s_]+", " ", h).strip().lower() for h in headers]
-    try:
-        col_idx = norm.index("total energy")
-    except ValueError:
-        # try looser contains
-        col_idx = next((i for i, h in enumerate(norm) if "total" in h and "energy" in h), None)
-        if col_idx is None:
-            return None
+    # --- Headerless format: first non-empty line like "<pdb>\t<num>\t..." ---
+    # e.g.: ./YKL048C_0008.pdb\t560.749\t...
+    first = lines[0].strip()
+    toks = re.split(r"\s*\t\s*|\s{2,}", first)
+    if len(toks) >= 2:
+        # Usually toks[0] is a *.pdb path; find the first numeric token after it
+        for tok in toks[1:]:
+            try:
+                return float(tok)
+            except Exception:
+                continue
 
-    # first data row after header
-    if header_idx + 1 >= len(lines):
-        return None
-    row = re.split(r"\s*\t\s*|\s{2,}", lines[header_idx + 1].strip())
-    if col_idx >= len(row):
-        return None
+    # If it's multi-line but still headerless, scan all lines for the first numeric after a *.pdb token
+    for ln in lines:
+        toks = re.split(r"\s*\t\s*|\s{2,}", ln.strip())
+        if len(toks) >= 2 and toks[0].lower().endswith(".pdb"):
+            for tok in toks[1:]:
+                try:
+                    return float(tok)
+                except Exception:
+                    continue
 
-    try:
-        return float(row[col_idx])
-    except Exception:
-        return None
-
+    return None
 
 def parse_foldx_log(path: Path) -> Optional[float]:
     """
@@ -259,7 +280,7 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
     score_dir = Path(args.input_dir)
 
-    # Build per-row dicts, concat to nodes_df
+    # build per-row dicts, concat to nodes_df
     perrow = nodes_df.apply(
         lambda row: per_row_foldx_scores(row, score_dir, args.nstruct),
         axis=1, result_type="expand"

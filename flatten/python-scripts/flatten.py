@@ -84,6 +84,7 @@ def main():
         "Unnamed: 0",
         "cagiada-dG_x",
         "gene",
+        "Protein IDs"
     ]
 
     ureg = UnitRegistry()
