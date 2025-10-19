@@ -15,7 +15,7 @@ def add_halflife_db1(
     halflife_df_cols,
 ) -> pd.DataFrame:
     """
-    Merge protein half life information into the nodes_df
+    Merge protein half life information into the nodes_df for the first halflife df from Christiano et al. 2014
 
     Args:
         nodes_df (pd.DataFrame): nodes_df to be merged with halflife information
@@ -41,6 +41,36 @@ def add_halflife_db1(
     return nodes_df
 
 
+def add_halflife_db2(
+    nodes_df: pd.DataFrame,
+    halflife_df: pd.DataFrame,
+    merge_col1,
+    merge_col2,
+    halflife_df_cols,
+) -> pd.DataFrame:
+    """
+    Merge protein half life information into the nodes_df for the second halflife df from Martin-Perez & Villen 2017
+
+    Args:
+        nodes_df (pd.DataFrame): nodes_df to be merged with halflife information
+        halflife_df (pd.DataFrame): dataframe with halflife information to be merged with nodes_df
+        merge_col1 (str): column within nodes_df to use as ID when merging
+        merge_col2 (str): column within halflife_df to use as ID when merging
+        halflife_df_cols (List[str]): list of the columns within halflife_df to be merged into nodes_df
+
+    Returns:
+        Updated nodes_df (pd.DataFrame) with half life information
+    """
+
+    halflife_df = halflife_df[halflife_df_cols]
+
+    nodes_df = nodes_df.merge(
+        halflife_df, how="left", left_on=merge_col1, right_on=merge_col2
+    )
+
+    return nodes_df
+
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -55,13 +85,14 @@ def main():
         "--output_suffix", default="step8", help="Suffix for output files"
     )
     parser.add_argument("--organism_tag", help="Organism label for this run")
-    parser.add_argument("--halflife_db")
+    parser.add_argument("--halflife_db1")
+    parser.add_argument("--halflife_db2")
     args = parser.parse_args()
 
     nodes_df = pd.read_pickle(args.nodes)
 
     # ADD FIRST HALF-LIFE DATABASE HERE
-    halflife_df1 = pd.read_csv(args.halflife_db)
+    halflife_df1 = pd.read_csv(args.halflife_db1)
     halflife_df1_cols = [
         "ENSG",
         "Degradation rates (min-1)",
@@ -75,6 +106,13 @@ def main():
     )
 
     # ADD SECOND HALF-LIFE DATABASE HERE
+    halflife_df2 = pd.read_csv(args.halflife_db2)
+    halflife_df2_cols = ["Protein IDs", "t_12_avg", "t_12_sd", "t_12_cv"]
+    merge_col1 = "node"
+    merge_col2 = "Protein IDs"
+    nodes_df = add_halflife_db2(
+        nodes_df, halflife_df2, merge_col1, merge_col2, halflife_df2_cols
+    )
 
     # output the results to file
     nodes_df.to_pickle(

@@ -4,6 +4,7 @@ import argparse
 import pandas as pd
 from typing import Dict, Iterable, Any
 
+
 def get_domain_source(domain_id: str, prefix_to_source: Dict[str, str]) -> str:
     """
     Determine the domain source based on prefix.
@@ -20,7 +21,8 @@ def get_domain_source(domain_id: str, prefix_to_source: Dict[str, str]) -> str:
             return prefix_to_source[prefix]
     return "Other"
 
-def build_domain_summary(group: pd.DataFrame, sources" Iterable[str]) -> pd.Series:
+
+def build_domain_summary(group: pd.DataFrame, sources: Iterable[str]) -> pd.Series:
     """
     Build a summary of domains for a given UniProtKB-AC group.
 
@@ -44,6 +46,7 @@ def build_domain_summary(group: pd.DataFrame, sources" Iterable[str]) -> pd.Seri
         result[f"{source}_domains"] = domain_ranges
     return pd.Series(result)
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output_prefix", required=True)
@@ -60,7 +63,7 @@ def main():
         "Description",
         "Domain_Annotation_ID",
         "Start",
-        "End"
+        "End",
     ]
 
     # map annotation prefixes to source names
@@ -72,7 +75,7 @@ def main():
         "SSF": "SUPERFAMILY",
         "TIGR": "TIGRFAM",
         "G3DSA": "Gene3D",
-        "PTHR": "PANTHER"
+        "PTHR": "PANTHER",
     }
 
     # annotate each row with the domain source
@@ -90,11 +93,19 @@ def main():
     summary_df = pd.DataFrame(summary_rows)
 
     # reorder columns so UniProt_ID is first
-    cols = ["UniProtKB-AC"] + [col for col in summary_df.columns if col != "UniProtKB-AC"]
+    cols = ["UniProtKB-AC"] + [
+        col for col in summary_df.columns if col != "UniProtKB-AC"
+    ]
     summary_df = summary_df[cols]
 
-    summary_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-domain-annotations-processed.csv", index=False)
-    summary_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-domain-annotations-processed.pkl")
+    summary_df.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-domain-annotations-processed.csv",
+        index=False,
+    )
+    summary_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-domain-annotations-processed.pkl"
+    )
+
 
 if __name__ == "__main__":
     main()

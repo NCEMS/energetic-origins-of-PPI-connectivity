@@ -7,6 +7,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--output_prefix", required=True)
+    parser.add_argument("--output_suffix", required=True)
     parser.add_argument("--output_dir", default="processed-data")
     parser.add_argument("--organism_tag", default="s288c")
     parser.add_argument("--input_data", required=True)
@@ -25,7 +26,7 @@ def main():
     nodes_df["essentiality_details"] = nodes_df["node"].map(details_dict)
 
     nodes_df.to_pickle(
-        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada-Rosetta-FoldX-halflife-expr-speed-PTMGPT2-LiPMS-entanglement-chaperones-oligomers-domains-essential.pkl"
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
     )
 
 
