@@ -6,12 +6,12 @@ INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 DATA_DIR      = Path(config["data_dir"])
 WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
-OUTPUT_SUFFIX = config["output_suffix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 Y2H_PREFIX    = LOCAL_CONFIG["Y2H_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
-EDGES         = DATA_DIR2 / LOCAL_CONFIG["edges"]
-NODES         = DATA_DIR2 / LOCAL_CONFIG["nodes"]
+EDGES         = DATA_DIR / LOCAL_CONFIG["edges"]
+NODES         = DATA_DIR / LOCAL_CONFIG["nodes"]
 SCRIPT        = LOCAL_CONFIG["centrality_script"]
 COSDISTPATH   = LOCAL_CONFIG["cos_dist_path"]
 TEST_DIR      = LOCAL_CONFIG["test_dir"]
@@ -19,7 +19,7 @@ TEST_DIR      = LOCAL_CONFIG["test_dir"]
 rule all:
     input:
         f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv",
-        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv",
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
 # final reformatting of edges output from Cytoscape
@@ -57,9 +57,10 @@ rule get_Y2H_centralities:
     conda:
         "../1-network-centrality/env/network-analysis.yml"
     output:
-        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv"
     params:
         output_prefix = Y2H_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
         output_dir    = str(OUTPUT_DIR),
         organism_tag  = ORGANISM_TAG,
         test_dir      = str(TEST_DIR),
@@ -70,6 +71,7 @@ rule get_Y2H_centralities:
         --edges         {{input.edges}} \
         --nodes         {{input.nodes}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --output_dir    {{params.output_dir}} \
         --organism_tag  {{params.organism_tag}} \
         --test_dir      {{params.test_dir}} \
@@ -80,7 +82,7 @@ rule get_Y2H_centralities:
 rule add_Y2H_centralities:
     input:
         input_nodes = INPUT_NODES,
-        Y2H_centralities = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-nodes-centrality.csv"
+        Y2H_centralities = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv"
     conda:
         "env/merge-nodes.yml"
     params:

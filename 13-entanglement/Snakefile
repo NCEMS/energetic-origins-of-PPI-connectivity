@@ -2,15 +2,15 @@ from pathlib import Path
 
 LOCAL_CONFIG   = config["entanglement"]
 
-INPUT_NODES    = (LOCAL_CONFIG["input_nodes"]
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
-OUTPUT_SUFFIX  = config["output_suffix"]
+OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
-AF2_DATA       = DATA_DIR2 / LOCAL_CONFIG["AF2_data"]
-EXP_DATA       = DATA_DIR2 / LOCAL_CONFIG["exp_data"]
+AF2_DATA       = DATA_DIR / LOCAL_CONFIG["AF2_data"]
+EXP_DATA       = DATA_DIR / LOCAL_CONFIG["exp_data"]
 
 rule all:
     input:

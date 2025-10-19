@@ -6,7 +6,7 @@ INPUT_NODES    = Path(LOCAL_CONFIG["input_nodes"])
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
 OUTPUT_PREFIX  = config["output_prefix"]
-OUTPUT_SUFFIX  = config["output_suffix"]
+OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 ESSENTIAL_DATA = DATA_DIR / LOCAL_CONFIG["essentiality_data"]
@@ -56,7 +56,7 @@ rule process_essentiality:
 
 rule add_essentiality:
     input:
-        nodes = f"{DATA_DIR1}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl",
+        nodes = INPUT_NODES,
         data  = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-processed.csv"
     conda:
         "env/essentiality.yml"

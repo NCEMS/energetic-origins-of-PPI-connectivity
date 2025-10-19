@@ -5,12 +5,12 @@ LOCAL_CONFIG   = config["oligomer"]
 INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
-OUTPUT_SUFFIX  = config["output_suffix"]
+OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
 OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
-OLIG_DATA      = DATA_DIR2 / LOCAL_CONFIG["oligomer_data"]
-ID_MAP_FILE    = DATA_DIR2 / config["sequence_parsing"]["map_file"]
+OLIG_DATA      = DATA_DIR / LOCAL_CONFIG["oligomer_data"]
+ID_MAP_FILE    = DATA_DIR / config["sequence_parsing"]["map_file"]
 
 rule all:
     input:
