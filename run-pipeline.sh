@@ -28,8 +28,8 @@ STAGES=("0-download-inputs"
 for STAGE in "${STAGES[@]}"; do
     echo -e "\nRunning stage $STAGE with config $CONFIG_FILE"
 
-    if [ "$STAGE" == "5-dG-calculations" ]; then
-        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" -j 2 --cores 96 --use-conda --conda-frontend conda || exit 1
+    if [ "$STAGE" == "11-predict-PTMs" ]; then
+        snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" -j 2 --cores 96 --use-conda --conda-frontend conda --allowed-rules process_PTMs || exit 1
     else
         snakemake --snakefile "$STAGE/Snakefile" --configfile "$CONFIG_FILE" --cores 96 --use-conda --conda-frontend conda || exit 1
     fi
