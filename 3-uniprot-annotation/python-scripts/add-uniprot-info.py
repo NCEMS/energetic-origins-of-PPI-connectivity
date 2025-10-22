@@ -89,42 +89,35 @@ def add_PTM_exchange_info(nodes_df: pd.DataFrame, ptm_file: str) -> pd.DataFrame
 def main():
 
     parser = argparse.ArgumentParser(
-        description="Process UniProt database to extract entries matching organism name."
+        description="Add UniProt database information to PPI network"
     )
     parser.add_argument(
         "--nodes",
-        default="../2-sequence-parsing/processed-data/0_nodes-centrality-seqs-DeepTMHMM.csv",
         type=str,
         help="Path to input nodes csv file",
     )
     parser.add_argument(
         "--uniprot",
-        default="../0-download-inputs/data-files/uniprot_sprot.dat",
         type=str,
         help="Path to input UniProt.dat file",
     )
     parser.add_argument("--ptmexchange")
     parser.add_argument(
         "--output_dir",
-        default="processed-data",
         type=str,
         help="Path to the directory to which data will be written",
     )
     parser.add_argument(
         "--output_prefix",
-        default="0_",
         type=str,
         help="Prefix to be appended to the output file",
     )
     parser.add_argument(
         "--output_suffix",
-        default="step3",
         type=str,
         help="Suffix to be appended to the output file",
     )
-    parser.add_argument(
-        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
-    )
+    parser.add_argument("--organism_tag", help="Tag to label the organism for this run")
     args = parser.parse_args()
 
     # read in the nodes_df file to which annotations will be added

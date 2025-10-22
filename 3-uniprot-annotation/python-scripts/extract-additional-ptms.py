@@ -5,7 +5,9 @@ import argparse
 def main():
 
     # load arguments
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Extract PTM information from proteomeXchange file"
+    )
     parser.add_argument(
         "--input", required=True, help="Path to Yeast_GSB_phospho_all_prots_0125.csv"
     )

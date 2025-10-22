@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG  = config["uniprot_annotation"]
 
+# define variables
 WORK_DIR      = Path(workflow.basedir)
 DATA_DIR      = Path(config["data_dir"])
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
@@ -12,19 +14,21 @@ OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM      = LOCAL_CONFIG["organism"]
 ORGANISM_TAG  = config["organism_label"]
 
-# optional flag to determine if we want to integrate ptmexchange data
+# determine if user wants to integrate ptmexchange data
 USE_PTMEX     = bool(LOCAL_CONFIG.get("use_ptmexchange", True))
 PTMEXCHANGE   = LOCAL_CONFIG["ptmexchange"]
 PTMEX_INPUT   = (DATA_DIR / PTMEXCHANGE) if PTMEXCHANGE else None
 PTMEX_OUT     = OUTPUT_DIR / f"{ORGANISM_TAG}-ptmexchange-parsed.csv"
 HAVE_PTMEX    = bool(USE_PTMEX and PTMEXCHANGE and PTMEX_INPUT.exists())
 
+# overall goal
 rule all:
     input:
         str(OUTPUT_DIR / f"{ORGANISM_TAG}-uniprot_sprot-parsed.csv"),
         str(PTMEX_OUT),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
+# get uniprot record information for all proteins of selected organism
 rule parse_uniprot:
     input:
         uniprot = str(DATA_DIR / "uniprot_sprot.xml")
@@ -46,6 +50,7 @@ rule parse_uniprot:
         --obo_file      {{params.obo_file}}
         """
 
+# extract additional PTMs if requested
 if HAVE_PTMEX:
     rule parse_ptmexchange:
         input:
@@ -60,6 +65,7 @@ if HAVE_PTMEX:
             --input {{input}} \
             --output {{output}}
             """
+# otherwise, make a dummy file
 else:
     rule ptmexchange_placeholder:
         output:
@@ -73,6 +79,7 @@ else:
             f"{WORK_DIR}/python-scripts/make-empty-ptmexchange.py"
 
 
+# add uniprot and proteomexchange information to the node network
 rule add_uniprot_info:
     input:
         nodes = INPUT_NODES,
