@@ -48,7 +48,7 @@ def add_signalP_seq(nodes_df: pd.DataFrame, signalP_predictions: str) -> pd.Data
 def main():
 
     parser = argparse.ArgumentParser(
-        description="Add sequences after signal sequence cleavage with SignalP"
+        description="Add sequences with signal sequence cleavage with SignalP"
     )
     parser.add_argument(
         "--nodes",
@@ -56,25 +56,19 @@ def main():
     )
     parser.add_argument(
         "--output_dir",
-        default="processed-data",
         help="Path to output directory",
     )
     parser.add_argument(
         "--output_prefix",
-        default="0_",
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
         "--output_suffix",
-        default="step2",
         help="Suffix to be applied to output file",
     )
-    parser.add_argument(
-        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
-    )
+    parser.add_argument("--organism_tag", help="Tag to label the organism for this run")
     parser.add_argument(
         "--signalP_predictions",
-        default="processed-data/signalP/prediction_results.txt",
         help="Path to file containing SignalP output",
     )
     args = parser.parse_args()

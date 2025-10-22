@@ -30,7 +30,7 @@ def write_SignalP_fasta(
 def main():
 
     parser = argparse.ArgumentParser(
-        description="Create input fasta file for SignalP6.0; only proteins with classification SP will be included."
+        description="Create input fasta file for SignalP6.0"
     )
     parser.add_argument(
         "--nodes",
@@ -38,18 +38,14 @@ def main():
     )
     parser.add_argument(
         "--output_dir",
-        default="processed-data",
         help="Path to output directory",
     )
     parser.add_argument(
         "--output_prefix",
-        default="0",
         help="Prefix to be applied to output file",
     )
     parser.add_argument("--output_fasta", help="Path to the fasta file to be written")
-    parser.add_argument(
-        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
-    )
+    parser.add_argument("--organism_tag", help="Tag to label the organism for this run")
     args = parser.parse_args()
 
     # create a list of the DeepTMHMM output tags indicating proteins on which SignalP will be run

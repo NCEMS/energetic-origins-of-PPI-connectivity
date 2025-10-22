@@ -7,11 +7,11 @@ This pipeline will:
 (1) Add sequence information for genes as possible (sourced from SGD; see `../0-download-inputs/README.md` for details)
 (2) Add DeepTMHMM predictions for each sequence (DeepTMHMM currently must be run outside of the pipeline and the path to the results included in the .config)
 (3) Predict signal peptide cleavage sites with SignalP
-(4) Add updated sequence information in "trimmed_sequence" column of the annotated node network
+(4) Add updated sequence information in "*_trimmed_sequence" column(s) of the annotated node network
 
-SignalP, when able to access a GPU, will require ~15 min. All other rules in this step require <2 min. 
+* SignalP, when able to access a GPU, will require ~15 min. All other rules in this step require <2 min. 
 
-To run SignalP after downloading and unpacking the directory as described in `../README.md`, follow these steps:
+* To run SignalP after downloading and unpacking the directory as described in `../README.md`, follow these steps:
 
 * You *must* copy the model weights from the model folder into the signalP folder:
 
