@@ -1,5 +1,7 @@
 ### `0-download-inputs`: Download input files used by downstream pipeline steps
 
+Corresponding configuration file section: `DOWNLOAD INPUT FILES`
+
 * This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`
 
 * To run this step in isolation, navigate to the main project directory (i.e., up one level from `0-download-inputs`) and run the command:

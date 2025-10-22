@@ -1,8 +1,8 @@
 ### `1-network-centrality`: Annotate network with centrality metrics
 
-This pipeline step computes the following centrality metrics using a single Snakemake rule. 
+Corresponding configuration file section: `NETWORK CENTRALITY CALCULATIONS`
 
-The centrality metrics computed are:
+This pipeline step computes the following centrality metrics:
 
 * Degree centrality
 * Betweenness centrality
@@ -12,6 +12,8 @@ The centrality metrics computed are:
 * Page rank
 * Information centrality (run on the largest connected subgraph)
 * CentralityCosDist (using each of the above as part of the vector; default is to use all nodes as seed nodes)
+
+Cytoscape version 3.10.3 was used to convert `The_Yeast_Interactome.cys` to edge and node tables. These two files are the key inputs to this step (see the configuration file)
 
 Weighted k-shell decomposition was pre-computed in Cytoscape using The Yeast Interactome as the input; this information is stored in `../0-download-inputs/data-files/The_Yeast_Interactome_nodes.csv`
 
