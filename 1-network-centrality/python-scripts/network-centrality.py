@@ -247,25 +247,18 @@ def main():
         help="Path to the nodes CSV file",
     )
     parser.add_argument("--output_prefix", help="Prefix for output files")
-    parser.add_argument(
-        "--output_dir", default="processed-data", help="Output directory"
-    )
+    parser.add_argument("--output_dir", help="Output directory")
     parser.add_argument(
         "--output_suffix",
-        default="step1",
         help="Output suffix for final annotated nodes from this step",
     )
-    parser.add_argument(
-        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
-    )
+    parser.add_argument("--organism_tag", help="Tag to label the organism for this run")
     parser.add_argument(
         "--CosDistPath",
-        default="1-network-centrality/python-scripts/CentralityCosDist",
         help="Path to directory containing CentralityCosDist code",
     )
     parser.add_argument(
         "--test_dir",
-        default="test",
         help="Path to directory with data required to run tests for this program",
     )
     args = parser.parse_args()
