@@ -202,7 +202,7 @@ def test_CentralityCosDist(test_dir: str, CosDistPath: str):
         "Page_rank",
     ]
     result = add_CentralityCosDist(
-        nodes, f"{test_dir}/outputs", "test_", metrics_list, CosDistPath, seeds=seeds
+        nodes, f"{test_dir}/outputs", "test", metrics_list, CosDistPath, seeds=seeds
     )
 
     # expected scores from the CentralityCosDist documentation

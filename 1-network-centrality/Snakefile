@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# get configfile info for this step
 LOCAL_CONFIG  = config["network_centrality"]
 
+# define variables
 WORK_DIR      = Path(workflow.basedir)
 DATA_DIR      = WORK_DIR / config["data_dir"]
 OUTPUT_PREFIX = config["output_prefix"]
@@ -13,10 +15,12 @@ EDGES         = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
 NODES         = Path(config["data_dir"]) / LOCAL_CONFIG["nodes"]
 COSDISTPATH   = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
 
+# overall goal 
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
+# compute centrality metrics
 rule network_centrality:
     input:
         edges = str(EDGES),
