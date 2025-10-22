@@ -1,20 +1,23 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG  = config["sequence_parsing"]
 
+# define variables
 WORK_DIR      = Path(workflow.basedir)
 INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
-DATA_DIR2     = Path(config["data_dir"])
+DATA_DIR      = Path(config["data_dir"])
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 ORGANISM_TAG  = config["organism_label"]
-MAP_FILE      = DATA_DIR2 / LOCAL_CONFIG["map_file"]
-FASTA         = DATA_DIR2 / LOCAL_CONFIG["fasta"]
+MAP_FILE      = DATA_DIR / LOCAL_CONFIG["map_file"]
+FASTA         = DATA_DIR / LOCAL_CONFIG["fasta"]
 SIGNALP_FASTA = OUTPUT_DIR / str(OUTPUT_PREFIX + "-" + ORGANISM_TAG + LOCAL_CONFIG["signalp_fasta_suffix"])
 SIGNALP_DIR   = WORK_DIR / LOCAL_CONFIG["signalp_dir"]
 ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
+# overall goal
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs-{OUTPUT_SUFFIX}.csv"),
@@ -23,6 +26,7 @@ rule all:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
         
+# add sequence information to nodes
 rule add_sequences:
     input:
         nodes = str(INPUT_NODES),
@@ -49,6 +53,7 @@ rule add_sequences:
         --id_mappings   {{params.id_mappings}}
         """
 
+# add DeepTMHMM protein classes to nodes
 rule add_DeepTMHMM:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs-{OUTPUT_SUFFIX}.csv"),
@@ -73,6 +78,7 @@ rule add_DeepTMHMM:
         --organism_tag  {{params.organism_tag}}
         """
 
+# prepare sequences in format required by SignalP
 rule prepare_SignalP_sequences:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-DeepTMHMM-{OUTPUT_SUFFIX}.csv")
@@ -93,6 +99,7 @@ rule prepare_SignalP_sequences:
         --output_fasta  {{params.output_fasta}}
         """
 
+# run SignalP
 rule run_SignalP:
     input:
         fasta = str(SIGNALP_FASTA)
@@ -113,6 +120,7 @@ rule run_SignalP:
         rm -r {{params.output_dir1}}
         """
 
+# generate final annotated nodes file for this step with SignalP trimmed sequences
 rule SignalP_trim:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt")

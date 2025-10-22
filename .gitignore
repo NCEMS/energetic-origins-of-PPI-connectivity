@@ -6,18 +6,15 @@ cyverse-access-token
 # do not copy SignalP into the GitHub repo
 2-sequence-parsing/python-scripts/signalp6_fast
 
-# ignore everything in data-files except...
+# ignore everything in 0-download-inputs/data-files
 0-download-inputs/data-files/*
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores
-6-Rosetta-scoring/scores
-6-Rosetta-scoring/scores-backup
 6-Rosetta-scoring/old
 7-FoldX-scoring/processed-data/scores
-7-FoldX-scoring/scores-backup
 
-#
+# do not save the checkpoints
 analysis-notebooks/.ipynb_checkpoints
 
 .DS_Store

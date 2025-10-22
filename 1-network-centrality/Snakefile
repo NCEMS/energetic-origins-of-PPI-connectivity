@@ -1,6 +1,6 @@
 from pathlib import Path
 
-# get configfile info for this step
+# read configfile params
 LOCAL_CONFIG  = config["network_centrality"]
 
 # define variables
