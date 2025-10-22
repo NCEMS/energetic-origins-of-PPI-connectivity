@@ -3,6 +3,7 @@ import typing
 from typing import List
 from typing import Optional
 import argparse
+import numpy as np
 
 
 def add_DeepTMHMM(nodes_df: pd.DataFrame, path_to_3line_file: str) -> pd.DataFrame:
@@ -86,19 +87,19 @@ def apply_model_results(
     """
 
     def extract_mask(gene_id: str) -> dict[str, str]:
-        return model_output_dict.get(gene_id, {}).get("mask", None)
+        return model_output_dict.get(gene_id, {}).get("mask", np.nan)
 
     def trim_sequence(gene_id: str) -> Optional[str]:
 
         data = model_output_dict.get(gene_id)
         if not data:
-            return None
+            return np.nan
 
         sequence = data["sequence"]
         mask = data["mask"]
         class_label = data["class"]
 
-        if class_label == "SP":
+        if class_label in ["SP", "SP+TM"]:
             trimmed = "".join([aa for aa, m in zip(sequence, mask) if m != "S"])
         else:
             trimmed = sequence
@@ -106,7 +107,7 @@ def apply_model_results(
         return trimmed.rstrip("*")
 
     def extract_class(gene_id: str) -> dict[str, str]:
-        return model_output_dict.get(gene_id, {}).get("class", None)
+        return model_output_dict.get(gene_id, {}).get("class", np.nan)
 
     # use apply with functions to update the input df
     df["mask"] = df["node"].apply(extract_mask)
@@ -121,32 +122,25 @@ def main():
     parser = argparse.ArgumentParser(description="Add DeepTMHMM annotations to network")
     parser.add_argument(
         "--nodes",
-        default="processed-data/0_nodes-centrality-seqs.csv",
         help="Path to the input nodes CSV file",
     )
     parser.add_argument(
         "--DeepTMHMM",
-        default="DeepTMHMM-runs/s288c-results/all-predictions-s288c.3line",
         help="Path to 3line format prediction file from DeepTMHMM",
     )
     parser.add_argument(
         "--output_dir",
-        default="processed-data",
         help="Path to output directory",
     )
     parser.add_argument(
         "--output_prefix",
-        default="0_",
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
         "--output_suffix",
-        default="step2",
         help="Suffix to be applied to output file",
     )
-    parser.add_argument(
-        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
-    )
+    parser.add_argument("--organism_tag", help="Tag to label the organism for this run")
     args = parser.parse_args()
 
     # load the nodes csv file
@@ -155,9 +149,8 @@ def main():
     # insert DeepTMHMM annotations into df
     nodes_df = add_DeepTMHMM(nodes_df, args.DeepTMHMM)
 
-    # replace missing values/nan with "None"
-    nodes_df = nodes_df.replace("", "None")
-    nodes_df = nodes_df.fillna("None")
+    # drop the "mask" column, we do not need it
+    nodes_df = nodes_df.drop(columns=["mask"])
 
     # save the updated df to file
     nodes_df.to_csv(

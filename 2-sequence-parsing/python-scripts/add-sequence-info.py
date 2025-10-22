@@ -2,6 +2,7 @@ import pandas as pd
 from Bio import SeqIO
 import typing
 import argparse
+import numpy as np
 
 
 def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
@@ -16,12 +17,15 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
         Updated nodes_df containing sequence information where available and "None" where not available
     """
 
+    # read sequences
     seqs = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
 
+    # add column stating which nodes have sequence info
     nodes_df["has_verified_sequence"] = nodes_df["node"].isin(seqs.keys())
 
+    # add the sequence information
     nodes_df["sequence"] = nodes_df["node"].apply(
-        lambda x: str(seqs[x].seq).rstrip("*") if x in seqs else None
+        lambda x: str(seqs[x].seq).rstrip("*") if x in seqs else np.nan
     )
 
     return nodes_df
@@ -49,6 +53,9 @@ def add_mappings(nodes_df: pd.DataFrame, map_file: str) -> pd.DataFrame:
         cross_df[["UniProtKB-AC", "ID"]], left_on="node", right_on="ID", how="left"
     )
 
+    # drop the unneeded "ID" column left over from the merge
+    nodes_df.drop(columns=["ID"], inplace=True)
+
     return nodes_df
 
 
@@ -57,37 +64,29 @@ def main():
     parser = argparse.ArgumentParser(description="Add sequences to PPI network.")
     parser.add_argument(
         "--nodes",
-        default="../1-network-centrality/processed-data/0_nodes-centrality.csv",
         help="Path to the nodes CSV file",
     )
     parser.add_argument(
         "--fasta",
-        default="data-files/orf_trans.fasta",
         help="Path to open reading frame FASTA file",
     )
     parser.add_argument(
         "--output_dir",
-        default="processed-data",
         help="Path to output directory",
     )
     parser.add_argument(
         "--output_prefix",
-        default="0_",
         help="Prefix to be applied to output file",
     )
     parser.add_argument(
         "--output_suffix",
-        default="step2",
         help="Suffix to be applied to output file",
     )
     parser.add_argument(
         "--id_mappings",
-        default="../0-download-inputs/data-files/YEAST_559292_idmapping.dat",
         help="File containing UniProt ID mappings to current identifier",
     )
-    parser.add_argument(
-        "--organism_tag", default="s288c", help="Tag to label the organism for this run"
-    )
+    parser.add_argument("--organism_tag", help="Tag to label the organism for this run")
     args = parser.parse_args()
 
     # load the nodes csv file
@@ -98,10 +97,6 @@ def main():
 
     # add UniProt IDs
     nodes_df = add_mappings(nodes_df, args.id_mappings)
-
-    # replace missing values/nan with "None"
-    nodes_df = nodes_df.replace("", "None")
-    nodes_df = nodes_df.fillna("None")
 
     # write the updated nodes_df to file
     nodes_df.to_csv(

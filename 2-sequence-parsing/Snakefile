@@ -104,7 +104,7 @@ rule run_SignalP:
     input:
         fasta = str(SIGNALP_FASTA)
     conda:
-        str(WORK_DIR / "env/signalp_fast_local.yml")
+        str(WORK_DIR / "env/signalp-fast-local.yml")
     params:
         organism_type = ORGANISM_TYPE,
         output_dir1   = str(OUTPUT_DIR / "signalP"),
@@ -125,7 +125,7 @@ rule SignalP_trim:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-signalP-prediction-results.txt")
     conda:
-        str(WORK_DIR / "env/signalp_trim.yml")
+        str(WORK_DIR / "env/signalp-trim.yml")
     params:
         nodes         = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-DeepTMHMM-{OUTPUT_SUFFIX}.csv"),
         output_dir    = str(OUTPUT_DIR),
