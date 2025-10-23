@@ -174,7 +174,7 @@ def main():
         (seq_len > 0),
         nodes_df["N_aa_disordered"] / seq_len,
         np.nan
-    ).astype(float64)
+    ).astype("float64")
 
     # calculate thresholds for determining what is and is not an IDR based on DisProt database
     percentiles = np.arange(0.05, 1.05, 0.05)
