@@ -299,7 +299,7 @@ def main():
     nodes_df.to_csv(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.csv",
         index=False,
-        na_rep=None,
+        na_rep=np.nan,
     )
 
 
