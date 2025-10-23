@@ -70,51 +70,31 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
+    # print the columns in the pd.DataFrame
     junk = nodes_df.columns
     for j in junk:
         print(j)
 
+    # drop some unneeded columns
     columns_to_drop = [
-        "ENSG",
-        "Systematic Name",
         "dH",
         "dCp",
         "dS",
-        "ID",
-        "Unnamed: 0",
-        "cagiada-dG_x",
-        "gene",
-        "Protein IDs",
     ]
 
-    ureg = UnitRegistry()
+    nodes_df = nodes_df.drop(columns=columns_to_drop)
 
-    # nodes_df["Ghosh-Dill-dG"] = nodes_df['Ghosh-Dill-dG'].apply(lambda x: ureg(x).to_base_units().magnitude)
+    # remove pint units from Ghosh-Dill-dG
+    ureg = UnitRegistry()
     nodes_df["Ghosh-Dill-dG"] = nodes_df["Ghosh-Dill-dG"].apply(
         lambda x: (
             x.to("kilocalorie / mole").magnitude if isinstance(x, pint.Quantity) else x
         )
     )
 
-    # the two columns signalP_trimmed_sequence_x and signalP_trimmed_sequence_y do not match as a result of the merge step
-    # inside ghosh-dill.py in step 5; TM protein nodes are dropped out, resulting in these columns being empty
-    # if nodes_df["signalP_trimmed_sequence_y"].equals(nodes_df["signalP_trimmed_sequence_x"]):
-    # nodes_df = nodes_df.rename(columns={"signalP_trimmed_sequence_x":"signalP_trimmed_sequence"})
-    # columns_to_drop.append("signalP_trimmed_sequence_y")
-
-    # extra cagiada-dG column introduced; rename the correct one and drop the other
-    nodes_df = nodes_df.rename(columns={"cagiada-dG_y": "cagiada-dG"})
-
-    nodes_df = nodes_df.drop(columns=columns_to_drop)
-
     # save as a pickle file with reprocessed columns
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
-    )
-
-    # format disorder_predictions as a list
-    nodes_df["disorder_predictions"] = nodes_df["disorder_predictions"].apply(
-        lambda x: np.array2string(x, separator=",") if isinstance(x, np.ndarray) else x
     )
 
     # save to a .csv file
@@ -124,7 +104,7 @@ def main():
     )
 
     # reformat to expand dictionaries across N IDRs
-    nested_columns = ["albatross", "cider", "IDR_sequences"]
+    nested_columns = ["albatross", "cider", "IDR_sequences", "IDR_ranges"]
 
     flat_nodes_df = flatten_nodes(nodes_df, nested_columns)
 

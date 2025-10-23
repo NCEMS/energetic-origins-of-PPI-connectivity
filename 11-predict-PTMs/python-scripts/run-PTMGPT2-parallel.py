@@ -114,8 +114,6 @@ def run_inference_gpu(
             axis=1,
             args=(model_path, tokenizer_path, target_residues, sequence_column),
         )
-        # results_all.extend(results.tolist())
-        # print(f"[GPU {gpu_id}] Done: {model_name}")
         df_model = pd.DataFrame(results.tolist())
         model_file = (
             output_dir
@@ -135,6 +133,7 @@ def main():
     parser.add_argument("--organism_tag", default="s288c")
     parser.add_argument("--gpt_model_path", required=True)
     parser.add_argument("--tokenizer_path", required=True)
+    parser.add_argument("--seq_column", required=True)
     args = parser.parse_args()
 
     model_list = [
@@ -181,12 +180,11 @@ def main():
         "Ubiquitination (K)": ["K"],
     }
 
-    sequence_column = "signalP_trimmed_sequence_x"
     nodes_df = pd.read_pickle(args.nodes)
 
-    df = nodes_df[["node", sequence_column]].copy()
+    df = nodes_df[["node", args.seq_column]].copy()
     df = df[
-        df[sequence_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)
+        df[args.seq_column].apply(lambda x: isinstance(x, str) and len(x.strip()) > 0)
     ].copy()
     print(f"Dropping {len(nodes_df) - len(df)} rows with missing or invalid sequences.")
 
@@ -203,7 +201,7 @@ def main():
                     model_list,
                     type_dict,
                     args.tokenizer_path,
-                    sequence_column,
+                    args.seq_column,
                     args.gpt_model_path,
                     args.output_dir,
                     args.output_prefix,
@@ -215,7 +213,7 @@ def main():
                     model_list,
                     type_dict,
                     args.tokenizer_path,
-                    sequence_column,
+                    args.seq_column,
                     args.gpt_model_path,
                     args.output_dir,
                     args.output_prefix,

@@ -80,25 +80,26 @@ If you want to rerun everything, follow the download instructions in the table b
 | 2 | SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. See `2-sequence-parsing/README.md` for additional setup steps.|
 | 6 | Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
 | 7 | FoldX for structure scoring | FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`. |
-| 8 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path` |
+| 8 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`; you must also download the Tokenizer from https://github.com/pallucs/PTMGPT2 and add its path to your config file |
 
 If you want to use existing data for yeast, follow the instructions in the table below to download it from CyVerse.
 
 | Step Number | Description | Instructions |
 |------------:|:-----------:|:------------:|
-| 0           | EBI AlphaFold2 v4 yeast structures | Download with `gocommands` (see below) from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/0-download-inputs/UP000002311_559292_YEAST_v4-PDBs.tar` and extract its contents into `0-download-inputs/data-files` before running that pipeline step |
-| 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores` and place the files in `6-Rosetta-scoring/processed-data/scores` |
-| 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/7-FoldX-scoring/scores` and place the files in `7-FoldX-scoring/processed-data/scores` |
-|11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/11-predict-PTMs/` and place the contents in `11-predict-PTMs/processed-data`|
+| 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz` and place the contents of the .tar.gz archive in `6-Rosetta-scoring/processed-data/scores` |
+| 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/7-FoldX-scoring/FoldX-N10_20251019.tar.gz` and place the contents of the .tar.gz archive in `7-FoldX-scoring/processed-data/scores` |
+|11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz` and place the contents of the .tar.gz archive in `11-predict-PTMs/processed-data`|
 
 Check the step-specific subdirectories for any additional setup instructions for SignalP, Rosetta, FoldX, and PTMGPT2.
 
 ##### Using `gocommands` to get data from the CyVerse Data Store
 
 Visit [this page](https://learning.cyverse.org/ds/gocommands/installation) and follow the installation instructions for your system. Once installed, you should have the executable `gocmd` in the folder where you ran the installation command. 
-With `gocmd` available in your system, you can download data from CyVerse like so:
+With `gocmd` available in your system, you can download data required from CyVerse like so:
 
-`gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/additional-data/6-Rosetta-scoring/scores 6-Rosetta-scoring/processed-data/scores`
+`cd 6-Rosetta-scoring`
+`gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz .`
+`tar -xvf Rosetta-N10_20251016.tar.gz`
 
 #### Benchmarks
 
@@ -108,11 +109,11 @@ The main computational bottlenecks are:
 
 | Step Number | Description | Time |
 |------------:|:-----------:|:----:|
-|           0 | Download, unpacking, and pre-processing of input data | Requires up to 2 hours depending on connection speeds and rewrite speed of drive |
-|           5 | dG prediction from structure with Cagiada et al. 2025 method | ~4 h on A16; ~45 min on RTX 6000 Ada Gene |
+|           0 | Download, unpacking, and pre-processing of input data | Requires up to 2 hours depending on connection speeds and write speed of drive |
+|           5 | dG prediction from structure with Cagiada et al. 2025 method | ~4 h on A16; ~25 min on RTX 6000 Ada Gene |
 |           6 | Rosetta structure relxation & scoring | ~24 days with 96 Intel(R) Xeon(R) w9-3495X CPUs with N = 10 replicates per protein |
-|          11 | Prediction of post-translational modifications with PTMGPT2 | ~ 60 h on 2 x RTX 6000 Ada Gene GPUs in coarse-grain parallel |
-|          16 | Extract domain annotations from ~100 GB file | Depending on file system, 5 min - 1 h |
+|          11 | Prediction of post-translational modifications with PTMGPT2 | ~48 h on 2 x RTX 6000 Ada Gene GPUs in coarse-grain parallel |
+|          16 | Extract domain annotations from ~100 GB file | Depending on on your system, 10 min - 2 h |
 
 As you will read below (see the section **Running the pipeline now** below), you can skip these expensive calculations if you just want to rerun the pipeline as-is. If you are running for a new organism/new proteins, these calculations are a one-time cost. 
 
@@ -141,9 +142,9 @@ Note: This gave me issues on a new Ubuntu machine; if you have any problems, try
 
 The `.config` file contains all commonly changed parameters, including those used to label output files. The current config file to run all steps is `config-files/s288c.config`.
 
-### Run the pipeline now
+### Running the pipeline now
 
-You can run the pipeline with the command:
+Once you have downloaded all required code and/or data, you can run the pipeline with the command:
 
 `./run-pipeline.sh [.config file]`
 

@@ -35,6 +35,9 @@ def main():
         TE_df[["gene", "log2_TE"]], how="left", left_on="node", right_on="gene"
     )
 
+    # drop unneeded "gene" column
+    nodes_df.drop(columns=["gene"], inplace=True)
+
     # save the resulting pd.DataFrame containing log2_TE information
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"

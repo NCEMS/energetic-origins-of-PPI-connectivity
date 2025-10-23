@@ -1,14 +1,17 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG  = config["flatten_nodes"]
 
+# define variables
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 WORK_DIR      = Path(workflow.basedir)
-OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_PREFIX = LOCAL_CONFIG["final_prefix"]
 OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
 
+# overall goal
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv"),
@@ -16,6 +19,7 @@ rule all:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-per-IDR-{OUTPUT_SUFFIX}.csv"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-per-IDR-{OUTPUT_SUFFIX}.pkl")
 
+# flatten the PPI network & write final files
 rule flatten_nodes:
     input:
         INPUT_NODES
@@ -37,5 +41,6 @@ rule flatten_nodes:
         --nodes         {{input}} \
         --output_dir    {{params.output_dir}} \
         --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
         --organism_tag  {{params.organism_tag}}
         """

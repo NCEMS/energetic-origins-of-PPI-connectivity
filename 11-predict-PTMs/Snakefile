@@ -12,6 +12,7 @@ OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 TOKENIZER_PATH = Path(LOCAL_CONFIG["tokenizer_path"])
 MODEL_PATH     = Path(LOCAL_CONFIG["gpt_model_path"])
+SEQ_COLUMN     = LOCAL_CONFIG["seq_column"]
 PTM_NAMES      = [ "Acetylation_K", "Amidation_V", "Formylation_K", "Glutarylation_K", "Glutathionylation_C",
                    "Hydroxylation_K", "Hydroxylation_P", "Malonylation_K", "Methylation_K", "Methylation_R",
                    "N-linked_Glycosylation_N", "O-linked_Glycosylation_ST", "Phosphorylation_ST", "Phosphorylation_Y",
@@ -35,7 +36,8 @@ rule predict_PTMs:
         output_dir    = str(OUTPUT_DIR),
         organism_tag  = ORGANISM_TAG,
         tokenizer     = str(TOKENIZER_PATH),
-        model_dir     = str(MODEL_PATH)
+        model_dir     = str(MODEL_PATH),
+        seq_column    = SEQ_COLUMN
     output:
         expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
     shell:
@@ -46,7 +48,8 @@ rule predict_PTMs:
         --output_prefix  {{params.output_prefix}} \
         --organism_tag   {{params.organism_tag}} \
         --tokenizer_path {{params.tokenizer}} \
-        --gpt_model_path {{params.model_dir}}
+        --gpt_model_path {{params.model_dir}} \
+        --seq_column     {{params.seq_column}}
         """
 
 # merge part0 and part1
