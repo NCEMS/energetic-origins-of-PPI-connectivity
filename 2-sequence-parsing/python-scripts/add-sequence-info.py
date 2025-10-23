@@ -14,7 +14,7 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
         fasta_file (str): path to file containing protein sequence information in fasta format
 
     Returns:
-        Updated nodes_df containing sequence information where available and "None" where not available
+        Updated nodes_df containing sequence information where available and np.nan where not available
     """
 
     # read sequences
