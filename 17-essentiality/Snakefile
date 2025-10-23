@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG   = config["essentiality"]
 
+# define variables
 INPUT_NODES    = Path(LOCAL_CONFIG["input_nodes"])
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
@@ -12,12 +14,14 @@ ORGANISM_TAG   = config["organism_label"]
 ESSENTIAL_DATA = DATA_DIR / LOCAL_CONFIG["essentiality_data"]
 STRAIN_FILTER  = LOCAL_CONFIG["strain_filter"]
 
+# overall goal
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-fixed.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-processed.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
+# check for malformed lines and attempt to resolve
 rule fix_input_file:
     input:
         str(ESSENTIAL_DATA)
@@ -31,7 +35,8 @@ rule fix_input_file:
         --input_file  {{input}}                      \
         --output_file {{output}}
         """
-    
+
+# preprocess essentiality information from SGD
 rule process_essentiality:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-essentiality-fixed.csv"
@@ -54,6 +59,7 @@ rule process_essentiality:
         --input_data     {{input}}
         """
 
+# add to annotated nodes_df
 rule add_essentiality:
     input:
         nodes = INPUT_NODES,

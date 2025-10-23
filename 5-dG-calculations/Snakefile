@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG  = config["dG_predictions"]
 
+# define variables
 WORK_DIR      = Path(workflow.basedir)
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OUTPUT_PREFIX = config["output_prefix"]
@@ -9,17 +11,18 @@ OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
 TEMPERATURE   = LOCAL_CONFIG["temperature"]
-RUN_CAGIADA   = LOCAL_CONFIG["run_cagiada"]
 STRUCTURE_DIR = Path(LOCAL_CONFIG["structure_dir"])
 ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
 SEQ_COLUMN    = LOCAL_CONFIG["seq_column"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
 AF2_DIR       = LOCAL_CONFIG["AF2_dir"]
 
+# overall goal
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
 
+# finalize structure selection for dG calculations
 rule prepare_structures:
     input:
         nodes = INPUT_NODES
@@ -45,6 +48,7 @@ rule prepare_structures:
         > {WORK_DIR}/prepare-structures.log
         """
 
+# predict dG with Ghosh-Dill equation
 rule ghosh_dill_stability:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-temp.pkl")
@@ -69,7 +73,7 @@ rule ghosh_dill_stability:
         --seq_column_to_use {{params.seq_column}}
         """
 
-
+# predict |dG| with Cagiada et al. 2025 model
 rule cagiada_stability:
     input:
         nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
@@ -81,8 +85,7 @@ rule cagiada_stability:
         organism_tag   = ORGANISM_TAG,
         structure_dir  = STRUCTURE_DIR,
         ESM_model      = ESM_MODEL,
-        test_dir       = TEST_DIR,
-        run_cagiada    = RUN_CAGIADA
+        test_dir       = TEST_DIR
     output:
         csv = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
     shell:
@@ -95,10 +98,10 @@ rule cagiada_stability:
         --structure_dir  {{params.structure_dir}} \
         --ESM_model      {{params.ESM_model}} \
         --test_dir       {{params.test_dir}} \
-        --run_cagiada    {{params.run_cagiada}} \
         > {WORK_DIR}/cagiada.log
         """
 
+# merge Cagiada et al. 2025 results with nodes_df
 rule merge_cagiada_with_nodes:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl"),

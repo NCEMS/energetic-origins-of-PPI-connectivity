@@ -16,6 +16,7 @@ from datetime import datetime
 
 import biotite.structure as _bs
 
+
 def _filter_backbone_mask(arr, include_oxygen=True):
     """
     Drop-in replacement for the old biotite.structure.filter_backbone.
@@ -30,12 +31,13 @@ def _filter_backbone_mask(arr, include_oxygen=True):
         atom_names = np.asarray(getattr(arr, "atom_name"))
     # Derive a 1-D mask over the atom axis
     if getattr(atom_names, "ndim", 1) == 2:
-        base = atom_names[0]          # assume consistent names across models
+        base = atom_names[0]  # assume consistent names across models
     else:
         base = atom_names
     mask = np.isin(base, names)
     # Ensure boolean dtype
     return mask.astype(bool)
+
 
 # monkey-patch so "from biotite.structure import filter_backbone" resolves
 _bs.filter_backbone = _filter_backbone_mask
@@ -294,19 +296,10 @@ def main():
     )
     parser.add_argument("--organism_tag")
     parser.add_argument("--test_dir")
-    parser.add_argument("--run_cagiada", type=str)
     args = parser.parse_args()
 
     # load network node information
     nodes_df = pd.read_pickle(args.nodes)
-
-    # check to see if running Cagiada stability calculations has been requested by the user
-    if args.run_cagiada == "False":
-        nodes_df["cagiada-dG"] = None
-        nodes_df.to_pickle(
-            f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-nodes-centrality-seqs-DeepTMHMM-SignalP-UniProt-IDRs-albatross-cider-GhoshDill-Cagiada.pkl"
-        )
-        sys.exit()
 
     # check if CUDA is available
     if torch.cuda.is_available():
@@ -325,9 +318,6 @@ def main():
     model, alphabet = esm.pretrained.load_model_and_alphabet(IF_model_name)
     model.to("cuda")
     model.eval().cuda().requires_grad_(False)
-
-    # testing purposes only - select the first ten nodes to run a small set of dG predictions
-    # nodes_df = nodes_df.head(100)
 
     # all protein structure predictions from EBI for S288C contain a single chain with name A
     chainID = "A"
@@ -358,7 +348,7 @@ def main():
             r["has_verified_sequence"] == True
             and r["DeepTMHMM_class"] in ["GLOB", "SP"]
             and pd.notna(r["final_structure_path"])
-            and r["final_structure_source"] != "None"
+            and pd.notna(r["final_structure_source"])
         ):
             structure_path_to_use = r["final_structure_path"]
 
@@ -389,7 +379,11 @@ def main():
     print("Total execution time is:", datetime.now() - start)
 
     nodes_df = nodes_df[["node", "cagiada-dG"]]
-    nodes_df.to_csv(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-cagiada-dG.csv")
+    nodes_df.to_csv(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-cagiada-dG.csv",
+        index=False,
+    )
+
 
 if __name__ == "__main__":
 

@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG   = config["LiP_MS"]
 
+# define variables
 INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
@@ -20,6 +22,7 @@ REFOLDING120_2 = LOCAL_CONFIG["refolding120_2"]
 HEATSHOCK      = LOCAL_CONFIG["heatshock"]
 RECOVERY       = LOCAL_CONFIG["recovery"]
 
+# overall goal
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-refolding.csv",
@@ -27,7 +30,7 @@ rule all:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-recovery.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
-
+# pre-process refolding LiP-MS data
 rule process_refolding:
     input:
         refolding1_1   = str(DATA_DIR / REFOLDING1_1),
@@ -62,7 +65,7 @@ rule process_refolding:
         --refolding120_2 {{input.refolding120_2}}
         """
 
-
+# pre-process heatshock LiP-MS data
 rule process_heatshock:
     input:
         heatshock = str(DATA_DIR / HEATSHOCK)
@@ -83,7 +86,7 @@ rule process_heatshock:
         --heatshock     {{input.heatshock}}
         """
 
-
+# pre-process heatshock recovery data
 rule process_recovery:
     input:
         recovery = str(DATA_DIR / RECOVERY)
@@ -104,7 +107,7 @@ rule process_recovery:
         --recovery      {{input.recovery}}
         """
 
-
+# merge pre-processed data into nodes_df
 rule merge_results:
     input:
         refol = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-processed-refolding.csv",

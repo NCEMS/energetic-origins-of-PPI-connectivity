@@ -10,6 +10,7 @@ import pandas as pd
 # Naming helpers
 # -----------------------------
 
+
 def candidate_stems_for_row(row) -> List[str]:
     """
     Prefer the new labeling scheme (row['node']), but also fall back to
@@ -30,18 +31,22 @@ def candidate_stems_for_row(row) -> List[str]:
     out = []
     for s in stems:
         if s and s not in seen:
-            out.append(s); seen.add(s)
+            out.append(s)
+            seen.add(s)
     return out
+
 
 # -----------------------------
 # Rosetta score parsing
 # -----------------------------
+
 
 def float_or_str(x: str):
     try:
         return float(x)
     except Exception:
         return x
+
 
 def parse_rosetta_sc_first(score_file_path: Path) -> Optional[Dict[str, float]]:
     """
@@ -64,6 +69,7 @@ def parse_rosetta_sc_first(score_file_path: Path) -> Optional[Dict[str, float]]:
                 return dict(zip(header, map(float_or_str, values)))
     return None
 
+
 def _suffix_is_4digit(p: Path) -> Optional[int]:
     """
     Return 4-digit replicate index if name matches *_dddd.sc, else None.
@@ -74,7 +80,10 @@ def _suffix_is_4digit(p: Path) -> Optional[int]:
     suf = stem.split("_")[-1]
     return int(suf) if len(suf) == 4 and suf.isdigit() else None
 
-def list_replicate_files(score_dir: Path, stems: List[str], nstruct: Optional[int]) -> List[Path]:
+
+def list_replicate_files(
+    score_dir: Path, stems: List[str], nstruct: Optional[int]
+) -> List[Path]:
     """
     Return the list of .sc files for the first stem that yields hits.
     If nstruct is provided, look for exact STEM_0001..STEM_NNNN and keep existing.
@@ -85,16 +94,26 @@ def list_replicate_files(score_dir: Path, stems: List[str], nstruct: Optional[in
             files = [score_dir / f"{stem}_{i:04d}.sc" for i in range(1, nstruct + 1)]
             files = [p for p in files if p.exists()]
         else:
-            files = sorted([p for p in score_dir.glob(f"{stem}_*.sc") if _suffix_is_4digit(p) is not None])
+            files = sorted(
+                [
+                    p
+                    for p in score_dir.glob(f"{stem}_*.sc")
+                    if _suffix_is_4digit(p) is not None
+                ]
+            )
         if files:
             return files
     return []
+
 
 # -----------------------------
 # Per-row aggregation
 # -----------------------------
 
-def per_replicate_scores_for_row(row, score_dir: Path, nstruct: Optional[int]) -> Dict[str, object]:
+
+def per_replicate_scores_for_row(
+    row, score_dir: Path, nstruct: Optional[int]
+) -> Dict[str, object]:
     """
     Build a dict with:
       - Rosetta_total_score_0001 .. Rosetta_total_score_NNNN (NaN if missing)
@@ -140,30 +159,47 @@ def per_replicate_scores_for_row(row, score_dir: Path, nstruct: Optional[int]) -
     if totals:
         best_idx = min(totals, key=lambda k: totals[k])
         out["Rosetta_best_total_score"] = totals[best_idx]
-        out["Rosetta_best_pose_index"]  = best_idx
-        out["Rosetta_best_score_file"]  = filemap.get(best_idx)
+        out["Rosetta_best_pose_index"] = best_idx
+        out["Rosetta_best_score_file"] = filemap.get(best_idx)
     else:
         out["Rosetta_best_total_score"] = np.nan
-        out["Rosetta_best_pose_index"]  = np.nan
-        out["Rosetta_best_score_file"]  = None
+        out["Rosetta_best_pose_index"] = np.nan
+        out["Rosetta_best_score_file"] = None
 
     out["Rosetta_n_found"] = int(len(totals))
     return out
+
 
 def main():
     parser = argparse.ArgumentParser(
         description="Add per-replicate Rosetta total_score columns and best score to nodes_df"
     )
-    parser.add_argument("--nodes", required=True, help="Path to pickled nodes DataFrame")
-    parser.add_argument("--output_dir", default="processed-data",
-                        help="Directory to write the updated pickle (default: processed-data)")
-    parser.add_argument("--input_dir", required=True,
-                        help="Directory containing Rosetta .sc files (scores)")
+    parser.add_argument(
+        "--nodes", required=True, help="Path to pickled nodes DataFrame"
+    )
+    parser.add_argument(
+        "--output_dir",
+        default="processed-data",
+        help="Directory to write the updated pickle (default: processed-data)",
+    )
+    parser.add_argument(
+        "--input_dir",
+        required=True,
+        help="Directory containing Rosetta .sc files (scores)",
+    )
     parser.add_argument("--organism_tag", required=True)
-    parser.add_argument("--output_prefix", default="0", help="Prefix for output filename")
-    parser.add_argument("--output_suffix", required=True, help="Suffix for output filename")
-    parser.add_argument("--nstruct", type=int, default=None,
-                        help="Number of replicates per protein. If omitted, auto-discover by glob.")
+    parser.add_argument(
+        "--output_prefix", default="0", help="Prefix for output filename"
+    )
+    parser.add_argument(
+        "--output_suffix", required=True, help="Suffix for output filename"
+    )
+    parser.add_argument(
+        "--nstruct",
+        type=int,
+        default=None,
+        help="Number of replicates per protein. If omitted, auto-discover by glob.",
+    )
     parser.add_argument("--nstruc", type=int, dest="nstruct")  # legacy alias
 
     args = parser.parse_args()
@@ -175,7 +211,8 @@ def main():
     # Build per-row dicts, then concat
     perrow = nodes_df.apply(
         lambda row: per_replicate_scores_for_row(row, score_dir, args.nstruct),
-        axis=1, result_type="expand"
+        axis=1,
+        result_type="expand",
     )
     out_df = pd.concat([nodes_df, perrow], axis=1)
 
@@ -186,6 +223,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_df.to_pickle(out_path)
     print(f"Wrote: {out_path}")
+
 
 if __name__ == "__main__":
     main()

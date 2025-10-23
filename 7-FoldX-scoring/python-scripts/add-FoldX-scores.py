@@ -12,6 +12,7 @@ import pandas as pd
 # Stem discovery (aligns with Rosetta/FoldX naming)
 # -----------------------------
 
+
 def candidate_stems_for_row(row: pd.Series) -> List[str]:
     """Prefer 'node' label; fall back to structure-path stems."""
     stems: List[str] = []
@@ -26,13 +27,15 @@ def candidate_stems_for_row(row: pd.Series) -> List[str]:
     seen, out = set(), []
     for s in stems:
         if s and s not in seen:
-            out.append(s); seen.add(s)
+            out.append(s)
+            seen.add(s)
     return out
 
 
 # -----------------------------
 # File discovery for replicates
 # -----------------------------
+
 
 def first_existing_for_index(score_dir: Path, stem: str, idx: int) -> Optional[Path]:
     """
@@ -52,13 +55,18 @@ def first_existing_for_index(score_dir: Path, stem: str, idx: int) -> Optional[P
     return None
 
 
-def list_replicate_files(score_dir: Path, stems: List[str], nstruct: Optional[int]) -> List[Tuple[int, Path]]:
+def list_replicate_files(
+    score_dir: Path, stems: List[str], nstruct: Optional[int]
+) -> List[Tuple[int, Path]]:
     """
     Try stems in order; return list of (pose_index, file_path) for the first stem that yields hits.
     If nstruct is given, check exactly indices 1..nstruct; otherwise, glob and infer indices.
     """
+
     def infer_idx_from_name(p: Path) -> Optional[int]:
-        m = re.search(r"_(\d{4})(?:\.\w+|_ST\.fxout|_Summary\.fxout|\.fxout|\.log)$", p.name)
+        m = re.search(
+            r"_(\d{4})(?:\.\w+|_ST\.fxout|_Summary\.fxout|\.fxout|\.log)$", p.name
+        )
         return int(m.group(1)) if m else None
 
     for stem in stems:
@@ -89,6 +97,7 @@ def list_replicate_files(score_dir: Path, stems: List[str], nstruct: Optional[in
 # -----------------------------
 # Parsing FoldX outputs
 # -----------------------------
+
 
 def parse_foldx_fxout(path: Path) -> Optional[float]:
     """
@@ -121,11 +130,13 @@ def parse_foldx_fxout(path: Path) -> Optional[float]:
         try:
             col_idx = norm.index("total energy")
         except ValueError:
-            col_idx = next((j for j, h in enumerate(norm) if "total" in h and "energy" in h), None)
+            col_idx = next(
+                (j for j, h in enumerate(norm) if "total" in h and "energy" in h), None
+            )
             if col_idx is None:
                 return None
         # take first data row with a numeric value
-        for ln in lines[header_idx + 1:]:
+        for ln in lines[header_idx + 1 :]:
             row = re.split(r"\s*\t\s*|\s{2,}", ln.strip())
             if col_idx < len(row):
                 try:
@@ -158,6 +169,7 @@ def parse_foldx_fxout(path: Path) -> Optional[float]:
 
     return None
 
+
 def parse_foldx_log(path: Path) -> Optional[float]:
     """
     Parse our per-replicate .log to extract a 'Total' or 'Total energy' style key if present.
@@ -185,8 +197,10 @@ def parse_foldx_log(path: Path) -> Optional[float]:
         except Exception:
             continue
         score = 0
-        if "total" in k: score += 1
-        if "energy" in k: score += 1
+        if "total" in k:
+            score += 1
+        if "energy" in k:
+            score += 1
         candidates.append((score, v))
     if candidates:
         # best match (most total/energy tokens); if tie, take first
@@ -199,7 +213,11 @@ def parse_foldx_log(path: Path) -> Optional[float]:
 def parse_foldx_file(path: Path) -> Optional[float]:
     """Dispatch parser by extension; prefer fxout semantics when available."""
     name = path.name.lower()
-    if name.endswith(".fxout") or name.endswith("_st.fxout") or name.endswith("_summary.fxout"):
+    if (
+        name.endswith(".fxout")
+        or name.endswith("_st.fxout")
+        or name.endswith("_summary.fxout")
+    ):
         v = parse_foldx_fxout(path)
         if v is not None:
             return v
@@ -211,7 +229,10 @@ def parse_foldx_file(path: Path) -> Optional[float]:
 # Per-row aggregation
 # -----------------------------
 
-def per_row_foldx_scores(row: pd.Series, score_dir: Path, nstruct: Optional[int]) -> Dict[str, object]:
+
+def per_row_foldx_scores(
+    row: pd.Series, score_dir: Path, nstruct: Optional[int]
+) -> Dict[str, object]:
     """
     Produce:
       - FoldX_total_energy_0001 .. _NNNN (NaN if missing)
@@ -265,15 +286,22 @@ def per_row_foldx_scores(row: pd.Series, score_dir: Path, nstruct: Optional[int]
 # Main
 # -----------------------------
 
+
 def main():
-    ap = argparse.ArgumentParser(description="Add per-replicate FoldX total energies and best to nodes_df")
+    ap = argparse.ArgumentParser(
+        description="Add per-replicate FoldX total energies and best to nodes_df"
+    )
     ap.add_argument("--nodes", required=True)
-    ap.add_argument("--input_dir", required=True, help="Directory with FoldX outputs (.fxout/.log)")
+    ap.add_argument(
+        "--input_dir", required=True, help="Directory with FoldX outputs (.fxout/.log)"
+    )
     ap.add_argument("--output_dir", default="processed-data")
     ap.add_argument("--organism_tag", required=True)
     ap.add_argument("--output_prefix", default="0")
     ap.add_argument("--output_suffix", required=True)
-    ap.add_argument("--nstruct", type=int, default=None, help="Expected # replicates per protein")
+    ap.add_argument(
+        "--nstruct", type=int, default=None, help="Expected # replicates per protein"
+    )
     ap.add_argument("--nstruc", type=int, dest="nstruct")  # legacy alias
     args = ap.parse_args()
 
@@ -283,7 +311,8 @@ def main():
     # build per-row dicts, concat to nodes_df
     perrow = nodes_df.apply(
         lambda row: per_row_foldx_scores(row, score_dir, args.nstruct),
-        axis=1, result_type="expand"
+        axis=1,
+        result_type="expand",
     )
     out_df = pd.concat([nodes_df, perrow], axis=1)
 
@@ -294,6 +323,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_df.to_pickle(out_path)
     print(f"Wrote: {out_path}")
+
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG   = config["chaperone"]
 
+# define variables
 INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
@@ -12,10 +14,12 @@ ORGANISM_TAG   = config["organism_label"]
 CHAP_DATA      = DATA_DIR / LOCAL_CONFIG["chaperone_data"]
 EDGES          = DATA_DIR / config["network_centrality"]["edges"]
 
+# overall goal
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
+# add chaperone interaction information to nodes_df
 rule get_chaperone_info:
     input:
         input_nodes = INPUT_NODES

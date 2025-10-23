@@ -1,6 +1,8 @@
 ### `18-Y2H-data`: Add Y2H-derived PPI network to the existing network
 
-The source file from CSBB `../0-download-inputs/data-files/Y2H_union.txt` was downloaded from https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt
+Corresponding configuration file section: `Get Y2H network info & integrate`
+
+The source file from CSBB `../0-download-inputs/data-files/Y2H_union.txt` was downloaded from `https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt`
 
 This file was cleaned using the below steps:
 
@@ -14,3 +16,4 @@ The resulting files are `../0-download-inputs/data-files/Y2H_union-clean_nodes.t
 
 Note that this section of the pipeline uses scripts in `../1-network-centrality`; the paths in your .config file should be relative paths from this directory (`18-Y2H-data`) to the directory `../1-network-centrality/python-scripts/...`
 
+Note that the Y2H network is merged into the Yeast Interactome network to enable comparisons between nodes appearing in both datasets. However, this merge step means that *the Y2H data incorporated into the Yeast Interactome are incomplete*, as nodes that appear in the Y2H network but not the Yeast Interactome will be omitted. 

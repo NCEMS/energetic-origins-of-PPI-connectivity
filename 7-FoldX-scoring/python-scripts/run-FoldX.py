@@ -16,6 +16,7 @@ import pandas as pd
 # Selection & naming utilities
 # -----------------------------
 
+
 def should_include(row: pd.Series) -> bool:
     return (
         row.get("has_verified_sequence") is True
@@ -23,6 +24,7 @@ def should_include(row: pd.Series) -> bool:
         and pd.notna(row.get("final_structure_path"))
         and str(row.get("final_structure_source")) != "None"
     )
+
 
 def candidate_stems_for_row(row: pd.Series) -> List[str]:
     """
@@ -44,14 +46,19 @@ def candidate_stems_for_row(row: pd.Series) -> List[str]:
     out = []
     for s in stems:
         if s and s not in seen:
-            out.append(s); seen.add(s)
+            out.append(s)
+            seen.add(s)
     return out
+
 
 # -----------------------------
 # Filesystem helpers
 # -----------------------------
 
-def ensure_symlink(src: Path, dst: Path, copy_instead: bool = False, overwrite: bool = False) -> Path:
+
+def ensure_symlink(
+    src: Path, dst: Path, copy_instead: bool = False, overwrite: bool = False
+) -> Path:
     dst.parent.mkdir(parents=True, exist_ok=True)
     if dst.exists() or dst.is_symlink():
         if overwrite:
@@ -76,6 +83,7 @@ def ensure_symlink(src: Path, dst: Path, copy_instead: bool = False, overwrite: 
     dst.symlink_to(rel)
     return dst
 
+
 def foldx_outputs_exist(output_dir: Path, base: str) -> bool:
     candidates = [
         f"{base}_ST.fxout",
@@ -85,11 +93,15 @@ def foldx_outputs_exist(output_dir: Path, base: str) -> bool:
     ]
     return any((output_dir / c).exists() for c in candidates)
 
+
 # -----------------------------
 # Rosetta replicate discovery
 # -----------------------------
 
-def list_relaxed_pdbs_for_row(row: pd.Series, rosetta_dir: Path, nstruct: Optional[int]) -> List[Tuple[Path, str]]:
+
+def list_relaxed_pdbs_for_row(
+    row: pd.Series, rosetta_dir: Path, nstruct: Optional[int]
+) -> List[Tuple[Path, str]]:
     """
     Return list of (pdb_path, base) where base is STEM_#### without extension.
     Try stems in order; stop at the first that yields any files.
@@ -116,9 +128,11 @@ def list_relaxed_pdbs_for_row(row: pd.Series, rosetta_dir: Path, nstruct: Option
             return found
     return []
 
+
 # -----------------------------
 # FoldX worker
 # -----------------------------
+
 
 def score_with_foldx(args: Tuple[str, str, str, str, bool, bool]) -> Tuple[str, bool]:
     """
@@ -156,7 +170,9 @@ def score_with_foldx(args: Tuple[str, str, str, str, bool, bool]) -> Tuple[str, 
 
     print(f"[FoldX] {base}")
     try:
-        result = subprocess.run(cmd, check=False, text=True, capture_output=True, cwd=output_dir)
+        result = subprocess.run(
+            cmd, check=False, text=True, capture_output=True, cwd=output_dir
+        )
         log_path = output_dir / f"{base}.log"
         with open(log_path, "w") as fh:
             fh.write("=== CMD ===\n" + " ".join(cmd) + "\n\n")
@@ -176,23 +192,54 @@ def score_with_foldx(args: Tuple[str, str, str, str, bool, bool]) -> Tuple[str, 
         sys.stderr.write(f"[ERROR] No recognized FoldX outputs for {base}\n")
     return str(src_pdb), ok
 
+
 # -----------------------------
 # Main
 # -----------------------------
 
+
 def main():
-    p = argparse.ArgumentParser(description="Run FoldX Stability on Rosetta-relaxed PDB replicates (STEM_####.pdb).")
-    p.add_argument("--nodes", required=True, help="Path to nodes DataFrame (.pkl/.pickle or .csv)")
-    p.add_argument("--rosetta_dir", required=True, help="Directory containing Rosetta <stem>_####.pdb files")
-    p.add_argument("--output_dir", required=True, help="Directory where FoldX outputs will be written")
-    p.add_argument("--foldx_executable", default="foldx", help="FoldX binary (default: foldx in PATH)")
-    p.add_argument("--nprocessors", type=int, default=0, help="Parallel workers (0 = cpu_count)")
-    p.add_argument("--copy-instead-of-symlink", action="store_true",
-                   help="Copy PDBs into output_dir instead of creating symlinks")
-    p.add_argument("--overwrite", action="store_true",
-                   help="Re-run even if outputs already exist for a target")
+    p = argparse.ArgumentParser(
+        description="Run FoldX Stability on Rosetta-relaxed PDB replicates (STEM_####.pdb)."
+    )
+    p.add_argument(
+        "--nodes", required=True, help="Path to nodes DataFrame (.pkl/.pickle or .csv)"
+    )
+    p.add_argument(
+        "--rosetta_dir",
+        required=True,
+        help="Directory containing Rosetta <stem>_####.pdb files",
+    )
+    p.add_argument(
+        "--output_dir",
+        required=True,
+        help="Directory where FoldX outputs will be written",
+    )
+    p.add_argument(
+        "--foldx_executable",
+        default="foldx",
+        help="FoldX binary (default: foldx in PATH)",
+    )
+    p.add_argument(
+        "--nprocessors", type=int, default=0, help="Parallel workers (0 = cpu_count)"
+    )
+    p.add_argument(
+        "--copy-instead-of-symlink",
+        action="store_true",
+        help="Copy PDBs into output_dir instead of creating symlinks",
+    )
+    p.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Re-run even if outputs already exist for a target",
+    )
     p.add_argument("--dry-run", action="store_true", help="Plan only; do not run FoldX")
-    p.add_argument("--nstruct", type=int, default=None, help="Number of Rosetta replicates per protein")
+    p.add_argument(
+        "--nstruct",
+        type=int,
+        default=None,
+        help="Number of Rosetta replicates per protein",
+    )
 
     args = p.parse_args()
 
@@ -203,11 +250,16 @@ def main():
         nodes = pd.read_csv(args.nodes)
 
     rosetta_dir = Path(args.rosetta_dir).resolve()
-    output_dir  = Path(args.output_dir).resolve()
+    output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    if shutil.which(args.foldx_executable) is None and not Path(args.foldx_executable).exists():
-        sys.stderr.write(f"[ERROR] FoldX executable not found: {args.foldx_executable}\n")
+    if (
+        shutil.which(args.foldx_executable) is None
+        and not Path(args.foldx_executable).exists()
+    ):
+        sys.stderr.write(
+            f"[ERROR] FoldX executable not found: {args.foldx_executable}\n"
+        )
         sys.exit(1)
 
     # Build (row, replicate) jobs
@@ -226,26 +278,30 @@ def main():
             continue
 
         for pdb_path, base in pairs:
-            jobs.append((
-                str(pdb_path),
-                base,  # STEM_#### (also used for output-file)
-                args.foldx_executable,
-                str(output_dir),
-                args.copy_instead_of_symlink,
-                args.overwrite
-            ))
+            jobs.append(
+                (
+                    str(pdb_path),
+                    base,  # STEM_#### (also used for output-file)
+                    args.foldx_executable,
+                    str(output_dir),
+                    args.copy_instead_of_symlink,
+                    args.overwrite,
+                )
+            )
 
     if selected_rows == 0:
         print("[INFO] No rows selected by gating; nothing to do.")
         return
 
     if rows_without_inputs:
-        print(f"[WARN] {rows_without_inputs} selected rows had no matching Rosetta replicates in {rosetta_dir}")
+        print(
+            f"[WARN] {rows_without_inputs} selected rows had no matching Rosetta replicates in {rosetta_dir}"
+        )
 
     # If not overwriting, drop jobs whose outputs already exist
     if not args.overwrite:
         pre = []
-        for (pdb_path, base, fx, outdir, copyflag, overwrite) in jobs:
+        for pdb_path, base, fx, outdir, copyflag, overwrite in jobs:
             if not foldx_outputs_exist(Path(outdir), base):
                 pre.append((pdb_path, base, fx, outdir, copyflag, overwrite))
         jobs = pre
@@ -269,7 +325,9 @@ def main():
     ok = [p for (p, s) in results if s]
     bad = [p for (p, s) in results if not s]
 
-    print(f"\n[SUMMARY] FoldX complete. OK replicates: {len(ok)}  Failed replicates: {len(bad)}")
+    print(
+        f"\n[SUMMARY] FoldX complete. OK replicates: {len(ok)}  Failed replicates: {len(bad)}"
+    )
     if bad:
         print("Failed PDBs:")
         for p in bad:
@@ -279,6 +337,7 @@ def main():
                 fh.write(f"{p}\n")
     else:
         (output_dir / ".all_foldx_done").touch()
+
 
 if __name__ == "__main__":
     main()

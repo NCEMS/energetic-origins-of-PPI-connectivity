@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG  = config["Y2H"]
 
+# define variables
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 DATA_DIR      = Path(config["data_dir"])
 WORK_DIR      = Path(workflow.basedir)
@@ -16,6 +18,7 @@ SCRIPT        = LOCAL_CONFIG["centrality_script"]
 COSDISTPATH   = LOCAL_CONFIG["cos_dist_path"]
 TEST_DIR      = LOCAL_CONFIG["test_dir"]
 
+# overall goal
 rule all:
     input:
         f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv",

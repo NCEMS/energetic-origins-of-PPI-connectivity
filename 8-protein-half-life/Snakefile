@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile information
 LOCAL_CONFIG  = config["protein_half_life"]
 
+# define variables
 WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
@@ -11,10 +13,12 @@ ORGANISM_TAG  = config["organism_label"]
 HALFLIFE_DB1   = Path(LOCAL_CONFIG["halflife_db1"])
 HALFLIFE_DB2   = Path(LOCAL_CONFIG["halflife_db2"])
 
+# overall goal
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
+# integrate half-life data into PPI network
 rule add_half_life:
     input:
         INPUT_NODES

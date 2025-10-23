@@ -1,5 +1,7 @@
 ### `9-protein-expression`: Incorporate protein expression data
 
+Corresponding configfile section: `Protein expression`
+
 * Merges protein expression data into the dataset
 * The default .config file will merge in data from `../0-download-inputs/data-files/1-s2.0-S240547121730546X-mmc5.csv`, which is from Table S4 of 10.1016/j.cels.2017.12.004
 

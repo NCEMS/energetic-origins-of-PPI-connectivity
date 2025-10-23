@@ -6,18 +6,24 @@ from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 import numpy as np
 
+
 def main():
 
     parser = argparse.ArgumentParser(description="Write metapredict input FASTA")
     parser.add_argument("--input_nodes", help="Path to input pd.DataFrame nodes")
     parser.add_argument("--output_fasta", help="Name/path of fasta file to be written")
-    parser.add_argument("--column", help="Column name corresponding to sequences on which IDR predictions will be run")
+    parser.add_argument(
+        "--column",
+        help="Column name corresponding to sequences on which IDR predictions will be run",
+    )
     args = parser.parse_args()
 
     df = pd.read_csv(args.input_nodes)
 
     if args.column not in df.columns:
-        print (f"{args.column} does not appear in the below list of column names.\n{list(df.columns)}")
+        print(
+            f"{args.column} does not appear in the below list of column names.\n{list(df.columns)}"
+        )
         sys.exit()
 
     df = df.dropna(subset=[args.column])
@@ -35,6 +41,7 @@ def main():
         print(f"Wrote {len(records)} sequences to {args.output_fasta}")
     else:
         print("No valid sequences found. No FASTA file written.")
+
 
 if __name__ == "__main__":
     main()

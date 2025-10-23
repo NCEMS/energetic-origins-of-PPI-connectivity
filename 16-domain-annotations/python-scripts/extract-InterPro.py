@@ -6,6 +6,7 @@ import pint
 import pint_pandas
 from tqdm import tqdm
 
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -26,12 +27,15 @@ def main():
     output_file = f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-domain-annotations.csv"
 
     with open(args.domain_data, "r") as infile, open(output_file, "w") as outfile:
-        for line in tqdm(infile, total=total_lines, desc="Filtering InterPro", unit="lines"):
+        for line in tqdm(
+            infile, total=total_lines, desc="Filtering InterPro", unit="lines"
+        ):
             if not line.strip():
                 continue
             uniprot = line.split("\t")[0]
             if uniprot in uniprot_ids:
                 outfile.write(line)
+
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ import sys
 import argparse
 import pandas as pd
 
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -19,7 +20,10 @@ def main():
 
     nodes_df = nodes_df.merge(domain_df, on="UniProtKB-AC", how="left")
 
-    nodes_df.to_pickle(f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl")
+    nodes_df.to_pickle(
+        f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
+    )
+
 
 if __name__ == "__main__":
     main()
