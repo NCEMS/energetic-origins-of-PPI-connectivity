@@ -6,12 +6,13 @@ import argparse
 import typing
 from typing import List, Dict, Optional
 
+
 def add_halflife_db1(
     nodes_df: pd.DataFrame,
     halflife_df: pd.DataFrame,
-    merge_col1: str,                      # column in nodes_df
-    merge_col2: str,                      # ORIGINAL column name in halflife_df
-    halflife_df_cols: List[str],         # columns to keep (OLD names)
+    merge_col1: str,  # column in nodes_df
+    merge_col2: str,  # ORIGINAL column name in halflife_df
+    halflife_df_cols: List[str],  # columns to keep (OLD names)
     rename_map: Optional[Dict[str, str]] = None,  # {old_name: new_name}
 ) -> pd.DataFrame:
     """
@@ -42,9 +43,9 @@ def add_halflife_db1(
 def add_halflife_db2(
     nodes_df: pd.DataFrame,
     halflife_df: pd.DataFrame,
-    merge_col1: str,                      # column in nodes_df
-    merge_col2: str,                      # ORIGINAL column name in halflife_df
-    halflife_df_cols: List[str],         # columns to keep (OLD names)
+    merge_col1: str,  # column in nodes_df
+    merge_col2: str,  # ORIGINAL column name in halflife_df
+    halflife_df_cols: List[str],  # columns to keep (OLD names)
     rename_map: Optional[Dict[str, str]] = None,  # {old_name: new_name}
 ) -> pd.DataFrame:
     """
@@ -66,6 +67,7 @@ def add_halflife_db2(
         halflife_df, how="left", left_on=merge_col1, right_on=right_on_key
     )
     return nodes_df
+
 
 def main():
 
@@ -95,10 +97,12 @@ def main():
         "R2 (quality of curve fitting)",
         "t1/2 (min)",
     ]
-    rename_map1 = {"ENSG":"ENSG",
-        "Degradation rates (min-1)":"Christiano_degradation_rate(min-1)",
-        "R2 (quality of curve fitting)":"Christiano_degradation_R2",
-        "t1/2 (min)":"Christiano_halflife_min"}
+    rename_map1 = {
+        "ENSG": "ENSG",
+        "Degradation rates (min-1)": "Christiano_degradation_rate(min-1)",
+        "R2 (quality of curve fitting)": "Christiano_degradation_R2",
+        "t1/2 (min)": "Christiano_halflife_min",
+    }
     merge_col1 = "node"
     merge_col2 = "ENSG"
     nodes_df = add_halflife_db1(
@@ -108,7 +112,12 @@ def main():
     # ADD SECOND HALF-LIFE DATABASE HERE
     halflife_df2 = pd.read_csv(args.halflife_db2)
     halflife_df2_cols = ["Protein IDs", "t_12_avg", "t_12_sd", "t_12_cv"]
-    rename_map2 = {"Protein IDs":"Protein IDs", "t_12_avg":"Villen_halflife_hours", "t_12_sd":"Villen_halflife_SD_hours", "t_12_cv":"Villen_halflife_CV_hours"}
+    rename_map2 = {
+        "Protein IDs": "Protein IDs",
+        "t_12_avg": "Villen_halflife_hours",
+        "t_12_sd": "Villen_halflife_SD_hours",
+        "t_12_cv": "Villen_halflife_CV_hours",
+    }
     merge_col1 = "node"
     merge_col2 = "Protein IDs"
     nodes_df = add_halflife_db2(
@@ -116,8 +125,8 @@ def main():
     )
 
     # convert Martin-Perez & Villen numbers from hours to minutes
-    nodes_df["Villen_halflife_min"] = nodes_df["Villen_halflife_hours"]*60.0
-    nodes_df["Villen_halflife_SD_min"] = nodes_df["Villen_halflife_SD_hours"]*60.0
+    nodes_df["Villen_halflife_min"] = nodes_df["Villen_halflife_hours"] * 60.0
+    nodes_df["Villen_halflife_SD_min"] = nodes_df["Villen_halflife_SD_hours"] * 60.0
 
     # output the results to file
     nodes_df.to_pickle(

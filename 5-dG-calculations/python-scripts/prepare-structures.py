@@ -183,7 +183,7 @@ def extract_plddt_ca_only(pdb_filename):
     """
     plddt_values = []
 
-    with open(pdb_filename, 'r') as f:
+    with open(pdb_filename, "r") as f:
         for line in f:
             if line.startswith("ATOM") and line[12:16].strip() == "CA":
                 try:
@@ -193,7 +193,7 @@ def extract_plddt_ca_only(pdb_filename):
                     continue  # skip lines with malformed B-factors
 
     plddt_array = np.array(plddt_values)
-    avg_plddt = np.mean(plddt_array) if len(plddt_array) > 0 else float('nan')
+    avg_plddt = np.mean(plddt_array) if len(plddt_array) > 0 else float("nan")
     return avg_plddt
 
 
@@ -218,16 +218,18 @@ def select_final_structure(row, af2_dir):
         and pd.isna(row.get("cleavage_site_start"))
         and row.get("sequence_matches_structure", False)
     ):
-        return pd.Series([row.get("structure_path"), row.get("structure_sequence"), "EBI"])
+        return pd.Series(
+            [row.get("structure_path"), row.get("structure_sequence"), "EBI"]
+        )
 
-    # Rule 2 & 3: Try AF2 structure
+    # Rules 2 & 3: Try AF2 structure
     if af2_dir and isinstance(node, str):
         af2_path, af2_seq = locate_rescue_structure(node, af2_dir)
 
         if af2_path is None or af2_seq is None:
             return pd.Series([None, None, "None"])
 
-        # Make sure both sequences are valid strings
+        # make sure both sequences are valid strings
         if not (isinstance(af2_seq, str) and isinstance(sgd_seq, str)):
             print(f"[{node}] One or both sequences are not valid strings.")
             return pd.Series([None, None, "None"])
@@ -236,11 +238,15 @@ def select_final_structure(row, af2_dir):
         sgd_clean = sgd_seq.strip().upper()
 
         if af2_clean == sgd_clean:
-            source = "AF2-cleaved" if not pd.isna(row.get("cleavage_site_start")) else "AF2"
+            source = (
+                "AF2-cleaved" if not pd.isna(row.get("cleavage_site_start")) else "AF2"
+            )
             return pd.Series([af2_path, af2_seq, source])
         else:
             if not pd.isna(row.get("cleavage_site_start")):
-                print(f"[{node}] Cleaved AF2 structure does not match expected trimmed sequence.")
+                print(
+                    f"[{node}] Cleaved AF2 structure does not match expected trimmed sequence."
+                )
             else:
                 print(f"[{node}] AF2 structure does not match expected full sequence.")
             return pd.Series([None, None, "None"])
@@ -248,7 +254,9 @@ def select_final_structure(row, af2_dir):
     return pd.Series([None, None, "None"])
 
 
-def locate_rescue_structure(node: str, af2_dir: str) -> typing.Tuple[Optional[str], Optional[str]]:
+def locate_rescue_structure(
+    node: str, af2_dir: str
+) -> typing.Tuple[Optional[str], Optional[str]]:
     """
     Locate the AlphaFold2 rescue structure (ranked_0.pdb) and extract sequence from it.
 
@@ -293,7 +301,9 @@ def main():
         help="Directory containing predicted structures for the proteome under consideration",
     )
     parser.add_argument("--organism_tag")
-    parser.add_argument("--AF2_dir", help="Directory container additional AF2 predictions")
+    parser.add_argument(
+        "--AF2_dir", help="Directory containing additional AF2 predictions"
+    )
     args = parser.parse_args()
 
     # read in the nodes_df from the previous step
@@ -320,26 +330,25 @@ def main():
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 
     # determine the final structure to use - includes accounting for new AF2 structures
-    nodes_df[["final_structure_path", "final_sequence", "final_structure_source"]] = nodes_df.apply(
-            lambda row: select_final_structure(row, args.AF2_dir),
-            axis=1
-        )
+    nodes_df[["final_structure_path", "final_sequence", "final_structure_source"]] = (
+        nodes_df.apply(lambda row: select_final_structure(row, args.AF2_dir), axis=1)
+    )
 
     # compute the mean of per-residue pLDDT for each AF2 structure
     nodes_df["mean_plddt"] = nodes_df.apply(compute_mean_plddt, axis=1)
-
-    # call function to prepare AF2 input fasta and directory (not currently used; AF2 run in separate pipeline)
-    #prepare_alphafold_fasta_dirs(nodes_df, args.output_dir, args.organism_tag, args.output_prefix)
 
     # save a temporary output file that has structure information; this is the input to the cagiada-stability.py calculations in the next rule
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.pkl"
     )
 
+    # repace None for np.nan for simplicity
+    nodes_df = nodes_df.replace({None: np.nan})
+
     # save a csv file as well (for testing purposes)
     nodes_df.to_csv(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-temp.csv",
-        index=False
+        index=False,
     )
 
 

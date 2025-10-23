@@ -1,6 +1,7 @@
 import pandas as pd
 import argparse
 
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -14,6 +15,7 @@ def main():
 
     merged = pd.merge(nodes_df, cagiada_df, on="node", how="left")
     merged.to_pickle(args.output)
+
 
 if __name__ == "__main__":
     main()

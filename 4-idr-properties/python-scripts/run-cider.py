@@ -6,6 +6,7 @@ from typing import Optional
 from typing import Dict
 import numpy as np
 
+
 def run_cider(row: pd.Series) -> Optional[Dict[int, Dict[str, float]]]:
 
     idr_dict = row.get("IDR_sequences")

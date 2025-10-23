@@ -31,8 +31,8 @@ def compute_Ghosh_Dill_dG(
     dG_df = nodes_df[
         (nodes_df["has_verified_sequence"] == True)
         & (nodes_df["DeepTMHMM_class"].isin(["GLOB", "SP"]))
-        & (nodes_df["structure_exists"] == 1)
-        & (nodes_df["sequence_matches_structure"] == True)
+        & (~nodes_df["final_structure_path"].isna())
+        & (nodes_df["final_structure_source"] != np.nan)
     ][["node", seq_column]].copy()
 
     # add protein length
@@ -68,7 +68,7 @@ def compute_Ghosh_Dill_dG(
         dG_list.append(deltaG.magnitude)
 
     dG_df["Ghosh-Dill-dG"] = dG_list
-
+    dG_df.drop(columns=[seq_column], inplace=True)
     nodes_df = pd.merge(nodes_df, dG_df, on="node", how="left")
 
     return nodes_df
@@ -101,8 +101,6 @@ def main():
     nodes_df = pd.read_pickle(args.nodes)
 
     nodes_df = compute_Ghosh_Dill_dG(nodes_df, args.temperature, args.seq_column_to_use)
-
-    nodes_df["cagiada-dG"] = None
 
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-GhoshDill.pkl"

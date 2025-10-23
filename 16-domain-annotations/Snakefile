@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG   = config["domain_annotations"]
 
+# define variables
 INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 DATA_DIR       = Path(config["data_dir"])
 WORK_DIR       = Path(workflow.basedir)
@@ -11,12 +13,14 @@ OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 DOMAIN_DATA    = DATA_DIR / LOCAL_CONFIG["annotations"]
 
+# overall goal
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations-processed.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
 
+# parse InterPro database to extract annotations for organism of interest
 rule extract_domain_info:
     input:
         nodes = INPUT_NODES
@@ -39,6 +43,7 @@ rule extract_domain_info:
         --nodes          {{input.nodes}}
         """
 
+# post-process extracted information into usable format
 rule process_domain_info:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-domain-annotations.csv"
@@ -60,6 +65,7 @@ rule process_domain_info:
         --input_data     {{input}}
         """
 
+# integrate into nodes_df (annotated PPI network)
 rule add_domain_info:
     input:
         nodes = INPUT_NODES,

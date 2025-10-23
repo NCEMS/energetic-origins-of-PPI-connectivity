@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG  = config["Rosetta_scoring"]
 
+# define variables
 INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
 WORK_DIR      = Path(workflow.basedir)
 OUTPUT_PREFIX = config["output_prefix"]
@@ -13,11 +15,13 @@ NPROCS        = LOCAL_CONFIG["nprocessors"]
 RELAX_EXEC    = LOCAL_CONFIG["relax_executable"]
 NSTRUC        = LOCAL_CONFIG["n_structures"]
 
+# overall goal
 rule all:
     input:
         str(SCORE_DIR / ".all_scores_done"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
 
+# run NSTRUC Rosetta jobs per protein structure
 rule run_Rosetta:
     input:
         INPUT_NODES
@@ -44,6 +48,7 @@ rule run_Rosetta:
         --nstruct          {{params.nstruc}}
         """
 
+# extract scores and add to pd.DataFrame
 rule add_scores_to_nodes:
     input:
         input_nodes       = INPUT_NODES,

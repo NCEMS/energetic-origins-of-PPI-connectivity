@@ -31,7 +31,12 @@ def parse_metapredict_fasta(path: str, min_len: int) -> pd.DataFrame:
     def _flush_current() -> None:
         nonlocal current_node, current_start, current_end, current_seq_parts
         if current_node is not None and current_seq_parts:
-            seq = "".join(current_seq_parts).replace("\n", "").replace("\r", "").replace(" ", "")
+            seq = (
+                "".join(current_seq_parts)
+                .replace("\n", "")
+                .replace("\r", "")
+                .replace(" ", "")
+            )
             seq = seq.replace("*", "").upper()
             # apply off-by-one fix to START here (1-based inclusive range)
             start_fixed = (current_start or 0) + 1
@@ -66,21 +71,25 @@ def parse_metapredict_fasta(path: str, min_len: int) -> pd.DataFrame:
     for node, segs in segments.items():
         # keep all sequences/ranges; threshold only affects the idr_count
         idr_sequences = {str(i + 1): seq for i, (seq, _, _) in enumerate(segs)}
-        idr_ranges    = {str(i + 1): f"{start}-{end}" for i, (_, start, end) in enumerate(segs)}
-        idr_count     = sum(1 for (seq, _, _) in segs if len(seq) >= min_len)
-        n_disordered  = sum(len(seq) for (seq, _, _) in segs)
+        idr_ranges = {
+            str(i + 1): f"{start}-{end}" for i, (_, start, end) in enumerate(segs)
+        }
+        idr_count = sum(1 for (seq, _, _) in segs if len(seq) >= min_len)
+        n_disordered = sum(len(seq) for (seq, _, _) in segs)
 
-        rows.append({
-            "node": node,
-            "IDR_count": idr_count,
-            "IDR_sequences": idr_sequences,
-            "IDR_ranges": idr_ranges,
-            "N_aa_disordered": n_disordered,
-        })
+        rows.append(
+            {
+                "node": node,
+                "IDR_count": idr_count,
+                "IDR_sequences": idr_sequences,
+                "IDR_ranges": idr_ranges,
+                "N_aa_disordered": n_disordered,
+            }
+        )
 
     return pd.DataFrame(
         rows,
-        columns=["node", "IDR_count", "IDR_sequences", "IDR_ranges", "N_aa_disordered"]
+        columns=["node", "IDR_count", "IDR_sequences", "IDR_ranges", "N_aa_disordered"],
     )
 
 
@@ -104,8 +113,8 @@ def get_disprot_thresholds(
 
     dp_unique = (
         dp.loc[dp["organism"] == organism_string]
-          .drop_duplicates(subset="acc", keep="first")
-          .copy()
+        .drop_duplicates(subset="acc", keep="first")
+        .copy()
     )
 
     dp_unique["disorder_content"] = (
@@ -144,10 +153,13 @@ def main():
     )
     parser.add_argument(
         "--seq_column",
-        help="Name of the column from which sequence information should be used"
+        help="Name of the column from which sequence information should be used",
     )
     parser.add_argument("--disprot", help="Path to DisProt database file")
-    parser.add_argument("--disprot_organism_name", help="Exact string of the organism name to match within DisProt")
+    parser.add_argument(
+        "--disprot_organism_name",
+        help="Exact string of the organism name to match within DisProt",
+    )
     args = parser.parse_args()
 
     # read in the previous step's nodes_df
@@ -166,14 +178,14 @@ def main():
     # ensure empty dict when no IDRs
     for col in ["IDR_sequences", "IDR_ranges"]:
         if col in nodes_df.columns:
-            nodes_df[col] = nodes_df[col].apply(lambda x: x if isinstance(x, dict) else {})
+            nodes_df[col] = nodes_df[col].apply(
+                lambda x: x if isinstance(x, dict) else {}
+            )
 
     # compute disorder fraction
     seq_len = nodes_df[args.seq_column].str.len()
     nodes_df["disorder_fraction"] = np.where(
-        (seq_len > 0),
-        nodes_df["N_aa_disordered"] / seq_len,
-        np.nan
+        (seq_len > 0), nodes_df["N_aa_disordered"] / seq_len, np.nan
     ).astype("float64")
 
     # calculate thresholds for determining what is and is not an IDR based on DisProt database
