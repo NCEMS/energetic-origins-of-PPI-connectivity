@@ -142,6 +142,9 @@ def main():
         left_on="UniProtKB-AC",
     )
 
+    # remove unneeded columns
+    nodes_df.drop(columns=["exp_gene", "AF2_gene"], inplace=True)
+
     # save the results to file
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"

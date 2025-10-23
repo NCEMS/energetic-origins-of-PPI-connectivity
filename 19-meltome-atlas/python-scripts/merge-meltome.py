@@ -32,6 +32,8 @@ def main():
 
     melt_df["UniProtKB-AC"] = melt_df["meltome-id"].str.split("_").str[0]
 
+    melt_df.drop(columns=["meltome-id"], inplace=True)
+
     nodes_df = nodes_df.merge(melt_df, on="UniProtKB-AC", how="left")
 
     output_path = f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"

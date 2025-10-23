@@ -19,14 +19,14 @@ def add_halflife_db1(
     Christiano et al. 2014-like merge.
     Select columns by OLD names, then rename, then merge on the (renamed) right key.
     """
-    # 1) select by OLD names (so your current lists work)
+    # 1) select by OLD names
     halflife_df = halflife_df[halflife_df_cols]
 
-    # 2) rename to new schema (if provided)
+    # 2) rename to new schema
     if rename_map:
         halflife_df = halflife_df.rename(columns=rename_map)
 
-    # 3) compute the RIGHT-ON key (after rename)
+    # 3) compute the RIGHT-ON key
     right_on_key = rename_map.get(merge_col2, merge_col2) if rename_map else merge_col2
 
     # 4) drop duplicates on the (renamed) ID column
@@ -116,7 +116,7 @@ def main():
         "Protein IDs": "Protein IDs",
         "t_12_avg": "Villen_halflife_hours",
         "t_12_sd": "Villen_halflife_SD_hours",
-        "t_12_cv": "Villen_halflife_CV_hours",
+        "t_12_cv": "Villen_halflife_CV",
     }
     merge_col1 = "node"
     merge_col2 = "Protein IDs"
@@ -127,6 +127,9 @@ def main():
     # convert Martin-Perez & Villen numbers from hours to minutes
     nodes_df["Villen_halflife_min"] = nodes_df["Villen_halflife_hours"] * 60.0
     nodes_df["Villen_halflife_SD_min"] = nodes_df["Villen_halflife_SD_hours"] * 60.0
+
+    # drop unneeded columns
+    nodes_df.drop(columns=["ENSG", "Protein IDs"], inplace=True)
 
     # output the results to file
     nodes_df.to_pickle(

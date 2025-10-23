@@ -59,6 +59,7 @@ def main():
         "Systematic Name",
         "Mean molecules per cell",
         "Median molecules per cell",
+        "Coefficient of Variation"
     ]
 
     merge_col1 = "node"
@@ -68,6 +69,12 @@ def main():
     nodes_df = add_expression(
         nodes_df, expression_df, merge_col1, merge_col2, expression_df_cols
     )
+
+    # rename columns for ease of use
+    nodes_df.rename(columns={"Coefficient of Variation":"expression_CV", "Mean molecules per cell":"mean_molecules_per_cell", "Median molecules per cell":"median_molecules_per_cell"}, inplace=True)
+
+    # drop unneeded column
+    nodes_df.drop(columns=["Systematic Name"], inplace=True)
 
     nodes_df.to_pickle(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.pkl"
