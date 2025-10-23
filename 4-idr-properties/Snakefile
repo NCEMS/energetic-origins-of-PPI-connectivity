@@ -1,7 +1,9 @@
 from pathlib import Path
 
+# read configfile params
 LOCAL_CONFIG     = config["idr_properties"]
 
+# define variables
 DATA_DIR         = Path(config["data_dir"])
 WORK_DIR         = Path(workflow.basedir)
 INPUT_NODES      = Path(LOCAL_CONFIG["input_nodes"])
@@ -10,47 +12,77 @@ OUTPUT_SUFFIX    = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR       = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG     = config["organism_label"]
 MIN_IDR_LENGTH   = LOCAL_CONFIG["min_idr_length"]
-DISORDER_RESI    = LOCAL_CONFIG["disorder_resi_cut"]
 SEQ_COLUMN       = LOCAL_CONFIG["seq_column"]
 DISPROT          = DATA_DIR / LOCAL_CONFIG["disprot_database"]
 DISPROT_ORGANISM = LOCAL_CONFIG["disprot_organism"]
 
+# overall goal
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-IDRs.pkl"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-albatross.pkl"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
 
-rule predict_IDRs:
+
+# write input fasta for metapredict
+rule write_fasta:
     input:
         nodes = str(INPUT_NODES)
     conda:
+        "env/utils.yml"
+    params:
+        seq_column = SEQ_COLUMN
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs.fasta")
+    shell:
+        "python {WORK_DIR}/python-scripts/create-fasta.py --input_nodes {input} --output_fasta {output} --column {params.seq_column}"
+
+
+# predict IDRs with metapredict v3
+rule predict_IDRs:
+    input:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-seqs.fasta")
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-IDRs-raw.txt")
+    conda:
         "env/metapredict.yml"
+    shell:
+        "metapredict-predict-idrs -o {output} {input}"
+
+
+# add IDR information to nodes 
+rule add_IDRs:
+    input:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-IDRs-raw.txt")
+    conda:
+        "env/utils.yml"
     params:
         output_prefix  = OUTPUT_PREFIX,
         output_dir     = str(OUTPUT_DIR),
         organism_tag   = ORGANISM_TAG,
-        min_idr_length = MIN_IDR_LENGTH,
-        disorder_aa    = DISORDER_RESI,
-        seq_column     = SEQ_COLUMN,
         disprot        = DISPROT,
-        disprot_org    = DISPROT_ORGANISM
+        disprot_org    = DISPROT_ORGANISM,
+        input_nodes    = INPUT_NODES,
+        seq_column     = SEQ_COLUMN,
+        min_idr_length = MIN_IDR_LENGTH
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-IDRs.pkl")
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/add-idr-predictions.py \
-        --nodes                   {{input.nodes}} \
+        python {WORK_DIR}/python-scripts/add-IDRs.py \
+        --nodes                   {{params.input_nodes}} \
+        --idr_predictions         {{input}} \
         --output_dir              {{params.output_dir}} \
         --output_prefix           {{params.output_prefix}} \
         --organism_tag            {{params.organism_tag}} \
         --min_idr_length          {{params.min_idr_length}} \
-        --disorder_threshold_aa   {{params.disorder_aa}} \
-        --seq_column_to_use       {{params.seq_column}} \
         --disprot                 {{params.disprot}} \
-        --disprot_organism_name   "{{params.disprot_org}}"
+        --disprot_organism_name   "{{params.disprot_org}}" \
+        --seq_column              {{params.seq_column}}
         """
 
+
+# predict IDR conformational ensemble properties with ALBATROSS
 rule run_albatross:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-IDRs.pkl")
@@ -71,6 +103,8 @@ rule run_albatross:
         --organism_tag  {{params.organism_tag}}
         """
 
+
+# compute IDR sequence properties with CIDER
 rule run_cider:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-albatross.pkl")
