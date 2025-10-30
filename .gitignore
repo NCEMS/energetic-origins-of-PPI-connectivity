@@ -3,6 +3,8 @@ cyverse-access-token
 */.snakemake
 .snakemake
 
+docker/examples/.ipynb_checkpoints
+
 # do not copy SignalP into the GitHub repo
 2-sequence-parsing/python-scripts/signalp6_fast
 
