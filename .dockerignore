@@ -1,0 +1,38 @@
+# --- Git and local clutter ---
+.git
+.gitignore
+*.log
+*.tmp
+*.swp
+__pycache__/
+**/__pycache__/
+**/.ipynb_checkpoints/
+*.pyc
+
+# --- Environment / cache dirs ---
+.env
+*.env
+.mamba
+.conda
+.venv
+*.egg-info
+.cache/
+.ipython/
+
+# --- Data you don’t want baked ---
+user_notebooks/
+results/
+scratch/
+*.tar
+*.gz
+*.zip
+*.gx
+
+# --- Snakemake / pipelines ---
+.snakemake
+*.snakemake
+
+# --- System files ---
+.DS_Store
+*/.DS_Store
+Thumbs.db
