@@ -1,0 +1,14 @@
+name: anyi
+channels: [conda-forge, bioconda, defaults]
+dependencies:
+  - python=3.11
+  - jupyterlab=4.*
+  - ipykernel
+  - pandas>=2.2.2
+  - numpy==2.3.2
+  - matplotlib
+  - networkx
+  - pyvis
+  - plotly
+  - ipycytoscape
+  - scipy
