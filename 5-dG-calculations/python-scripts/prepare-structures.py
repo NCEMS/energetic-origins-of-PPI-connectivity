@@ -3,7 +3,7 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.PDB import PDBParser, PDBIO, Select
-from Bio.PDB.Polypeptide import PPBuilder
+from Bio.PDB.Polypeptide import is_aa
 import typing
 from typing import Optional
 import argparse
@@ -11,6 +11,12 @@ import pint
 import pint_pandas
 import numpy as np
 
+AA_MAP = {
+    "ALA": "A", "CYS": "C", "ASP": "D", "GLU": "E", "PHE": "F",
+    "GLY": "G", "HIS": "H", "ILE": "I", "LYS": "K", "LEU": "L",
+    "MET": "M", "ASN": "N", "PRO": "P", "GLN": "Q", "ARG": "R",
+    "SER": "S", "THR": "T", "VAL": "V", "TRP": "W", "TYR": "Y",
+}
 
 class CleavageSelect(Select):
 
@@ -96,6 +102,46 @@ def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFra
     )
 
     return nodes_df
+
+
+def extract_sequence_from_af2_pdb(pdb_path: str) -> Optional[str]:
+    """
+    Extract the full protein sequence from an AlphaFold2 PDB by walking residues
+    in order, independent of geometric chain breaks.
+
+    Returns:
+        str or None
+    """
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure("af2", pdb_path)
+
+    # AF2 outputs a single model
+    model = structure[0]
+
+    seq_chars = []
+    seen = set()  # avoid duplicates if any weird altlocs/duplicates exist
+
+    for chain in model:
+        for residue in chain:
+            # residue.id is a tuple: (hetflag, resseq, icode)
+            hetflag, resseq, icode = residue.id
+            key = (chain.id, resseq, icode)
+
+            if key in seen:
+                continue
+            seen.add(key)
+
+            if not is_aa(residue, standard=False):
+                continue
+
+            resname = residue.get_resname().upper()
+            aa = AA_MAP.get(resname, "X")
+            seq_chars.append(aa)
+
+    if not seq_chars:
+        return None
+
+    return "".join(seq_chars)
 
 
 def read_fasta_sequence(fasta_path: str) -> Optional[str]:
@@ -236,6 +282,9 @@ def select_final_structure(row, af2_dir):
 
         af2_clean = af2_seq.strip().upper()
         sgd_clean = sgd_seq.strip().upper()
+        print (node)
+        print (f"af2_clean: {af2_clean}")
+        print (f"sgd_clean: {sgd_clean}")
 
         if af2_clean == sgd_clean:
             source = (
@@ -266,6 +315,7 @@ def locate_rescue_structure(
 
     Returns:
         Tuple[str or None, str or None]: path to ranked_0.pdb and extracted sequence, or (None, None)
+
     """
     pdb_path = os.path.join(af2_dir, node, "ranked_0.pdb")
 
@@ -273,12 +323,13 @@ def locate_rescue_structure(
         return None, None
 
     try:
-        # extract sequence from PDB file (AlphaFold2 stores sequence in SEQRES or ATOM lines)
-        parser = PDBParser(QUIET=True)
-        structure = parser.get_structure("af2", pdb_path)
-        ppb = PPBuilder()
-        for pp in ppb.build_peptides(structure):
-            return pdb_path, str(pp.get_sequence())
+        af2_seq = extract_sequence_from_af2_pdb(pdb_path)
+        if af2_seq is None:
+            print(f"No sequence could be extracted from AF2 structure for {node}")
+            return None, None
+
+        return pdb_path, af2_seq
+
     except Exception as e:
         print(f"Error reading AF2 structure for {node}: {e}")
         return None, None
