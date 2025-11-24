@@ -6883,11 +6883,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YHR099W
-Prediction skipped for YHR099W:
-has_verified_seq       = True
-DeepTMHMM_class         = GLOB
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHR099W
+Structure used: /home/dan182/energetic-origins/alphafold2-structures/s288c/YHR099W/ranked_0.pdb
+DeepTMHMM_class: GLOB
+Structure source: AF2
 
 Attempting prediction for YBR081C
 Done with ΔG prediction for: YBR081C
@@ -17406,11 +17405,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YLR106C
-Prediction skipped for YLR106C:
-has_verified_seq       = True
-DeepTMHMM_class         = GLOB
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YLR106C
+Structure used: /home/dan182/energetic-origins/alphafold2-structures/s288c/YLR106C/ranked_0.pdb
+DeepTMHMM_class: GLOB
+Structure source: AF2
 
 Attempting prediction for YNL182C
 Done with ΔG prediction for: YNL182C
@@ -19888,11 +19886,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YKR054C
-Prediction skipped for YKR054C:
-has_verified_seq       = True
-DeepTMHMM_class         = GLOB
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YKR054C
+Structure used: /home/dan182/energetic-origins/alphafold2-structures/s288c/YKR054C/ranked_0.pdb
+DeepTMHMM_class: GLOB
+Structure source: AF2
 
 Attempting prediction for YKR065C
 Prediction skipped for YKR065C:
@@ -24136,4 +24133,4 @@ Structure used: 0-download-inputs/data-files/AF-Q86ZR7-F1-model_v4.pdb
 DeepTMHMM_class: GLOB
 Structure source: EBI
 
-Total execution time is: 0:24:36.507585
+Total execution time is: 0:19:06.169956
