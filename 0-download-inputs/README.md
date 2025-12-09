@@ -12,6 +12,26 @@ Corresponding configuration file section: `DOWNLOAD INPUT FILES`
 
 *N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~112 GB of data. 
 
+#### CyVerse downloads with gocmds
+
+This section of the pipeline requires that have a working `gocmd` executable on your machine. You will need:
+
+1. a CyVerse account (sign up [here](https://user.cyverse.org/register))
+2. the `gocmd` executable (download it [here](https://learning.cyverse.org/ds/gocommands/installation/))
+3. to `upgrade` your executable with `sudo gocmd upgrade`
+4. initialize 'gocmd' with `gocmd init` (input your credentials as below)
+
+`gocmd init` credentials:
+
+Upon running this command, you will be prompted to input five pieces of information in series on the command line:
+  * (1) `iRODS Host [data.cyverse.org]`: hit enter to accept the default of `data.cyverse.org`
+  * (2) `iRODS Port [1247]`: hit enter to accept the default of `1247`
+  * (3) `iRODS Zone [iplant]`: hit enter to accept the default of `iplant`
+  * (4) `iRODS Username`: type in your CyVerse username and then hit enter
+  * (5) `iRODS Password`: type in your CyVerse password and then hit enter. Note well: you will not see your password or asterisks representing the characters you have entered, but your keystrokes are being recorded. 
+
+You are now ready to run this phase of the overall pipeline - Snakemake will handle the path if you insert the path to your `gocmd` executable in the `config` file.
+
 #### Summary of data files
 
 The following 43 files are distributed with the GitHub repository. In most cases, this is because the file required pre-processing not easily accomplished programmatically (e.g., converting from .xlsx to .csv). In such cases, the original file is also included in the repository (see, for example, `1-s2.0-S2211124714009346-mmc2.xlsx` and `1-s2.0-S2211124714009346-mmc2.csv`)
