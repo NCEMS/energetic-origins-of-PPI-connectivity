@@ -13,3 +13,6 @@ dependencies:
   - ipycytoscape
   - scipy
   - statsmodels
+  - tqdm
+  - nglview
+  - biopython
