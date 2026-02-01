@@ -20,4 +20,8 @@ docker/examples/.ipynb_checkpoints
 analysis-notebooks/.ipynb_checkpoints
 analysis-notebooks/from-muskan/.ipynb_checkpoints/
 
+# do not upload all protein structures to GitHub
+# helper function is provided to copy them into place when creating the container
+docker/ANYI-browser/structures/*
+
 .DS_Store
