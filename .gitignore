@@ -16,10 +16,6 @@ docker/examples/.ipynb_checkpoints
 6-Rosetta-scoring/old
 7-FoldX-scoring/processed-data/scores
 
-# do not save the checkpoints
-analysis-notebooks/.ipynb_checkpoints
-analysis-notebooks/from-muskan/.ipynb_checkpoints/
-
 # do not upload all protein structures to GitHub
 # helper function is provided to copy them into place when creating the container
 docker/ANYI-browser/structures/*
