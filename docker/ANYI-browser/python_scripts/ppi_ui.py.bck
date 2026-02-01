@@ -361,6 +361,15 @@ def build_ui(
             layout=W.Layout(width="520px"),
         )
 
+    #max_neighbors = W.IntSlider(
+    #    value=max_neighbors_default,
+    #    min=0,
+    #    max=200,
+    #    step=10,
+    #    description="Neighbors:",
+    #    continuous_update=False,
+    #    layout=W.Layout(width="520px"),
+    #)
     neighbor_cols = W.Dropdown(
         options=[("3 columns", 3), ("4 columns", 4)],
         value=4,
@@ -396,9 +405,6 @@ def build_ui(
         description="Layout:",
         layout=W.Layout(width="260px"),
     )
-    hover_title = W.HTML("<div style='font-weight:700; margin:6px 0;'>Hover annotations</div>")
-    hover_status = W.HTML("<div style='color:#777;'>Hover over a node in the network.</div>")
-    hover_summary = W.HTML(value="")
 
     if include_cytoscape:
         if _HAVE_CYTO:
@@ -417,16 +423,6 @@ def build_ui(
                 "</div>"
             )
 
-    def _on_cyto_mouseover(node_json):
-        # ipycytoscape passes a JSON dict; node id is typically in node_json['data']['id']
-        data = (node_json or {}).get("data", {})
-        nid = data.get("id") or data.get("label")
-        if nid is not None:
-            _render_hover(str(nid))
-
-    cyto.on("node", "mouseover", _on_cyto_mouseover)
-
-
     # --- Structure viewer (optional) ---
     show_structure = W.Checkbox(value=True, description="Show structure", indent=False)
 
@@ -440,27 +436,6 @@ def build_ui(
 
     # Keep a handle to the current NGL widget so we can replace it cleanly
     ngl_widget = None
-
-    def _render_hover(node_id: str) -> None:
-        try:
-            if annotation_sections is None:
-                row = get_node_display_row(model, node_id=node_id, fields=display_fields)
-                hover_summary.value = _format_summary_table(row, title="Hovered node", field_labels=field_labels)
-            else:
-                all_fields = tuple(dict.fromkeys(
-                    f for _, fs in annotation_sections for f in fs
-                ))
-                row2 = get_node_display_row(model, node_id=node_id, fields=all_fields)
-                hover_summary.value = _format_annotation_sections(
-                    row2,
-                    annotation_sections,
-                    title="Hovered node",
-                    field_labels=field_labels,
-                )
-            hover_status.value = f"<div style='color:#555;'>Hovered: {_escape_html(node_id)}</div>"
-        except Exception as e:
-            hover_summary.value = ""
-            hover_status.value = f"<div style='color:#b00020; font-weight:600;'>Hover error: {_escape_html(e)}</div>"
 
     def _render_structure(node_id: str) -> None:
         nonlocal ngl_widget
@@ -602,17 +577,7 @@ def build_ui(
 
     children = [controls, summary, neighbors_out]
     if cyto_panel is not None:
-        children.append(
-            W.VBox(
-                [
-                    cyto_panel,
-                    W.Box(
-                        [W.VBox([hover_title, hover_status, hover_summary])],
-                        layout=W.Layout(width="100%", margin="10px 0 0 0"),
-                    ),
-                ]
-            )
-        )
+        children.append(cyto_panel)
 
     children.append(
         W.VBox(
