@@ -2,6 +2,8 @@
 
 Corresponding configuration file section: `NETWORK CENTRALITY CALCULATIONS`
 
+Anticipated execution time: ~1 min
+
 This pipeline step computes the following centrality metrics:
 
 * Degree centrality

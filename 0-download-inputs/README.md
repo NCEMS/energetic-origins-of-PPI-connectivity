@@ -2,7 +2,9 @@
 
 Corresponding configuration file section: `DOWNLOAD INPUT FILES`
 
-* This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`
+Anticipated execution time: 60-120 min
+
+This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`
 
 * To run this step in isolation, navigate to the main project directory (i.e., up one level from `0-download-inputs`) and run the command:
 
@@ -10,11 +12,11 @@ Corresponding configuration file section: `DOWNLOAD INPUT FILES`
 snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-inputs/Snakefile --configfile config-files/s288c.config
 ```
 
-* This pipeline will require 60-90 min depending on connection speeds and the write speed of your file system. 
+* The runtime of this pipeline depends on connection speeds
 
-*N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~110 GB of data. 
+*N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
 
-#### CyVerse downloads with gocmds
+#### Download data from CyVerse with gocmds
 
 This section of the pipeline requires that have a working `gocmd` executable on your machine. You will need:
 
@@ -40,6 +42,8 @@ No input data files are distributed on GitHub. All data for *S. cerevisiae* are 
 ```text
 /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/0-download-inputs/data-files`
 ```
+
+This path is encoded in `../config-files/s288c.config`
 
 The following 31 files will be downloaded:
 

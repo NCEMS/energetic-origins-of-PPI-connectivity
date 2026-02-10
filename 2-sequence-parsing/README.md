@@ -1,6 +1,14 @@
-### `2-sequence-parsing`: Add sequence information and DeepTMHMM annotations to nodes
+### `2-sequence-parsing`: Add sequence information and DeepTMHMM/SignalP annotations to nodes
 
 Corresponding configuration file section: `SEQUENCE PARSING`
+
+Anticipated execution time: ~5 min
+
+To run this pipeline step in isolation, run the command:
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 2-sequence-parsing/Snakefile --configfile config-files/s288c.config
+```
 
 This pipeline will:
 
