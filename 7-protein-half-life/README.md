@@ -1,4 +1,4 @@
-### `8-protein-half-life`: Incorporate protein half life data
+### `7-protein-half-life`: Incorporate protein half life data
 
 Corresponding configfile section: `Protein half-life`
 
