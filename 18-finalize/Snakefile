@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # read configfile params
-LOCAL_CONFIG  = config["flatten_nodes"]
+LOCAL_CONFIG  = config["finalize_nodes"]
 
 # define variables
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]

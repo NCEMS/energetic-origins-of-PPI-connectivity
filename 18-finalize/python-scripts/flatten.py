@@ -70,19 +70,36 @@ def main():
 
     nodes_df = pd.read_pickle(args.nodes)
 
-    # print the columns in the pd.DataFrame
-    junk = nodes_df.columns
-    for j in junk:
-        print(j)
+    # print columns for testing purposes
+    col_list = list(nodes_df.columns)
+    count = 1
+    for col in col_list:
+        print ("Input columns: ", count, col)
+        count += 1
 
     # drop some unneeded columns
     columns_to_drop = [
         "dH",
         "dCp",
         "dS",
+        "structure_path",
+        "structure_exists",
+        "structure_fasta_path",
+        "cleaved_structure_path",
+        "final_structure_path",
+        "Rosetta_best_score_file",
+        "Rosetta_n_found",
     ]
 
     nodes_df = nodes_df.drop(columns=columns_to_drop)
+
+    # print columns for testing purposes
+    col_list = list(nodes_df.columns)
+    count = 1
+    for col in col_list:
+        print ("Final columns: ", count, col)
+        count += 1
+
 
     # remove pint units from Ghosh-Dill-dG
     ureg = UnitRegistry()
