@@ -2,6 +2,14 @@
 
 Corresponding configuration file section: `Integrate essentiality information`
 
+Anticipated execution time: 1 min
+
+To run this pipeline step in isolation, run the command:
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 15-essentiality/Snakefile --configfile config-files/s288c.config
+```
+
 * This pipeline merges proteins annotated within the Saccharomyces Genome Database as essential ("inviable" within SGD)
 * Data were downloaded from SGD by navigating through the following menu selections: select "Function" > select "Phenotype" > select "Browse All Phenotypes" > select "Inviable" > download all entries
 

@@ -2,6 +2,14 @@
 
 Corresponding configuration file section: `ANNOTATION WITH UNIPROT INFO`
 
+Anticipated executation time: 5 min
+
+To run this pipeline step in isolation, use the command:
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 3-uniprot-annotation/Snakefile --configfile config-files/s288c.config
+```
+
 This pipeline will:
 
 1. Extract records from `uniprot_sprot.xml` for your organism of choice

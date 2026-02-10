@@ -3,7 +3,7 @@
 This branch includes significant updates to several steps of the pipeline to:
 
 * (i) enable the use of new AF2 structures (i.e., not structures from EBI) for structure-based analyses in the pipeline,
-* (ii) run multiple replicates within Rosetta (and score them with Rosetta and FoldX),
+* (ii) run multiple replicates within Rosetta (and score them with Rosetta),
 * (iii) incorporate Meltome Atlas protein thermal stability data,
 * (iv) wrap in analysis notebooks that formalize the generation of publication figures
 
@@ -37,12 +37,9 @@ The top-level directory of the repository contains 23 sub-directories and 2 file
 |5|4-idr-properties| Predict disordered regions and their sequence and dynamical properties |
 |6|5-dG-calculations| Predict dG for each protein with empirical model and ESM-IF generative model |
 |7|6-Rosetta-scoring| Relax AlphaFold2 structures with Rosetta and score |
-|8|7-FoldX-scoring| Score structures with FoldX |
-|9|8-protein-half-life| Add protein half-life data |
-|10|9-protein-expression| Add protein expression data |
-|11|10-translation-speed| Add protein translation efficiency data from `scikit-ribo`|
-|12|11-predict-PTMs| Predict post-translational modifications with PTMGPT2 |
-|13|12-LiP-MS| Add limited proteolysis mass spec data |
+|9|7-protein-half-life| Add protein half-life data |
+|10|8-protein-expression| Add protein expression data |
+|11|9-translation-speed| Add protein translation efficiency data from `scikit-ribo`|
 |14|13-entanglement| Add entanglement data |
 |15|14-chaperones| Add chaperone data |
 |16|15-oligomers| Add oligomerization state/complex membership data from Complex Portal |
@@ -79,16 +76,15 @@ If you want to rerun everything, follow the download instructions in the table b
 |------------:|:-----------:|:------------:| 
 | 2 | SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. See `2-sequence-parsing/README.md` for additional setup steps.|
 | 6 | Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
-| 7 | FoldX for structure scoring | FoldX can be [downloaded](https://foldxsuite.crg.eu/) after making an account and accepting the academic license agreement. Insert the absolute path to the pre-compiled binary in the FoldX section of the .config file for the variable `executable`. |
-| 8 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`; you must also download the Tokenizer from https://github.com/pallucs/PTMGPT2 and add its path to your config file |
+|10 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`; you must also download the Tokenizer from https://github.com/pallucs/PTMGPT2 and add its path to your config file |
 
 If you want to use existing data for yeast, follow the instructions in the table below to download it from CyVerse.
 
 | Step Number | Description | Instructions |
 |------------:|:-----------:|:------------:|
+| 5           | Additional AlphaFold2 protein stuctures predictions | Download with 'gocommands' from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/5-dG-calculations/alphafold2-structures` and update the `AF2_struc` path in your configuration file |
 | 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz` and place the contents of the .tar.gz archive in `6-Rosetta-scoring/processed-data/scores` |
-| 7           | Pre-computed FoldX scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/7-FoldX-scoring/FoldX-N10_20251019.tar.gz` and place the contents of the .tar.gz archive in `7-FoldX-scoring/processed-data/scores` |
-|11           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz` and place the contents of the .tar.gz archive in `11-predict-PTMs/processed-data`|
+|10           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz` and place the contents of the .tar.gz archive in `11-predict-PTMs/processed-data`|
 
 Check the step-specific subdirectories for any additional setup instructions for SignalP, Rosetta, FoldX, and PTMGPT2.
 
