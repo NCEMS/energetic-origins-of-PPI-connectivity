@@ -1,13 +1,15 @@
-### `af2-revamp` description
+### Quick start
 
-This branch includes significant updates to several steps of the pipeline to:
+#### ANotated Yeast Interactom (ANYI)
 
-* (i) enable the use of new AF2 structures (i.e., not structures from EBI) for structure-based analyses in the pipeline,
-* (ii) run multiple replicates within Rosetta (and score them with Rosetta),
-* (iii) incorporate Meltome Atlas protein thermal stability data,
-* (iv) wrap in analysis notebooks that formalize the generation of publication figures
+Docker container
 
-This branch is a work in progress; `main` should be considered the current production pipeline. 
+#### Reproducing the results and figures
+
+Execute code
+
+Generate figures from processed data
+
 
 ### Introduction
 
