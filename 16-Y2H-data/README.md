@@ -2,6 +2,14 @@
 
 Corresponding configuration file section: `Get Y2H network info & integrate`
 
+Anticipated execution time: ~5 min
+
+To run this pipeline step in isolation, run the command:
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 16-Y2H-data/Snakefile --configfile config-files/s288c.config
+```
+
 The source file from CSBB `../0-download-inputs/data-files/Y2H_union.txt` was downloaded from `https://interactome.dfci.harvard.edu/S_cerevisiae/download/Y2H_union.txt`
 
 This file was cleaned using the below steps:
