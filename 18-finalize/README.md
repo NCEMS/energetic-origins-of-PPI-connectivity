@@ -1,6 +1,6 @@
 ### `flatten`: Finally, produce the analysis-ready data product
 
-Corresponding configuration file section: `Flatten nodes`
+Corresponding configuration file section: `FINALIZE NODES`
 
 
 * Write a few different "final" versions of the annotated protein-protein interation network
