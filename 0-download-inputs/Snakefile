@@ -10,11 +10,39 @@ UNPACK_SCRIPT     = SCRIPTS_DIR / "unpack-files.sh"
 GOCMD             = Path(LOCAL_CONFIG["gocommands"])
 CYVERSE_DIR       = Path(LOCAL_CONFIG["cyverse_directory"])
 
+# ----------------------------
+# expected file counts
+# ----------------------------
+EXPECTED_TOTAL = 12108
+EXPECTED_BY_EXT = {
+    ".pdb":  6039,
+    ".fasta": 6040,
+    ".dat":  2,
+    ".tsv":  4,
+    ".xml":  1,
+    ".obo":  1,
+    ".txt":  5,
+    ".csv":  11,
+    ".pt":   1,
+    ".xlsx": 3,
+    ".cys":  1,
+}
+
+FASTA_LIKE_EXTS = {".fasta"}
+
+# Exclude bookkeeping files from totals
+EXCLUDE_NAME_PREFIXES = (
+    ".all_",        # your sentinels
+    ".download_",   # if you add more sentinels later
+    ".snakemake",   # snakemake internals
+)
+
 rule all:
     input:
         str(DATA_DIR / ".all_files_downloaded"),
         str(DATA_DIR / ".all_files_unpacked"),
-        str(DATA_DIR / ".all_fasta_created")
+        str(DATA_DIR / ".all_fasta_created"),
+        str(DATA_DIR / ".download_verified"),
 
 # download data from CyVerse with gocommands
 rule download_inputs:
@@ -51,3 +79,71 @@ rule create_fasta:
         target_dir = str(DATA_DIR)
     shell:
         "bash {params.script} {params.target_dir}"
+
+# verify file counts after pipeline runs
+rule verify_downloaded_files:
+    input:
+        str(DATA_DIR / ".all_fasta_created")
+    output:
+        str(DATA_DIR / ".download_verified")
+    run:
+        data_dir = Path(str(DATA_DIR))
+
+        def _excluded(p: Path) -> bool:
+            name = p.name
+            return any(name.startswith(pref) for pref in EXCLUDE_NAME_PREFIXES)
+
+        # count all regular files
+        all_files = [p for p in data_dir.rglob("*") if p.is_file() and not _excluded(p)]
+        total = len(all_files)
+
+        # count by suffix
+        by_ext = {}
+        for p in all_files:
+            ext = p.suffix.lower()
+            by_ext[ext] = by_ext.get(ext, 0) + 1
+
+        # FASTA-like aggregation
+        fasta_like = sum(by_ext.get(ext, 0) for ext in FASTA_LIKE_EXTS)
+
+        # build a human-readable report
+        lines = []
+        lines.append(f"DATA_DIR: {data_dir}")
+        lines.append(f"Total (excluding bookkeeping): {total}")
+        lines.append("Counts by expected extension:")
+        for ext, exp in EXPECTED_BY_EXT.items():
+            obs = by_ext.get(ext, 0)
+            lines.append(f"  {ext}: {obs} (expected {exp})")
+        if FASTA_LIKE_EXTS != {".fasta"}:
+            lines.append(f"FASTA-like aggregate {sorted(FASTA_LIKE_EXTS)}: {fasta_like}")
+
+        # check expectations
+        errors = []
+
+        if total != EXPECTED_TOTAL:
+            errors.append(f"TOTAL mismatch: observed {total}, expected {EXPECTED_TOTAL}")
+
+        # per-extension checks
+        for ext, exp in EXPECTED_BY_EXT.items():
+            obs = by_ext.get(ext, 0)
+            if obs != exp:
+                errors.append(f"{ext} mismatch: observed {obs}, expected {exp}")
+
+        report = "\n".join(lines)
+
+        if errors:
+            err_txt = "\n".join(f"- {e}" for e in errors)
+
+            expected_exts = set(EXPECTED_BY_EXT.keys())
+            unknown = sorted(((ext, c) for ext, c in by_ext.items() if ext not in expected_exts),
+                             key=lambda x: x[1], reverse=True)
+            if unknown:
+                err_txt += "\n\nUnknown extensions (top):\n" + "\n".join(
+                    f"  {ext or '<no suffix>'}: {c}" for ext, c in unknown[:20]
+                )
+
+            raise ValueError(f"File-count verification FAILED.\n\n{report}\n\nErrors:\n{err_txt}")
+
+        # success: write sentinel + print report
+        print(report)
+        Path(output[0]).touch()

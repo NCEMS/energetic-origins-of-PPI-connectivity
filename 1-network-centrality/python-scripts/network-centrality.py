@@ -295,6 +295,9 @@ def main():
         args.CosDistPath,
     )
 
+    # drop the CentralityCosDist values from the data product (for now)
+    nodes_df = nodes_df.drop(columns=["CentralityCosDist_rank", "CentralityCosDist_similarity_score"])
+
     # save the output to file
     nodes_df.to_csv(
         f"{args.output_dir}/{args.output_prefix}-{args.organism_tag}-{args.output_suffix}.csv",

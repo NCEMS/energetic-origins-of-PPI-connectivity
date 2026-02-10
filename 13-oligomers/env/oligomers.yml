@@ -1,0 +1,10 @@
+name: oligomers
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy==2.3.2
+  - pandas>=2.2.2
+  - pint
+  - pint-pandas

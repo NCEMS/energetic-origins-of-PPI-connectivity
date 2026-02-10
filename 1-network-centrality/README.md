@@ -13,6 +13,12 @@ This pipeline step computes the following centrality metrics:
 * Information centrality (run on the largest connected subgraph)
 * CentralityCosDist (using each of the above as part of the vector; default is to use all nodes as seed nodes)
 
+To run this pipeline step in isolation, use the command:
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 1-network-centrality/Snakefile --configfile config-files/s288c.config
+```
+
 Cytoscape version 3.10.3 was used to convert `The_Yeast_Interactome.cys` to edge and node tables. These two files are the key inputs to this step (see the configuration file)
 
 Weighted k-shell decomposition was pre-computed in Cytoscape using The Yeast Interactome as the input; this information is stored in `../0-download-inputs/data-files/The_Yeast_Interactome_nodes.csv`
@@ -25,6 +31,15 @@ The values of {output_prefix} and {organism_label} are taken from the configurat
 
 `{output_prefix}-CentralityCosDist-input.csv` is an intermediate file written in the specific format required for Centrality Cosine Distance calculations. 
 
-`{output_prefix}-{organism_label}-nodes-centrality.csv` is the output file from this step containing the annotated node network. Each row corresponds to a node, with columns for centrality metrics added for each node. 
+`{output_prefix}-{organism_label}-step1.csv` is the output file from this step containing the annotated node network. Each row corresponds to a node, with columns for centrality metrics added for each node. 
 
-Centrality Cosine Distance calculations are carried out using code from the [Mukhtar Lab](https://github.com/nilesh-iiita/CentralityCosDist). This repository is distributed in `1-network-centrality/python-scripts/CentralityCosDist`. The directory `1-network-centrality/test` contains input data used to perform a test at runtime that the CentralityCosDist code is functioning as expected. 
+Centrality Cosine Distance calculations are carried out using code from the [Mukhtar Lab](https://github.com/nilesh-iiita/CentralityCosDist). This repository is distributed in `1-network-centrality/python-scripts/CentralityCosDist`. 
+
+The directory `1-network-centrality/test` contains input data used to perform a test at runtime that the CentralityCosDist code is functioning as expected. 
+
+Note: In the current version of the repository, CentralityCosDist calculations are run but not included in the data product. They can be added back in by comment out the line
+
+```python
+nodes_df = nodes_df.drop(columns=["CentralityCosDist_rank", "CentralityCosDist_similarity_score"])
+```
+ in `python-scripts/network-centrality.py`

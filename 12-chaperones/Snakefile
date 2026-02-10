@@ -1,0 +1,46 @@
+from pathlib import Path
+
+# read configfile params
+LOCAL_CONFIG   = config["chaperone"]
+
+# define variables
+INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
+DATA_DIR       = Path(config["data_dir"])
+WORK_DIR       = Path(workflow.basedir)
+OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
+OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG   = config["organism_label"]
+CHAP_DATA      = DATA_DIR / LOCAL_CONFIG["chaperone_data"]
+EDGES          = DATA_DIR / config["network_centrality"]["edges"]
+
+# overall goal
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+
+# add chaperone interaction information to nodes_df
+rule get_chaperone_info:
+    input:
+        input_nodes = INPUT_NODES
+    conda:
+        "env/chaperones.yml"
+    params:
+        output_dir     = OUTPUT_DIR,
+        organism_tag   = ORGANISM_TAG,
+        output_prefix  = OUTPUT_PREFIX,
+        output_suffix  = OUTPUT_SUFFIX,
+        chaperone_data = str(CHAP_DATA),
+        edges          = str(EDGES)
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-chaperones.py \
+        --input_nodes    {{input.input_nodes}}             \
+        --output_dir     {{params.output_dir}}             \
+        --output_prefix  {{params.output_prefix}}          \
+        --output_suffix  {{params.output_suffix}}          \
+        --chap_data      {{params.chaperone_data}}         \
+        --edges          {{params.edges}}
+        """

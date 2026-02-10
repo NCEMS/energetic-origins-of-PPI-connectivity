@@ -1,0 +1,107 @@
+from pathlib import Path
+
+# read configfile params
+LOCAL_CONFIG  = config["Y2H"]
+
+# define variables
+INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
+DATA_DIR      = Path(config["data_dir"])
+WORK_DIR      = Path(workflow.basedir)
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
+Y2H_PREFIX    = LOCAL_CONFIG["Y2H_prefix"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG  = config["organism_label"]
+EDGES         = DATA_DIR / LOCAL_CONFIG["edges"]
+NODES         = DATA_DIR / LOCAL_CONFIG["nodes"]
+SCRIPT        = LOCAL_CONFIG["centrality_script"]
+COSDISTPATH   = LOCAL_CONFIG["cos_dist_path"]
+TEST_DIR      = LOCAL_CONFIG["test_dir"]
+
+# overall goal
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv",
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv",
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+
+# final reformatting of edges output from Cytoscape
+rule reformat_edges:
+    input:
+        EDGES
+    conda:
+        "env/merge-nodes.yml"
+    params:
+        from_name       = "source",
+        to_name         = "target",
+        column_to_parse = "name",
+        output_dir      = OUTPUT_DIR,
+        output_prefix   = Y2H_PREFIX,
+        organism_tag    = ORGANISM_TAG
+    output:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/reformat-edges.py \
+        --input_edges   {{input}} \
+        --from_name     {{params.from_name}} \
+        --to_name       {{params.to_name}} \
+        --column_name   {{params.column_to_parse}} \
+        --output_dir    {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --organism_tag  {{params.organism_tag}}
+        """
+
+# compute centralities for Y2H network
+rule get_Y2H_centralities:
+    input:
+        edges = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv",
+        nodes = str(NODES)
+    conda:
+        "../1-network-centrality/env/network-analysis.yml"
+    output:
+        f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv"
+    params:
+        output_prefix = Y2H_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+        test_dir      = str(TEST_DIR),
+        cosdistpath   = str(COSDISTPATH)
+    shell:
+        f"""
+        python {SCRIPT} \
+        --edges         {{input.edges}} \
+        --nodes         {{input.nodes}} \
+        --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
+        --output_dir    {{params.output_dir}} \
+        --organism_tag  {{params.organism_tag}} \
+        --test_dir      {{params.test_dir}} \
+        --CosDistPath   {{params.cosdistpath}}
+        """
+
+# merge centralities into the existing annotated network
+rule add_Y2H_centralities:
+    input:
+        input_nodes = INPUT_NODES,
+        Y2H_centralities = f"{OUTPUT_DIR}/{Y2H_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv"
+    conda:
+        "env/merge-nodes.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/merge-nodes.py \
+        --input_nodes      {{input.input_nodes}} \
+        --Y2H_centralities {{input.Y2H_centralities}} \
+        --output_dir       {{params.output_dir}} \
+        --output_prefix    {{params.output_prefix}} \
+        --output_suffix    {{params.output_suffix}} \
+        --organism_tag     {{params.organism_tag}}
+        """
