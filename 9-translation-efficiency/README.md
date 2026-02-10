@@ -1,4 +1,4 @@
-### `10-translation-efficiency`: Incorporate translation efficiency data
+### `9-translation-efficiency`: Incorporate translation efficiency data
 
 Corresponding configufle section: `Translation efficiency`
 

@@ -1,4 +1,4 @@
-### `14-chaperones`: Integrate information on chaperone interactions
+### `12-chaperones`: Integrate information on chaperone interactions
 
 Corresponding configuration file section: `Integrate chaperone information`
 

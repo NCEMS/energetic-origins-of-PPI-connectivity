@@ -1,4 +1,4 @@
-### `9-protein-expression`: Incorporate protein expression data
+### `8-protein-expression`: Incorporate protein expression data
 
 Corresponding configfile section: `Protein expression`
 

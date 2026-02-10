@@ -2,7 +2,7 @@
 
 Corresponding configuration file section: `Integrate domain annotations`
 
-Anticipated execution time: <30 min
+Anticipated execution time: <10 min
 
 To run this pipeline step in isolation, run the command:
 
