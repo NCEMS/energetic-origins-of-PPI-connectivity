@@ -1,19 +1,40 @@
 name: anyi
-channels: [conda-forge, bioconda, defaults]
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
 dependencies:
+  # core
   - python=3.11
+  - pip
+  - setuptools<82   # provides pkg_resources (required by nglview 3.1.4)
+  - wheel
+
+  # Jupyter / widgets
   - jupyterlab=4.*
+  - notebook>=7
   - ipykernel
+  - ipywidgets>=8.1
+  - jupyterlab_widgets>=3.0
+
+  # scientific python
   - pandas>=2.2.2
   - numpy==2.3.2
-  - matplotlib
-  - networkx
-  - pyvis
-  - plotly
-  - ipycytoscape
   - scipy
   - statsmodels
+  - matplotlib
   - tqdm
-  - nglview
+  - networkx
+
+  # visualization
+  - plotly
+  - pyvis
+  - ipycytoscape
+
+  # NGLView (conda-forge build)
+  - nglview=3.1.4
+
+  # bio / workflow
   - biopython
   - snakemake
