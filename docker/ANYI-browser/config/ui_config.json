@@ -6,12 +6,17 @@
     "degree_centrality": "Degree centrality",
     "betweenness_centrality": "Betweenness centrality",
     "pagerank": "PageRank",
-    "DeepTMHMM_class": "DeepTMHMM (topology class)"
+    "DeepTMHMM_class": "DeepTMHMM (topology class)",
+    "parsed_functions": "UniProt function"
   },
   "annotation_sections": [
     {
       "title": "Identifiers",
       "fields": ["node", "UniProtKB-AC", "ProteinName"]
+    },
+    {
+      "title": "Function",
+      "fields": ["parsed_functions"]
     },
     {
       "title": "Network",
