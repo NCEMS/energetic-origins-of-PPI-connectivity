@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple
 
 import pandas as pd
 import numpy as np
@@ -11,7 +11,12 @@ from IPython.display import display
 import networkx as nx
 
 from .ppi_model import PPIModel, get_node_display_row
-from .ppi_structure import get_pdb_path_for_node, resolve_structures_dir, make_nglview_with_plddt_bins, plddt_legend_html
+from .ppi_structure import (
+    get_pdb_path_for_node,
+    resolve_structures_dir,
+    make_nglview_with_plddt_bins,
+    plddt_legend_html,
+)
 
 # ipycytoscape is optional at import time; if missing, the UI will still work
 try:
@@ -51,27 +56,79 @@ def _escape_html(x: object) -> str:
     )
 
 
-def _format_value(v: object, *, sigfig: int = 3) -> str:
+def _hex(c: str) -> str:
+    c = c.strip()
+    return c if c.startswith("#") else f"#{c}"
+
+
+_COLOR_BINS = [
+    (0, 10,  _hex("5289C7")),
+    (11, 20, _hex("7BAFDE")),
+    (21, 30, _hex("4EB265")),
+    (31, 40, _hex("90C987")),
+    (41, 50, _hex("CAE0AB")),
+    (51, 60, _hex("F7F056")),
+    (61, 70, _hex("F6C141")),
+    (71, 80, _hex("F1932D")),
+    (81, 90, _hex("E8601C")),
+    (91, 100, _hex("DC050C")),
+]
+_COLOR_NA = _hex("DDDDDD")
+_COLOR_DEFAULT = _hex("BDBDBD")  # default node grey (non-focus)
+
+
+def _color_from_percentile(p: object) -> str:
+    if p is None:
+        return _COLOR_NA
+    try:
+        if pd.isna(p):
+            return _COLOR_NA
+        x = float(p)
+    except Exception:
+        return _COLOR_NA
+
+    # clamp into [0, 100]
+    x = max(0.0, min(100.0, x))
+
+    for lo, hi, col in _COLOR_BINS:
+        if lo <= x <= hi:
+            return col
+    return _COLOR_NA
+
+
+def _format_value(
+    v: object,
+    *,
+    sigfig: int = 3,
+    decimals: int = 2,
+    sci_small: float = 1e-2,
+    sci_large: float = 1e6,
+) -> str:
     """
     Format values for display.
-    - Numeric -> scientific notation with `sigfig` significant figures (e.g., 1.23e-04)
     - None/NaN -> empty string
+    - Numeric -> fixed-point decimals by default, scientific only if very small/large
     - Other -> str(v)
     """
     if v is None:
         return ""
-    # handle pandas / numpy NaN
+
     try:
-        if isinstance(v, float) and pd.isna(v):
-            return ""
         if hasattr(pd, "isna") and pd.isna(v):
             return ""
     except Exception:
         pass
 
-    # format numerics (excluding bool)
     if isinstance(v, (int, float, np.number)) and not isinstance(v, bool):
-        return f"{float(v):.{sigfig}e}"
+        x = float(v)
+        ax = abs(x)
+
+        if (ax != 0.0) and (ax < sci_small or ax >= sci_large):
+            return f"{x:.{sigfig}e}"
+
+        s = f"{x:.{decimals}f}"
+        s = s.rstrip("0").rstrip(".")
+        return s
 
     return str(v)
 
@@ -104,7 +161,7 @@ def _display_label(field: str, field_labels: Optional[dict[str, str]] = None) ->
 def _format_kv_table(
     rows: list[tuple[str, object]],
     *,
-    key_col_px: int = 220,   # adjust (e.g., 180–260)
+    key_col_px: int = 320,
 ) -> str:
     trs = "\n".join(
         f"<tr>"
@@ -129,7 +186,8 @@ def _format_annotation_sections(
     sections: tuple[tuple[str, tuple[str, ...]], ...],
     field_labels: Optional[dict[str, str]] = None,
     *,
-    title: str = "Node annotations",
+    title: str = "NODE ANNOTATIONS",
+    missing_text: str = "Not available",
 ) -> str:
     blocks = [f"<div style='font-weight:700; margin:6px 0 10px 0;'>{_escape_html(title)}</div>"]
 
@@ -138,13 +196,17 @@ def _format_annotation_sections(
         for f in fields:
             if f in node_row.index:
                 val = node_row.get(f, "")
-                # skip empty values to keep it readable
-                if val is None or (isinstance(val, float) and pd.isna(val)) or str(val).strip() == "":
-                    continue
+                is_missing = (
+                    val is None
+                    or (isinstance(val, float) and pd.isna(val))
+                    or (hasattr(pd, "isna") and pd.isna(val))
+                    or str(val).strip() == ""
+                )
+                if is_missing:
+                    val = missing_text
                 kv.append((_display_label(f, field_labels), val))
-
-        if not kv:
-            continue
+            else:
+                kv.append((_display_label(f, field_labels), missing_text))
 
         blocks.append(
             f"<div style='margin:10px 0 6px 0; font-weight:700;'>{_escape_html(sec_title)}</div>"
@@ -152,18 +214,6 @@ def _format_annotation_sections(
         blocks.append(_format_kv_table(kv))
 
     return "<div>" + "\n".join(blocks) + "</div>"
-
-
-# to be removed
-def _neighbors_df(G: nx.Graph | nx.DiGraph, node_id: str, max_n: int = 50) -> pd.DataFrame:
-    node_id = str(node_id)
-    if node_id not in G:
-        return pd.DataFrame({"neighbor": []})
-
-    # For directed graphs, "neighbors" = successors; for undirected it's the usual.
-    nbrs = list(G.neighbors(node_id))
-    nbrs = [str(n) for n in nbrs][:max_n]
-    return pd.DataFrame({"neighbor": nbrs})
 
 
 def _neighbor_ids(G: nx.Graph | nx.DiGraph, node_id: str) -> list[str]:
@@ -180,18 +230,13 @@ def _neighbor_ids(G: nx.Graph | nx.DiGraph, node_id: str) -> list[str]:
 
 
 def _neighbors_grid_df(neighbors: list[str], n_cols: int = 4) -> pd.DataFrame:
-    """
-    Arrange neighbor IDs into a multi-column grid DataFrame for nicer display.
-    """
     n_cols = int(n_cols)
     if n_cols < 1:
         n_cols = 1
-
-    # pad to rectangular
     pad = (-len(neighbors)) % n_cols
     items = neighbors + [""] * pad
     rows = [items[i:i + n_cols] for i in range(0, len(items), n_cols)]
-    cols = [""] * n_cols  # blank headers look cleaner in Jupyter
+    cols = [""] * n_cols
     return pd.DataFrame(rows, columns=cols)
 
 
@@ -199,7 +244,7 @@ def _ego_subgraph(
     G: nx.Graph | nx.DiGraph,
     node_id: str,
     hops: int = 1,
-    max_nodes: int = 200,   # only relevant for hops >= 2
+    max_nodes: int = 200,
 ) -> nx.Graph | nx.DiGraph:
     node_id = str(node_id)
     if node_id not in G:
@@ -211,17 +256,20 @@ def _ego_subgraph(
     if hops > 3:
         hops = 3
 
-    # Hops=1: include all immediate neighbors, no cap
     if hops == 1:
         visited = {node_id}
         if G.is_directed():
-            visited |= set(map(str, G.successors(node_id)))
-            visited |= set(map(str, G.predecessors(node_id)))
+            nbrs = list(set(map(str, G.successors(node_id))) | set(map(str, G.predecessors(node_id))))
         else:
-            visited |= set(map(str, G.neighbors(node_id)))
+            nbrs = list(map(str, G.neighbors(node_id)))
+
+        # cap neighbors to avoid huge widget payloads
+        if len(nbrs) > max_nodes - 1:
+            nbrs = nbrs[: max_nodes - 1]
+
+        visited |= set(nbrs)
         return G.subgraph(list(visited)).copy()
 
-    # Hops>=2: BFS expansion with cap
     visited = {node_id}
     frontier = {node_id}
 
@@ -236,7 +284,6 @@ def _ego_subgraph(
         nxt -= visited
         visited |= nxt
         frontier = nxt
-
         if len(visited) >= max_nodes:
             break
 
@@ -244,17 +291,12 @@ def _ego_subgraph(
 
 
 def _cyto_clear(cyto) -> None:
-    """
-    Clear cytoscape widget graph in a version-tolerant way.
-    """
-    # Common API: cyto.graph.clear()
     try:
         cyto.graph.clear()
         return
     except Exception:
         pass
 
-    # Fallback: try to clear nodes/edges collections
     try:
         cyto.graph.nodes.clear()
     except Exception:
@@ -266,19 +308,13 @@ def _cyto_clear(cyto) -> None:
 
 
 def _cyto_load_networkx(cyto, H: nx.Graph | nx.DiGraph) -> None:
-    """
-    Load a NetworkX graph into cytoscape, with minimal style.
-    """
     _cyto_clear(cyto)
 
-    # Ensure nodes have a label attribute for display
     for n in H.nodes():
         if "label" not in H.nodes[n]:
             H.nodes[n]["label"] = str(n)
 
-    # Ensure edges have ids (helpful for some cytoscape backends)
-    for i, (u, v, k) in enumerate(H.edges(keys=True) if H.is_multigraph() else [(u, v, None) for u, v in H.edges()]):
-        # Only set if not already present
+    for (u, v, k) in (H.edges(keys=True) if H.is_multigraph() else [(u, v, None) for u, v in H.edges()]):
         if H.is_multigraph():
             if "id" not in H.edges[u, v, k]:
                 H.edges[u, v, k]["id"] = f"{u}__{v}__{k}"
@@ -286,30 +322,40 @@ def _cyto_load_networkx(cyto, H: nx.Graph | nx.DiGraph) -> None:
             if "id" not in H.edges[u, v]:
                 H.edges[u, v]["id"] = f"{u}__{v}"
 
-    # Add graph
     cyto.graph.add_graph_from_networkx(H)
 
-    # Style: label nodes; keep other defaults minimal
     cyto.set_style([
-        # default nodes: grey
+        # default nodes
         {
             "selector": "node",
             "style": {
                 "label": "data(label)",
-                "background-color": "#BDBDBD",
+                "background-color": "data(color)",
                 "border-width": 1,
                 "border-color": "#4F4F4F",
                 "font-size": 10,
             },
         },
 
-        # focus node: blue
+        # focus node when NOT coloring by metric (default behavior = blue)
         {
-            "selector": 'node[is_focus = "true"]',
+            "selector": 'node[is_focus = "true"][color_mode = "false"]',
             "style": {
                 "background-color": "#2F80ED",
                 "border-width": 3,
                 "border-color": "#1B4F9C",
+                "font-size": 12,
+                "font-weight": "bold",
+            },
+        },
+
+        # focus node when coloring by metric (use percentile color, but keep bold)
+        {
+            "selector": 'node[is_focus = "true"][color_mode = "true"]',
+            "style": {
+                "background-color": "data(color)",
+                "border-width": 3,
+                "border-color": "#4F4F4F",
                 "font-size": 12,
                 "font-weight": "bold",
             },
@@ -343,7 +389,6 @@ def build_ui(
         default_node = node_ids[0] if node_ids else ""
     default_node = str(default_node)
 
-    # Searchable selector (Combobox). Falls back to Dropdown if Combobox unavailable.
     try:
         node_selector = W.Combobox(
             options=node_ids,
@@ -364,22 +409,27 @@ def build_ui(
     neighbor_cols = W.Dropdown(
         options=[("3 columns", 3), ("4 columns", 4)],
         value=4,
-        description="Neighbors:",
+        description="Neighbors table:",
         layout=W.Layout(width="300px"),
     )
 
-
-    show_neighbors = W.Checkbox(
-        value=True,
-        description="Show neighbors table",
-        indent=False,
-    )
+    show_neighbors = W.Checkbox(value=True, description="Show neighbors table", indent=False)
 
     status = W.HTML(value="")
     summary = W.HTML(value="")
     neighbors_out = W.Output()
+    neighbors_header = W.HTML("<div style='font-weight:700; margin:6px 0 6px 0;'>Neighbors</div>")
 
-    # Cytoscape controls + widget (optional)
+    # --- Structure viewer ---
+    show_structure = W.Checkbox(value=True, description="Show structure", indent=False)
+    structure_status = W.HTML(value="")
+    structure_box = W.Box(layout=W.Layout(width="100%"))
+    structure_legend = W.HTML(value=plddt_legend_html())
+    STRUCT_DIR = resolve_structures_dir()
+    ngl_widget = None
+
+    # --- Cytoscape controls + widget (optional) ---
+    network_legend = W.HTML(value="")
     cyto = None
     cyto_panel = None
 
@@ -396,9 +446,165 @@ def build_ui(
         description="Layout:",
         layout=W.Layout(width="260px"),
     )
+
     hover_title = W.HTML("<div style='font-weight:700; margin:6px 0;'>Hover annotations</div>")
     hover_status = W.HTML("<div style='color:#777;'>Hover over a node in the network.</div>")
     hover_summary = W.HTML(value="")
+
+    # ---- Color-by controls (mutually exclusive checkboxes) ----
+    color_by_title = W.HTML("<div style='font-weight:700; margin:6px 0 6px 0;'>Color network by percentile of:</div>")
+
+    base_cols = (
+        "degree_centrality",
+        "betweenness_centrality",
+        "eigenvector_centrality",
+        "closeness_centrality",
+        "load_centrality",
+        "pagerank",
+        "information_centrality",
+        "median_molecules_per_cell",
+        "Villen_halflife_min",
+        "meltome-melting-point",
+    )
+    percentile_map = {c: f"{c}_percentile" for c in base_cols}
+
+    def _swatch(label: str, color: str) -> str:
+        return (
+            "<div style='display:flex; align-items:center; gap:8px; margin:2px 0;'>"
+            f"<span style='display:inline-block; width:14px; height:14px; background:{color}; "
+            "border:1px solid #666;'></span>"
+            f"<span>{_escape_html(label)}</span>"
+            "</div>"
+        )
+
+    def _legend_default_html() -> str:
+        return (
+            "<div style='margin:6px 0 0 0;'>"
+            "<div style='font-weight:700; margin:0 0 4px 0;'>Legend</div>"
+            f"{_swatch('Selected node', '#2F80ED')}"
+            f"{_swatch('Connected nodes', _COLOR_DEFAULT)}"
+            "</div>"
+        )
+
+    def _legend_percentile_html() -> str:
+        # include NA as well
+        items = [
+            ("0–10%", _hex("5289C7")),
+            ("11–20%", _hex("7BAFDE")),
+            ("21–30%", _hex("4EB265")),
+            ("31–40%", _hex("90C987")),
+            ("41–50%", _hex("CAE0AB")),
+            ("51–60%", _hex("F7F056")),
+            ("61–70%", _hex("F6C141")),
+            ("71–80%", _hex("F1932D")),
+            ("81–90%", _hex("E8601C")),
+            ("91–100%", _hex("DC050C")),
+            ("Not available", _COLOR_NA),
+        ]
+
+        # two-column grid
+        rows = "".join(
+            "<div style='display:flex; align-items:center; gap:8px; margin:2px 0;'>"
+            f"<span style='display:inline-block; width:14px; height:14px; background:{c}; border:1px solid #666;'></span>"
+            f"<span>{_escape_html(lbl)}</span>"
+            "</div>"
+            for lbl, c in items
+        )
+
+        return (
+            "<div style='margin:6px 0 0 0;'>"
+            "<div style='font-weight:700; margin:0 0 4px 0;'>Legend</div>"
+            "<div style='display:grid; grid-template-columns: 1fr 1fr; column-gap:18px;'>"
+            f"{rows}"
+            "</div>"
+            "</div>"
+        )
+
+
+    PRETTY_COLOR_LABELS = {
+        "degree_centrality": "Degree centrality",
+        "betweenness_centrality": "Betweenness centrality",
+        "eigenvector_centrality": "Eigenvector centrality",
+        "closeness_centrality": "Closeness centrality",
+        "load_centrality": "Load centrality",
+        "pagerank": "PageRank",
+        "information_centrality": "Information centrality",
+        "median_molecules_per_cell": "Median molecules per cell",
+        "villen_halflife_min": "Half-life (min)",
+        "meltome-melting-point": "Melting point (°C)",
+    }
+
+    def _metric_label(base: str) -> str:
+        # explicit overrides first
+        if base in PRETTY_COLOR_LABELS:
+            return PRETTY_COLOR_LABELS[base]
+        # then config field_labels if present
+        if field_labels and base in field_labels:
+            return field_labels[base]
+        # fallback: title-case a cleaned version
+        return base.replace("_", " ").replace("-", " ").title()
+
+
+    cb_none = W.Checkbox(value=True, description="None (default)", indent=False)
+    color_boxes: dict[str, W.Checkbox] = {}
+    for base in base_cols:
+        color_boxes[base] = W.Checkbox(value=False, description=_metric_label(base), indent=False)
+
+    def _set_exclusive(active: Optional[str]) -> None:
+        if active is None:
+            cb_none.value = True
+            for cb in color_boxes.values():
+                cb.value = False
+            return
+        cb_none.value = False
+        for k, cb in color_boxes.items():
+            cb.value = (k == active)
+
+    def _active_color_key() -> Optional[str]:
+        if cb_none.value:
+            return None
+        for k, cb in color_boxes.items():
+            if cb.value:
+                return k
+        return None
+
+    def _on_none_change(change):
+        if change.get("name") == "value" and change["new"] is True:
+            _set_exclusive(None)
+            _render(node_selector.value)
+
+    cb_none.observe(_on_none_change, names="value")
+
+    def _make_box_handler(key: str):
+        def _handler(change):
+            if change.get("name") != "value":
+                return
+            if change["new"] is True:
+                _set_exclusive(key)
+                _render(node_selector.value)
+            else:
+                # if user unchecks the active one, revert to None
+                if _active_color_key() is None:
+                    _set_exclusive(None)
+                    _render(node_selector.value)
+        return _handler
+
+    for k, cb in color_boxes.items():
+        cb.observe(_make_box_handler(k), names="value")
+
+    color_items = [cb_none] + list(color_boxes.values())  # 11 total
+    grid = W.GridBox(
+        children=color_items,
+        layout=W.Layout(
+            grid_template_columns="1fr 1fr",
+            grid_gap="4px 18px",
+        ),
+    )
+
+    color_by_panel = W.VBox(
+        [color_by_title, grid],
+        layout=W.Layout(width="100%", margin="6px 0 0 0"),
+    )
 
     if include_cytoscape:
         if _HAVE_CYTO:
@@ -408,6 +614,8 @@ def build_ui(
             cyto.layout.height = "520px"
             cyto_panel = W.VBox([
                 W.HBox([hops, layout_dropdown, show_network]),
+                color_by_panel,
+                network_legend,
                 cyto,
             ])
         else:
@@ -417,29 +625,15 @@ def build_ui(
                 "</div>"
             )
 
-    def _on_cyto_mouseover(node_json):
-        # ipycytoscape passes a JSON dict; node id is typically in node_json['data']['id']
-        data = (node_json or {}).get("data", {})
-        nid = data.get("id") or data.get("label")
-        if nid is not None:
-            _render_hover(str(nid))
+    # only register events if cytoscape exists
+    if cyto is not None:
+        def _on_cyto_mouseover(node_json):
+            data = (node_json or {}).get("data", {})
+            nid = data.get("id") or data.get("label")
+            if nid is not None:
+                _render_hover(str(nid))
 
-    cyto.on("node", "mouseover", _on_cyto_mouseover)
-
-
-    # --- Structure viewer (optional) ---
-    show_structure = W.Checkbox(value=True, description="Show structure", indent=False)
-
-    structure_status = W.HTML(value="")
-    structure_box = W.Box(layout=W.Layout(width="100%"))
-    structure_legend = W.HTML(value=plddt_legend_html())
-
-
-    # resolve once; can be overridden via env var PPI_PDB_DIR
-    STRUCT_DIR = resolve_structures_dir()
-
-    # Keep a handle to the current NGL widget so we can replace it cleanly
-    ngl_widget = None
+        cyto.on("node", "mouseover", _on_cyto_mouseover)
 
     def _render_hover(node_id: str) -> None:
         try:
@@ -447,16 +641,9 @@ def build_ui(
                 row = get_node_display_row(model, node_id=node_id, fields=display_fields)
                 hover_summary.value = _format_summary_table(row, title="Hovered node", field_labels=field_labels)
             else:
-                all_fields = tuple(dict.fromkeys(
-                    f for _, fs in annotation_sections for f in fs
-                ))
+                all_fields = tuple(dict.fromkeys(f for _, fs in annotation_sections for f in fs))
                 row2 = get_node_display_row(model, node_id=node_id, fields=all_fields)
-                hover_summary.value = _format_annotation_sections(
-                    row2,
-                    annotation_sections,
-                    title="Hovered node",
-                    field_labels=field_labels,
-                )
+                hover_summary.value = _format_annotation_sections(row2, annotation_sections, title="Hovered node", field_labels=field_labels)
             hover_status.value = f"<div style='color:#555;'>Hovered: {_escape_html(node_id)}</div>"
         except Exception as e:
             hover_summary.value = ""
@@ -467,7 +654,6 @@ def build_ui(
 
         structure_status.value = ""
 
-        # Clear if disabled
         if not show_structure.value:
             structure_box.children = ()
             return
@@ -485,17 +671,14 @@ def build_ui(
             model,
             node_id=node_id,
             structures_dir=STRUCT_DIR,
-            pdb_path_col=None,  # later you can set to e.g. "pdb_path"
+            pdb_path_col=None,
         )
 
         if pdb_path is None:
             structure_box.children = ()
-            structure_status.value = (
-                "<div style='color:#555;'>No PDB found for this node.</div>"
-            )
+            structure_status.value = "<div style='color:#555;'>No PDB found for this node.</div>"
             return
 
-        # Create a fresh widget each time (simple and reliable)
         view = make_nglview_with_plddt_bins(pdb_path, chain_id="A")
         view.layout.width = "100%"
         view.layout.height = "700px"
@@ -505,32 +688,28 @@ def build_ui(
         structure_box.children = (view,)
         structure_status.value = f"<div style='color:#555;'>Loaded: {_escape_html(pdb_path.name)}</div>"
 
-
     def _render(node_id: str) -> None:
         status.value = ""
 
-        # summary
         try:
-            row = get_node_display_row(model, node_id=node_id, fields=display_fields)
             if annotation_sections is None:
+                row = get_node_display_row(model, node_id=node_id, fields=display_fields)
                 summary.value = _format_summary_table(row, title="Node annotations", field_labels=field_labels)
             else:
-                # ensure we have values for all fields mentioned in sections
-                all_fields = tuple(dict.fromkeys(
-                    f for _, fs in annotation_sections for f in fs
-                ))
+                all_fields = tuple(dict.fromkeys(f for _, fs in annotation_sections for f in fs))
                 row2 = get_node_display_row(model, node_id=node_id, fields=all_fields)
                 summary.value = _format_annotation_sections(row2, annotation_sections, title="Node annotations", field_labels=field_labels)
         except Exception as e:
             summary.value = ""
             status.value = f"<div style='color:#b00020; font-weight:600;'>Error: {_escape_html(e)}</div>"
+            neighbors_header.layout.display = "none"
             with neighbors_out:
                 neighbors_out.clear_output()
-            # clear cyto if present
             if cyto is not None:
                 _cyto_clear(cyto)
             return
 
+        neighbors_header.layout.display = "" if show_neighbors.value else "none"
         with neighbors_out:
             neighbors_out.clear_output()
             if show_neighbors.value:
@@ -540,7 +719,6 @@ def build_ui(
                     nbrs = _neighbor_ids(model.graph, node_id)
                     print(f"Neighbors: {len(nbrs)}")
                     display(_neighbors_grid_df(nbrs, n_cols=neighbor_cols.value))
-
 
         # cytoscape network view
         if cyto is not None:
@@ -560,20 +738,29 @@ def build_ui(
 
             H = _ego_subgraph(model.graph, node_id=node_id, hops=hops.value, max_nodes=200)
 
-            # attach a couple annotation fields to nodes (useful now and later for styling)
-            # (safe even if node not in annotations)
+            active_key = _active_color_key()
+            pct_col = percentile_map.get(active_key, None) if active_key else None
+            have_pct = bool(pct_col) and (pct_col in model.nodes_df.columns)
+            network_legend.value = _legend_percentile_html() if have_pct else _legend_default_html()
+            mode = "true" if have_pct else "false"
+
             for n in H.nodes():
                 n_str = str(n)
-                if n_str in model.nodes_df.index:
-                    H.nodes[n]["degree_centrality"] = model.nodes_df.loc[n_str].get("degree_centrality", None)
-                    H.nodes[n]["DeepTMHMM_class"] = model.nodes_df.loc[n_str].get("DeepTMHMM_class", None)
+
+                H.nodes[n]["color_mode"] = mode
+                H.nodes[n]["color"] = _COLOR_DEFAULT if mode == "false" else _COLOR_NA
+
+                if n_str in model.nodes_df.index and have_pct:
+                    p = model.nodes_df.loc[n_str].get(pct_col, None)
+                    H.nodes[n]["color"] = _color_from_percentile(p)
+
             focus_id = str(node_id)
             for n in H.nodes():
                 H.nodes[n]["is_focus"] = "true" if str(n) == focus_id else "false"
+
             _cyto_load_networkx(cyto, H)
             cyto.set_layout(name=layout_dropdown.value)
 
-        # structure viewer
         _render_structure(node_id)
 
     def _on_node_change(change):
@@ -581,7 +768,6 @@ def build_ui(
             _render(change["new"])
 
     node_selector.observe(_on_node_change, names="value")
-    #max_neighbors.observe(lambda c: _render(node_selector.value), names="value")
     neighbor_cols.observe(lambda c: _render(node_selector.value), names="value")
     show_neighbors.observe(lambda c: _render(node_selector.value), names="value")
     show_structure.observe(lambda c: _render(node_selector.value), names="value")
@@ -590,6 +776,7 @@ def build_ui(
         hops.observe(lambda c: _render(node_selector.value), names="value")
         layout_dropdown.observe(lambda c: _render(node_selector.value), names="value")
         show_network.observe(lambda c: _render(node_selector.value), names="value")
+        # note: color checkboxes call _render themselves
 
     controls = W.VBox(
         [
@@ -600,7 +787,18 @@ def build_ui(
         layout=W.Layout(margin="0 0 10px 0"),
     )
 
-    children = [controls, summary, neighbors_out]
+    structure_panel = W.VBox(
+        [
+            W.HBox([show_structure]),
+            structure_legend,
+            structure_status,
+            structure_box,
+        ],
+        layout=W.Layout(margin="10px 0 0 0"),
+    )
+
+    children = [controls, structure_panel, summary, neighbors_header, neighbors_out]
+
     if cyto_panel is not None:
         children.append(
             W.VBox(
@@ -613,18 +811,6 @@ def build_ui(
                 ]
             )
         )
-
-    children.append(
-        W.VBox(
-            [
-                W.HBox([show_structure]),
-                structure_legend,
-                structure_status,
-                structure_box,
-            ],
-            layout=W.Layout(margin="10px 0 0 0"),
-        )
-    )
 
     root = W.VBox(children)
     _render(node_selector.value)
