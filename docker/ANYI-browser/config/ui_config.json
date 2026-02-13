@@ -3,11 +3,14 @@
     "node": "Yeast ORF",
     "UniProtKB-AC": "UniProt Accession",
     "ProteinName": "Protein name",
-    "degree_centrality": "Degree centrality",
-    "betweenness_centrality": "Betweenness centrality",
-    "pagerank": "PageRank",
+    "degree_centrality_percentile": "Degree centrality (percentile)",
+    "betweenness_centrality_percentile": "Betweenness centrality (percentile)",
+    "pagerank_percentile": "PageRank (percentile)",
     "DeepTMHMM_class": "DeepTMHMM (topology class)",
-    "parsed_functions": "UniProt function"
+    "parsed_functions": "UniProt function",
+    "median_molecules_per_cell":"Median molecules per cell",
+    "Villen_halflife_min":"Half-life (min)",
+    "meltome-melting-point":"Melting point (Meltome Atlas, °C)"
   },
   "annotation_sections": [
     {
@@ -19,8 +22,12 @@
       "fields": ["parsed_functions"]
     },
     {
+      "title": "Proteostasis",
+      "fields": ["median_molecules_per_cell", "Villen_halflife_min", "meltome-melting-point"]
+    },
+    {
       "title": "Network",
-      "fields": ["degree_centrality", "betweenness_centrality", "pagerank"]
+      "fields": ["degree_centrality_percentile", "betweenness_centrality_percentile", "pagerank_percentile"]
     },
     {
       "title": "Topology",

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, Optional, Set, Tuple
+from typing import Dict, Iterable, Optional, Set, Tuple, Sequence
 
 import pandas as pd
 import networkx as nx
@@ -116,6 +116,43 @@ def summarize_alignment(
     }
 
 
+def add_percentile_columns(
+    nodes_df: pd.DataFrame,
+    cols: Sequence[str],
+    *,
+    suffix: str = "_percentile",
+    scale_0_100: bool = True,
+) -> pd.DataFrame:
+    """
+    Add percentile-rank columns for numeric columns in `cols`.
+
+    - Uses pandas rank(pct=True) computed over non-missing values.
+    - Missing values remain missing in the percentile column (important for information_centrality).
+    - Output is 0–100 if scale_0_100=True, else 0–1.
+    """
+    df = nodes_df.copy()
+
+    for c in cols:
+        if c not in df.columns:
+            continue  # skip silently; you can make this strict if you prefer
+
+        out_col = f"{c}{suffix}"
+        if out_col in df.columns:
+            # Avoid overwriting if caller already provided precomputed percentiles
+            continue
+
+        s = pd.to_numeric(df[c], errors="coerce")  # non-numeric -> NaN
+        pct = s.rank(pct=True)  # NaNs stay NaN; ranks computed on non-NaN only
+
+        if scale_0_100:
+            pct = pct * 100.0
+
+        # Use pandas NA-friendly dtype
+        df[out_col] = pct
+
+    return df
+
+
 def prepare_model(
     nodes_df: pd.DataFrame,
     edges_df: pd.DataFrame,
@@ -134,6 +171,7 @@ def prepare_model(
     - builds a graph
     - validates presence of selected annotation columns (optional)
     - computes alignment summary
+    - adds percentile columns for centrality metrics
     """
     nodes_ix = index_nodes_df(nodes_df, node_col=node_col)
     edges_norm = normalize_edges_df(edges_df, u_col=u_col, v_col=v_col)
@@ -146,6 +184,21 @@ def prepare_model(
             f"Missing required annotation column(s) in nodes_df: {missing}. "
             f"Available columns: {list(nodes_ix.columns)}"
         )
+
+    # Add percentile columns (computed once on load)
+    percentile_cols = (
+        "degree_centrality",
+        "betweenness_centrality",
+        "eigenvector_centrality",
+        "closeness_centrality",
+        "load_centrality",
+        "pagerank",
+        "information_centrality",
+        "median_molecules_per_cell",
+        "Villen_halflife_min",
+        "meltome-melting-point",
+    )
+    nodes_ix = add_percentile_columns(nodes_ix, percentile_cols, suffix="_percentile", scale_0_100=True)
 
     alignment = summarize_alignment(nodes_ix, G, node_col=node_col)
 
