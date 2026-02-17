@@ -220,29 +220,19 @@ def register_plddt_selection_scheme(
 
 
 def make_nglview_with_plddt_bins(pdb_path: Path, *, chain_id: str = "A") -> nv.NGLWidget:
-    """
-    Build a widget and apply binned pLDDT coloring using multiple disjoint representations.
-    This avoids ColormakerRegistry, which may not work in some Jupyter frontends.
-    """
-    resolved_chain, res_plddt = _residue_plddt_map(pdb_path, chain_id=chain_id)
+    resolved_chain, _ = _residue_plddt_map(pdb_path, chain_id=chain_id)
+
+    scheme_id = register_plddt_selection_scheme(
+        pdb_path,
+        chain_id=resolved_chain,
+        bins=DEFAULT_PLDDT_BINS,
+    )
 
     view = nv.show_file(str(pdb_path))
     view.clear_representations()
 
-    # Optional fallback base (grey), will be visually overwritten where bin reps exist
-    view.add_cartoon(color="#C0C0C0")
-
-    for lo, hi, color in DEFAULT_PLDDT_BINS:
-        resnums = [r for (r, p) in res_plddt if (p >= lo and p < hi)]
-        sel_ranges = _compress_int_ranges(resnums)
-        if not sel_ranges:
-            continue
-
-        # For single-chain AF2, residue numbers alone are usually sufficient and robust.
-        # If you prefer to include chain explicitly, use: f"({sel_ranges}) and :{resolved_chain}"
-        selection = sel_ranges
-
-        view.add_cartoon(selection=selection, color=color)
+    # Single representation => no boundary gaps
+    view.add_cartoon(color=scheme_id)
 
     view.center()
     return view

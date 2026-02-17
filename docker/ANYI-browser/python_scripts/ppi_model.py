@@ -122,32 +122,32 @@ def add_percentile_columns(
     *,
     suffix: str = "_percentile",
     scale_0_100: bool = True,
+    overwrite: bool = False,
 ) -> pd.DataFrame:
     """
     Add percentile-rank columns for numeric columns in `cols`.
 
     - Uses pandas rank(pct=True) computed over non-missing values.
-    - Missing values remain missing in the percentile column (important for information_centrality).
+    - Missing values remain missing in the percentile column.
     - Output is 0–100 if scale_0_100=True, else 0–1.
+    - If overwrite=True, recompute even if the output column already exists.
     """
     df = nodes_df.copy()
 
     for c in cols:
         if c not in df.columns:
-            continue  # skip silently; you can make this strict if you prefer
-
-        out_col = f"{c}{suffix}"
-        if out_col in df.columns:
-            # Avoid overwriting if caller already provided precomputed percentiles
             continue
 
-        s = pd.to_numeric(df[c], errors="coerce")  # non-numeric -> NaN
-        pct = s.rank(pct=True)  # NaNs stay NaN; ranks computed on non-NaN only
+        out_col = f"{c}{suffix}"
+        if (out_col in df.columns) and (not overwrite):
+            continue
+
+        s = pd.to_numeric(df[c], errors="coerce")
+        pct = s.rank(pct=True)
 
         if scale_0_100:
             pct = pct * 100.0
 
-        # Use pandas NA-friendly dtype
         df[out_col] = pct
 
     return df
@@ -198,7 +198,7 @@ def prepare_model(
         "Villen_halflife_min",
         "meltome-melting-point",
     )
-    nodes_ix = add_percentile_columns(nodes_ix, percentile_cols, suffix="_percentile", scale_0_100=True)
+    nodes_ix = add_percentile_columns(nodes_ix, percentile_cols, suffix="_percentile", scale_0_100=True, overwrite=True)
 
     alignment = summarize_alignment(nodes_ix, G, node_col=node_col)
 
