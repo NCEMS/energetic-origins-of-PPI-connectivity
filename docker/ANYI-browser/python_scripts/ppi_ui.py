@@ -63,15 +63,15 @@ def _hex(c: str) -> str:
 
 _COLOR_BINS = [
     (0, 10,  _hex("5289C7")),
-    (11, 20, _hex("7BAFDE")),
-    (21, 30, _hex("4EB265")),
-    (31, 40, _hex("90C987")),
-    (41, 50, _hex("CAE0AB")),
-    (51, 60, _hex("F7F056")),
-    (61, 70, _hex("F6C141")),
-    (71, 80, _hex("F1932D")),
-    (81, 90, _hex("E8601C")),
-    (91, 100, _hex("DC050C")),
+    (10, 20, _hex("7BAFDE")),
+    (20, 30, _hex("4EB265")),
+    (30, 40, _hex("90C987")),
+    (40, 50, _hex("CAE0AB")),
+    (50, 60, _hex("F7F056")),
+    (60, 70, _hex("F6C141")),
+    (70, 80, _hex("F1932D")),
+    (80, 90, _hex("E8601C")),
+    (90, 100, _hex("DC050C")),
 ]
 _COLOR_NA = _hex("DDDDDD")
 _COLOR_DEFAULT = _hex("BDBDBD")  # default node grey (non-focus)
@@ -90,9 +90,11 @@ def _color_from_percentile(p: object) -> str:
     # clamp into [0, 100]
     x = max(0.0, min(100.0, x))
 
-    for lo, hi, col in _COLOR_BINS:
-        if lo <= x <= hi:
+    for i, (lo, hi, col) in enumerate(_COLOR_BINS):
+        # half-open bins: [lo, hi) and last bin includes 100
+        if (lo <= x < hi) or (i == len(_COLOR_BINS) - 1 and lo <= x <= hi):
             return col
+
     return _COLOR_NA
 
 
@@ -333,7 +335,9 @@ def _cyto_load_networkx(cyto, H: nx.Graph | nx.DiGraph) -> None:
                 "background-color": "data(color)",
                 "border-width": 1,
                 "border-color": "#4F4F4F",
-                "font-size": 10,
+                "font-size": 16,
+                "width":36,
+                "height":36,
             },
         },
 
@@ -344,8 +348,10 @@ def _cyto_load_networkx(cyto, H: nx.Graph | nx.DiGraph) -> None:
                 "background-color": "#2F80ED",
                 "border-width": 3,
                 "border-color": "#1B4F9C",
-                "font-size": 12,
+                "font-size": 18,
                 "font-weight": "bold",
+                "width":48,
+                "height":48,
             },
         },
 
@@ -356,8 +362,10 @@ def _cyto_load_networkx(cyto, H: nx.Graph | nx.DiGraph) -> None:
                 "background-color": "data(color)",
                 "border-width": 3,
                 "border-color": "#4F4F4F",
-                "font-size": 12,
+                "font-size": 18,
                 "font-weight": "bold",
+                "width":48,
+                "height":48,
             },
         },
 
@@ -490,15 +498,15 @@ def build_ui(
         # include NA as well
         items = [
             ("0–10%", _hex("5289C7")),
-            ("11–20%", _hex("7BAFDE")),
-            ("21–30%", _hex("4EB265")),
-            ("31–40%", _hex("90C987")),
-            ("41–50%", _hex("CAE0AB")),
-            ("51–60%", _hex("F7F056")),
-            ("61–70%", _hex("F6C141")),
-            ("71–80%", _hex("F1932D")),
-            ("81–90%", _hex("E8601C")),
-            ("91–100%", _hex("DC050C")),
+            ("10–20%", _hex("7BAFDE")),
+            ("20–30%", _hex("4EB265")),
+            ("30–40%", _hex("90C987")),
+            ("40–50%", _hex("CAE0AB")),
+            ("50–60%", _hex("F7F056")),
+            ("60–70%", _hex("F6C141")),
+            ("70–80%", _hex("F1932D")),
+            ("80–90%", _hex("E8601C")),
+            ("90–100%", _hex("DC050C")),
             ("Not available", _COLOR_NA),
         ]
 
