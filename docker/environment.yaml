@@ -35,6 +35,13 @@ dependencies:
   - plotly
   - pyvis
   - ipycytoscape
+  - seaborn
+  - matplotlib-venn
+
+  # ML / explainability
+  - scikit-learn
+  - imbalanced-learn
+  - shap
 
   # NGLView (conda-forge build)
   - nglview=3.1.4
