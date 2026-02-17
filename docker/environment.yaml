@@ -11,6 +11,10 @@ dependencies:
   - setuptools<82   # provides pkg_resources (required by nglview 3.1.4)
   - wheel
 
+  # solver / locking
+  - mamba
+  - conda-lock
+
   # Jupyter / widgets
   - jupyterlab=4.*
   - notebook>=7
