@@ -20,6 +20,8 @@ Each subfolder corresponds to figures and contains the notebook(s) that render t
 All generated figures appear in their respective folders, saved as `.svg` files with filenames matching the manuscript figure numbering/panel order.
 
 **Environment & Dependencies**
+ 
+- A reproducible environment file is provided in the repository under `env/energy-jupyter.yml`.  
 
  **Data Inputs**
 
