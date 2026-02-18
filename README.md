@@ -1,33 +1,15 @@
-### Quick start
+### Background and structure
 
-#### ANotated Yeast Interactom (ANYI)
+#### Repository structure
 
-Docker container
+* Nineteen directories with a numerical prefix {0, ..., 18} constitute the 19 steps required to assembled the ANotated Yeast Interactome. Each contains an individual Snakemake pipeline that carries out an action like downloading input data or adding an annotation to the base node file. 
+* There are three ways of using this repository and its associated Docker image. 
+	* First, you can clone this repository and the Docker image onto your machine and follow the `Quick start` instructions below to launch the ANYI Browser tool to visualize yeast PPIs. 
+	* Second, you can use the repository and Docker image to reproduce all figures and key results by rerunning pipeline steps with pre-computed data (e.g., Rosetta relaxed structures)
+	* Third, you can rerun the entire pipeline including computationally expensive steps like Rosetta relaxation
+* Each of the latter two uses of the repository are described in detail below. 
 
-#### Reproducing the results and figures
-
-Execute code
-
-Generate figures from processed data
-
-
-### Introduction
-
-This repository includes the code required to create the annotated yeast interactome dataset created for the **Energetic Origins of Connectivity Within Protein Interaction Networks** Working Group (NSF-NCEMS).
-
-The pipeline itself is actually a modular ensemble of pipelines that can be recombined by modifying the configuration file to run with different organisms that may have a different set of available data. 
-
-There are several different ways to use this repository:
-
-1. Reproduce the data product associated with this Working Group's work on the yeast protein-protein interaction (PPI) network
-2. Add data to the yeast data product
-3. Use this pipeline to annotate a new organism
-
-To perform 1., keep reading below and follow the instructions in the section **Running the pipeline now**. To perform 2., contact Dan Nissley at `dan182@psu.edu` and request permission to create a development branch. To perform 3., you will need to create a new configuration file chaining together the specific pipeline steps you want with new data paths; see **Running with different organisms**. 
-
-### Files and directories
-
-The top-level directory of the repository contains 23 sub-directories and 2 files. The 23 subdirectories are listed below in Table 1. The two files are the `README.md` file you are reading now and the helper script `run-pipeline.sh`, which automates running the entire pipeline end-to-end with one command. 
+##### Files and directories
 
 **Table 1. Repository directories and files**
 |Step Number| Name | Description |
@@ -39,22 +21,73 @@ The top-level directory of the repository contains 23 sub-directories and 2 file
 |5|4-idr-properties| Predict disordered regions and their sequence and dynamical properties |
 |6|5-dG-calculations| Predict dG for each protein with empirical model and ESM-IF generative model |
 |7|6-Rosetta-scoring| Relax AlphaFold2 structures with Rosetta and score |
-|9|7-protein-half-life| Add protein half-life data |
-|10|8-protein-expression| Add protein expression data |
-|11|9-translation-speed| Add protein translation efficiency data from `scikit-ribo`|
-|14|13-entanglement| Add entanglement data |
-|15|14-chaperones| Add chaperone data |
-|16|15-oligomers| Add oligomerization state/complex membership data from Complex Portal |
-|17|16-domain-annotations| Add domain annotations from InterPro|
-|18|17-essentiality| Add SGD protein essentiality information |
-|19|18-Y2H-data| Add yeast two-hybrid data from Yu et al. 2008 |
-|20|19-meltome-atlas| Add Meltome Atlas thermal stability data |
-|21|flatten| Effective final pipeline step that post-processes the annotated node network for easy analysis |
-|N/A|analysis-notebooks| Contains Jupyter notebooks used to create the figures in the manuscript |
-|N/A|config-files| Contains the configuration file used to generate the annotated yeast interactome |
+|8|7-protein-half-life| Add protein half-life data |
+|9|8-protein-expression| Add protein expression data |
+|10|9-translation-speed| Add protein translation efficiency data from `scikit-ribo`|
+|11|10-predict-PTMs| Predict PTMs with `PTMGPT2`|
+|12|11-entanglement| Add entanglement data |
+|13|12-chaperones| Add chaperone data |
+|14|13-oligomers| Add oligomerization state/complex membership data from Complex Portal |
+|15|14-domain-annotations| Add domain annotations from InterPro|
+|16|15-essentiality| Add SGD protein essentiality information |
+|17|16-Y2H-data| Add yeast two-hybrid data from Yu et al. 2008 |
+|18|17-meltome-atlas| Add Meltome Atlas thermal stability data |
+|19|18-finalize| Post-process the annotated node network for easy analysis |
+|N/A|`README.md`| The file you are reading now |
+|N/A|config-files| Contains the configuration file used to control inputs and outputs for Snakemake |
+|N/A|docker| Contains information needed to build the Docker container associated with this repository |
+|N/A|`docker_build.sh`| Contains the bash command used to build the Docker image |
+|N/A|figures| Contains subdirectories corresponding to all files in [MANUSCRIPT LINK] |
+|N/A|`run-pipeline.sh`| Bash script that automates rerunning the entire pipeline |
+|N/A|`reproduce-results.sh`| Bash script that automates reproducing results without rerunning long calculations |
 
-Each of these 23 sub-directories contains its own README.md explaining its contents and purpose in more detail. 
+* All folders include their own `README.md` files explaining their contents. 
 
+#### Runtimes
+
+* All steps of this pipeline were executed on an Ubuntu 22.04 machine with 2 x NVIDIA RTX 6000 Ada Gene GPUs and 112 threads on 56 Intel(R) Xeon(R) w9-3495X CPUs. Runtimes in the README.md files of individual pipeline steps, e.g. `1-netowork-centrality/README.md` refer to the expected runtime on an equivalent system. 
+
+### Quick start
+
+#### Using the ANotated Yeast Interactome (ANYI) Browser tool
+
+* This repository is designed to be used with a pre-built Docker image that contains the full ANYI runtime environment (JupyterLab + required Python packages). 
+
+**Step 1** - Clone this repository
+
+* Run the command below to clone this repository and then enter its root directory.
+
+```bash
+git clone https://github.com/<your-org>/energetic-origins-of-PPI-connectivity.git
+cd energetic-origins-of-PPI-connectivity
+```
+
+**Step 2** - Pull the Docker image
+
+* Run the command below to pull the Docker image
+
+```bash
+docker pull dannissleypsu/anyi:0.1.0
+```
+
+**Step 3** - Launch JupyterLab
+
+* Run the command below to launch JupyterLab in the environment required by the ANYI Browser tool.
+
+```bash
+docker run --rm -it -p 8888:8888 \
+  -e NB_UID=$(id -u) -e NB_GID=$(id -g) \
+  -v "$PWD":/home/jovyan/work \
+  dannissleypsu/anyi:0.1.0
+```
+
+* Once you have run the command above, copy the URL from your terminal into a web browser window.
+* You can then use the navigation pane on the left to enter the `docker` folder and then `ANYI-browser` and then open `ANYI-browser.ipynb`. 
+* By executing the code cells in this notebook and then clicking the `Launch` button, you can interact with the annotations in ANYI as well as their protein structures and key proteostasis metrics.
+
+### Reproducing key outputs and figures
+
+Simple command to use 
 ### Computational requirements, dependencies, and benchmarks
 
 #### Requirements
@@ -98,6 +131,7 @@ With `gocmd` available in your system, you can download data required from CyVer
 `cd 6-Rosetta-scoring`
 `gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz .`
 `tar -xvf Rosetta-N10_20251016.tar.gz`
+
 
 #### Benchmarks
 
