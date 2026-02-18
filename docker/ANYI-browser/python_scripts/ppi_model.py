@@ -162,6 +162,7 @@ def prepare_model(
     v_col: str = "target",
     graph_type: str = "undirected",
     required_node_columns: Tuple[str, ...] = ("degree_centrality", "DeepTMHMM_class"),
+    percentile_columns: Optional[Sequence[str]] = None,
 ) -> PPIModel:
     """
     End-to-end preparation for the interactive notebook.
@@ -186,19 +187,21 @@ def prepare_model(
         )
 
     # Add percentile columns (computed once on load)
-    percentile_cols = (
-        "degree_centrality",
-        "betweenness_centrality",
-        "eigenvector_centrality",
-        "closeness_centrality",
-        "load_centrality",
-        "pagerank",
-        "information_centrality",
-        "median_molecules_per_cell",
-        "Villen_halflife_min",
-        "meltome-melting-point",
+    if percentile_columns is None:
+        percentile_columns = (
+            "degree_centrality",
+            "betweenness_centrality",
+            "median_molecules_per_cell",
+            "Villen_halflife_min",
+            "meltome-melting-point",
+        )
+
+    nodes_ix = add_percentile_columns(
+        nodes_ix,
+        tuple(percentile_columns),
+        suffix="_percentile",
+        scale_0_100=True,
     )
-    nodes_ix = add_percentile_columns(nodes_ix, percentile_cols, suffix="_percentile", scale_0_100=True, overwrite=True)
 
     alignment = summarize_alignment(nodes_ix, G, node_col=node_col)
 

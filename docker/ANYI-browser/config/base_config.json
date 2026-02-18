@@ -1,0 +1,54 @@
+{
+
+  "data": {
+    "nodes_file": "nodes.pkl",
+    "edges_file": "edges.csv"
+  },
+
+  "field_labels": {
+    "node": "Yeast ORF",
+    "UniProtKB-AC": "UniProt Accession",
+    "ProteinName": "Protein name",
+    "degree_centrality_percentile": "Degree centrality (percentile)",
+    "betweenness_centrality_percentile": "Betweenness centrality (percentile)",
+    "DeepTMHMM_class": "DeepTMHMM (topology class)",
+    "parsed_functions": "UniProt function",
+    "median_molecules_per_cell":"Median molecules per cell",
+    "Villen_halflife_min":"Half-life (min)",
+    "meltome-melting-point":"Melting point (Meltome Atlas, °C)"
+  },
+
+  "network_coloring": {
+    "metrics": [
+      "degree_centrality",
+      "betweenness_centrality",
+      "median_molecules_per_cell",
+      "Villen_halflife_min",
+      "meltome-melting-point"
+    ]
+  },
+
+  "annotation_sections": [
+    {
+      "title": "Identifiers",
+      "fields": ["node", "UniProtKB-AC", "ProteinName"]
+    },
+    {
+      "title": "Function",
+      "fields": ["parsed_functions"]
+    },
+    {
+      "title": "Proteostasis",
+      "fields": ["median_molecules_per_cell", "Villen_halflife_min", "meltome-melting-point"]
+    },
+    {
+      "title": "Network",
+      "fields": ["degree_centrality_percentile", "betweenness_centrality_percentile"]
+    },
+    {
+      "title": "Topology",
+      "fields": ["DeepTMHMM_class"]
+    }
+  ]
+
+}
