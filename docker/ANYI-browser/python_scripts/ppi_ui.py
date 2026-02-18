@@ -388,6 +388,7 @@ def build_ui(
     annotation_sections: Optional[tuple[tuple[str, tuple[str, ...]], ...]] = None,
     field_labels: Optional[dict[str, str]] = None,
     display_fields: Tuple[str, ...] = ("node", "degree_centrality", "DeepTMHMM_class"),
+    color_metrics: Optional[Tuple[str, ...]] = None,
     max_neighbors_default: int = 30,
     include_cytoscape: bool = True,
 ) -> PPIUI:
@@ -462,18 +463,18 @@ def build_ui(
     # ---- Color-by controls (mutually exclusive checkboxes) ----
     color_by_title = W.HTML("<div style='font-weight:700; margin:6px 0 6px 0;'>Color network by percentile of:</div>")
 
-    base_cols = (
-        "degree_centrality",
-        "betweenness_centrality",
-        "eigenvector_centrality",
-        "closeness_centrality",
-        "load_centrality",
-        "pagerank",
-        "information_centrality",
-        "median_molecules_per_cell",
-        "Villen_halflife_min",
-        "meltome-melting-point",
-    )
+    # Which metrics should be available for percentile coloring in the network view
+    if color_metrics is None:
+        base_cols = (
+            "degree_centrality",
+            "betweenness_centrality",
+            "median_molecules_per_cell",
+            "Villen_halflife_min",
+            "meltome-melting-point",
+        )
+    else:
+        base_cols = tuple(color_metrics)
+
     percentile_map = {c: f"{c}_percentile" for c in base_cols}
 
     def _swatch(label: str, color: str) -> str:
