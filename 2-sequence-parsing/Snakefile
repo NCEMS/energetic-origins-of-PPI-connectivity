@@ -14,7 +14,6 @@ ORGANISM_TAG  = config["organism_label"]
 MAP_FILE      = DATA_DIR / LOCAL_CONFIG["map_file"]
 FASTA         = DATA_DIR / LOCAL_CONFIG["fasta"]
 SIGNALP_FASTA = OUTPUT_DIR / str(OUTPUT_PREFIX + "-" + ORGANISM_TAG + LOCAL_CONFIG["signalp_fasta_suffix"])
-SIGNALP_DIR   = WORK_DIR / LOCAL_CONFIG["signalp_dir"]
 ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
 # overall goal

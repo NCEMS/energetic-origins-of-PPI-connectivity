@@ -1,25 +1,39 @@
-### Background and structure
+# TO DO LIST
+* finish checking run instructions; make sure two new configuration files are correct and instructions are clear
+* remove extra information from individual README files that is now included in the main README.md
+* add a README.md to docker/ANYI-browser
+* add instructions for opening jupyter-lab in the container in the figures/1-figure etc directories
+* test rerun instructions for Run Modes 1, 2, & 3 on separate computer
 
-#### Repository structure
+## Background and structure
+
+### What is ANYI?
+
+* This repository contains the code required to create, analyze, and explore the ANotated Yeast Interactome (ANYI), a heavily annotated yeast protein-protein interaction dataset. 
+* Steps zero through eighteen (each with a correspond directory) are run in series to produce the annotated interactome, saved in the file `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
+* In addition to the code required to generate this file, we also include a Docker image and interactive browser tool, ANYI Browser. See the Quick Start instructions below for details.
+
+### Repository structure
 
 * Nineteen directories with a numerical prefix {0, ..., 18} constitute the 19 steps required to assembled the ANotated Yeast Interactome. Each contains an individual Snakemake pipeline that carries out an action like downloading input data or adding an annotation to the base node file. 
 * There are three ways of using this repository and its associated Docker image. 
-	* First, you can clone this repository and the Docker image onto your machine and follow the `Quick start` instructions below to launch the ANYI Browser tool to visualize yeast PPIs. 
-	* Second, you can use the repository and Docker image to reproduce all figures and key results by rerunning pipeline steps with pre-computed data (e.g., Rosetta relaxed structures)
-	* Third, you can rerun the entire pipeline including computationally expensive steps like Rosetta relaxation
-* Each of the latter two uses of the repository are described in detail below. 
+	* Run Mode 1 (Quick start) - you can clone this repository and the Docker image onto your machine and follow the `Quick start` instructions below to launch the ANYI Browser tool to visualize yeast PPIs. 
+	* Run Mode 2 (Reproduce key results) - you can use the repository and Docker image to reproduce all figures and key results without dealing with licensing agreements and expensive calculations
+	* Run Mode 3 (Complete pipeline run) - you can rerun the entire pipeline including expensive calculations
 
-##### Files and directories
+#### Files and directories
+
+* The repository root directory contains the following files and folders:
 
 **Table 1. Repository directories and files**
-|Step Number| Name | Description |
+| Step Number | Name | Description |
 |-----:|:----:|:------------|
 |1|0-download-inputs| Download, unpack, and pre-process inputs |
 |2|1-network-centrality| Compute network centrality metrics |
 |3|2-sequence-parsing| Add sequence information, predict transmembrane proteins, predict signal sequences |
 |4|3-uniprot-annotation| Add UniProt localization, post-translational modification, etc. data |
 |5|4-idr-properties| Predict disordered regions and their sequence and dynamical properties |
-|6|5-dG-calculations| Predict dG for each protein with empirical model and ESM-IF generative model |
+|6|5-dG-calculations| Predict dG for each protein with empirical model and ESM-IF model |
 |7|6-Rosetta-scoring| Relax AlphaFold2 structures with Rosetta and score |
 |8|7-protein-half-life| Add protein half-life data |
 |9|8-protein-expression| Add protein expression data |
@@ -38,16 +52,21 @@
 |N/A|docker| Contains information needed to build the Docker container associated with this repository |
 |N/A|`docker_build.sh`| Contains the bash command used to build the Docker image |
 |N/A|figures| Contains subdirectories corresponding to all files in [MANUSCRIPT LINK] |
-|N/A|`run-pipeline.sh`| Bash script that automates rerunning the entire pipeline |
-|N/A|`reproduce-results.sh`| Bash script that automates reproducing results without rerunning long calculations |
+|N/A|`minimal-rerun.sh`| Bash script that automates rerunning the entire pipeline except for expensive steps / steps requiring licensed software |
+|N/A|`full-rerun.sh`| Bash script that automates rerunning the entire pipeline |
 
 * All folders include their own `README.md` files explaining their contents. 
 
-#### Runtimes
+### Note on runtimes and requirments
 
-* All steps of this pipeline were executed on an Ubuntu 22.04 machine with 2 x NVIDIA RTX 6000 Ada Gene GPUs and 112 threads on 56 Intel(R) Xeon(R) w9-3495X CPUs. Runtimes in the README.md files of individual pipeline steps, e.g. `1-netowork-centrality/README.md` refer to the expected runtime on an equivalent system. 
+* All steps of this pipeline were executed on an Ubuntu 22.04 machine with:
+	* 2 x NVIDIA RTX 6000 Ada Gene GPUs
+	* 112 threads on 56 Intel(R) Xeon(R) w9-3495X CPUs
+	* 1 TB of memory
+* Runtimes in the `README.md` files of individual pipeline steps, e.g. `1-netowork-centrality/README.md`, refer to the expected runtime on an equivalent system. 
+* All input data requires ~110 GB of storage; all intermediate files and outputs bring the total size to ~250 GB.
 
-### Quick start
+### Run Mode 1 - Quick start
 
 #### Using the ANotated Yeast Interactome (ANYI) Browser tool
 
@@ -85,109 +104,171 @@ docker run --rm -it -p 8888:8888 \
 * You can then use the navigation pane on the left to enter the `docker` folder and then `ANYI-browser` and then open `ANYI-browser.ipynb`. 
 * By executing the code cells in this notebook and then clicking the `Launch` button, you can interact with the annotations in ANYI as well as their protein structures and key proteostasis metrics.
 
-### Reproducing key outputs and figures
+### Run Mode 2 - Reproduce key results
 
-Simple command to use 
-### Computational requirements, dependencies, and benchmarks
+* This run option allows you to skip dealing with licensed software and long runtimes by using precomputed data.
+* Following these instructions will allow for the generation of the same data currently in `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
+* In some places, you will need to update `config-files/minimal-rerun-s288c.config` while following the below instructions.
 
-#### Requirements
+**Step 1 - Clone this repository**
 
-This repository uses a series of Snakemake pipelines to assemble an annotated protein-protein interaction network. Each individual pipeline consists of discrete Python and bash processing steps (rules within Snakemake). 
+```bash
+git clone https://github.com/NCEMS/energetic-origins-of-PPI-connectivity.git
+cd energetic-origins-of-PPI-connectivity
+```
 
-To run the complete pipeline, you will need:
+**Step 2 - Create the environment**
 
-1. An internet connection to download obligate input files
-2. ~250 GB of storage space (for all inputs and outputs)
-3. A CUDA-enabled GPU for Cagiada et al. 2025 ESM-IF-based dG predictions & PTMGPT2 post-translational modification prediciton
-4. 60-120 CPUs to enable Rosetta relaxation of protein structures in a reasonable timeframe
+```bash
+conda env create -f docker/environment.yaml
+conda activate anyi
+```
 
-#### Dependencies
+**Step 3 - Setup `gocommands`**
 
-Nearly all dependency issues will be handled by Snakemake automatically by building conda environments based on the files in each pipeline's `env` subdirectory. However, if you want to rerun all pipeline steps you will need to download and install additional software. Converesly, if you want to skip some steps and use pre-generated data to save time, you will need to download it from CyVerse. 
+* Follow the instructions to install `gocommands` in `0-download-inputs/README.md`
+* Insert the absolute path to the `gocmd` executable into the file `config-files/rerun-s288c.config` for the term `gocommands` so that you have the line `gocommands: "/absolute/path/gocmd"` in the `download_inputs` section
 
-If you want to rerun everything, follow the download instructions in the table below to setup SignalP, Rosetta, FoldX, and PTMGPT2.
+**Step 4 - Download required data from CyVerse**
 
-| Step Number | Description | Instructions |
-|------------:|:-----------:|:------------:| 
-| 2 | SignalP6.0 for prediction of protein signal sequences | Download [here](https://services.healthtech.dtu.dk/cgi-bin/sw_request?software=signalp&version=6.0&packageversion=6.0h&platform=fast) and unpack `signalp-6.0h.fast.tar.gz`  into `2-sequence-parsing/python-scripts`. You should have the path `2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/` available from the repo root directory. See `2-sequence-parsing/README.md` for additional setup steps.|
-| 6 | Rosetta for structure relaxation and scoring | Download from [Rosetta Commons](https://rosettacommons.org/software/download/) and insert the absolute path to `relax.static.linuxgccrelease` or equivalent into the .config file in the Rosetta scoring section for the variable `relax_executabele`. |
-|10 | PTMGPT2 models for post-translational modification prediction | The models [Part 1](https://zenodo.org/records/11371883) and [Part 2](https://zenodo.org/records/11362322) can be downloaded from Zenodo. Both .zip files should be unpacked into one directory and the absolute path to this directory inserted into the "predict post-translational modifications" section of the .config file for the variable `gpt_model_path`; you must also download the Tokenizer from https://github.com/pallucs/PTMGPT2 and add its path to your config file |
+* To avoid rerunning expensive calculations we need to download some data from CyVerse. 
 
-If you want to use existing data for yeast, follow the instructions in the table below to download it from CyVerse.
+(1) Rosetta data: from the repo root directory, run the following commands:
 
-| Step Number | Description | Instructions |
-|------------:|:-----------:|:------------:|
-| 5           | Additional AlphaFold2 protein stuctures predictions | Download with 'gocommands' from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/5-dG-calculations/alphafold2-structures` and update the `AF2_struc` path in your configuration file |
-| 6           | Pre-computed Rosetta relaxed structures and scores | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz` and place the contents of the .tar.gz archive in `6-Rosetta-scoring/processed-data/scores` |
-|10           | Pre-computed PTMGPT2 predictions for yeast proteins | Download with `gocommands` from the path `/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz` and place the contents of the .tar.gz archive in `11-predict-PTMs/processed-data`|
+```bash
+cd 6-Rosetta-scoring
+gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz .
+tar -xvf Rosetta-N10_20251016.tar.gz
+touch 6-Rosetta-scoring/processed-data/scores/.all_scores_done
+```
 
-Check the step-specific subdirectories for any additional setup instructions for SignalP, Rosetta, FoldX, and PTMGPT2.
+(2) PTMGPT2 data: from the repo root directory, run the following commands:
 
-##### Using `gocommands` to get data from the CyVerse Data Store
+```bash
+cd 10-predict-PTMs
+gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz .
+tar -xvf PTMGPT2-predictions.tar.gz
+```
 
-Visit [this page](https://learning.cyverse.org/ds/gocommands/installation) and follow the installation instructions for your system. Once installed, you should have the executable `gocmd` in the folder where you ran the installation command. 
-With `gocmd` available in your system, you can download data required from CyVerse like so:
+(3) Updated AlphaFold2 predictions needed by the pipeline: from any directory not in the repository, run the commands:
 
-`cd 6-Rosetta-scoring`
-`gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz .`
-`tar -xvf Rosetta-N10_20251016.tar.gz`
+```bash
+gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/5-dG-calculations/alphafold2-structures .
+```
 
+After this data download completes, update the `AF2_dir` parameter in `config-files/rerun-s288c.config` to point to the `alphafold2-structures/s288c` directory in your downloads folder, like this:
 
-#### Benchmarks
+```json
+AF2_dir: "/absolute/path/alphafold2_structures/s288c"
+```
 
-Most pipeline steps include simple procedures like loading, cleaning, and merging datasets together. Some, however, require more heavy-duty computation. 
+**Step 5 - Run the pipeline**
 
-The main computational bottlenecks are:
+```bash
+bash minimal-rerun.sh config-files/minimal-rerun-s288c.config
+```
 
-| Step Number | Description | Time |
-|------------:|:-----------:|:----:|
-|           0 | Download, unpacking, and pre-processing of input data | Requires up to 2 hours depending on connection speeds and write speed of drive |
-|           5 | dG prediction from structure with Cagiada et al. 2025 method | ~4 h on A16; ~25 min on RTX 6000 Ada Gene |
-|           6 | Rosetta structure relxation & scoring | ~24 days with 96 Intel(R) Xeon(R) w9-3495X CPUs with N = 10 replicates per protein |
-|          11 | Prediction of post-translational modifications with PTMGPT2 | ~48 h on 2 x RTX 6000 Ada Gene GPUs in coarse-grain parallel |
-|          16 | Extract domain annotations from ~100 GB file | Depending on on your system, 10 min - 2 h |
+* This helper script will rerun all pipeline steps except for slow calculations or calculations requiring licensed software in `2-sequence-parsing`, `5-dG-calculations`, `6-Rosetta-scoring`, and `10-predict-PTMs`.
+* The final output will be written to `18-finalize/processed-data/minimal-rerun-20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
+* This run will take ~30 min
 
-As you will read below (see the section **Running the pipeline now** below), you can skip these expensive calculations if you just want to rerun the pipeline as-is. If you are running for a new organism/new proteins, these calculations are a one-time cost. 
+### Run Mode 3 - Complete pipeline run
 
-### SETUP
+* This run option will require significant time and computational resources (45 days with 112 CPUs)
+* Following these instructions will generate slightly different results from the data currently in `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl` for Rosetta calculations
+* In some places, you will need to update `config-files/full-rerun-s288c.config` while following the instructions below. 
 
-The pipeline for assembling the final data product is in fact an ensemble of pipelines. You will need to install `conda` and then setup a top-level environment with Snakemake. 
+**Important note**: the Snakemake pipeline in `0-download-inputs/Snakefile` will automatically download fixed versions of certain input data like, for example, open reading frame sequences from SGD. If you want to use updated versions, you will need to manually download them and then update `config-files/full-rerun-s288c.config` to point to these new files. 
 
-1. Update your version of conda:
+**Step 1 - Clone this repository**
 
-`conda update -n base -c defaults conda`
+```bash
+git clone https://github.com/NCEMS/energetic-origins-of-PPI-connectivity.git
+cd energetic-origins-of-PPI-connectivity
+```
 
-2. Setup a conda environment with Snakemake by running the command
+**Step 2 - Create the environment**
 
-`conda create --name snakemake -c bioconda -y snakemake`
+```bash
+conda env create -f docker/environment.yaml
+conda activate anyi
+```
 
-followed by the command
+**Step 3 - Setup `gocommands`**
 
-`conda activate snakemake`
+* Follow the instructions to install `gocommands` in `0-download-inputs/README.md`
+* Insert the absolute path to the `gocmd` executable into the file `config-files/rerun-s288c.config` for the term `gocommands` so that you have the line `gocommands: "/absolute/path/gocmd"` in the `download_inputs` section
 
-Note: This gave me issues on a new Ubuntu machine; if you have any problems, try `conda create -n snakemake -c conda-forge -c bioconda "python>3.11" "snakemake>=9,<10" biopython
-`.
+**Step 4 - Download required software**
 
-3. Download SignalP, Rosetta, FoldX, & PTMGPT2 models (see **Dependencies** section above)
+1) Rosetta
 
-4. You can now run the pipeline by entering the command `./run-pipeline.sh <.config file>`
+* Academic users can download Rosetta for free [here](https://downloads.rosettacommons.org/software/academic/)
+* Once you have Rosetta installed, insert the absolute path to `relax.static.linuxgccrelease` into `config-files/full-rerun-s288c.config` in the `Rosetta_scoring` section:
 
-The `.config` file contains all commonly changed parameters, including those used to label output files. The current config file to run all steps is `config-files/s288c.config`.
+```json
+relax_executable: "/path/to/rosetta.binary.ubuntu.release-371/main/source/bin/relax.static.linuxgccrelease"
+```
 
-### Running the pipeline now
+2) SignalP 6.0
 
-Once you have downloaded all required code and/or data, you can run the pipeline with the command:
+* Academic users can navigate to the webpage [here](https://services.healthtech.dtu.dk/services/SignalP-6.0/) and sign the license agreement to be sent download information. SignalP Version 6.0h fast was used for the calculations included in this repository.
+* Once you have downloaded SignalP and unpacked the download, you will have a directory named `signalp6_fast` or similar. Move this directory in `2-sequence-parsing/python-scripts/` so that, from the repo root directory, you can `ls 2-sequence-parsing/python-scripts/signalp6_fast`
+* Now, copy the weights into the expected directory:
 
-`./run-pipeline.sh [.config file]`
+```bash
+cp 2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/models/distilled_model_signalp6.pt 2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package/signalp/model_weights/
+```
 
-For example, 
+Finally, edit `2-sequence-parsing/env/signalp-fast-local.yml` such that this section:
 
-`./run-pipeline.sh config-files/s288c.config`
+```json
+  - pip:
+      - -e /absolute/path/to/energetic-origins-of-PPI-connectivity/2-sequence-parsing/python-scripts/signalp6_fast/signalp-6-package
+```
 
-If you would like to run a specific pipeline step in isolation, you can use a command like:
+includes an absolute path to the `signalp-6-package` folder you just copied into your `2-sequence-parsing/python-scripts/` directory. 
 
-`snakemake --snakefile /snakefile/path/Snakefile --configfile /configfile/path/config.config --use-conda --conda-frontend conda -c all`
+3) PTMGPT2
 
-in which you must replace `/snakefile/path/Snakefile` and `/configfile/path/config.config` with correct relative paths. For example, from the main repo working directory we could run pipeline step 8 in isolation with the command:
+* To enable PTMGPT2 runs, we need to clone the repository and download the models from Zenodo and then direct our configuration file to them. 
+* In a directory outside of this repository, run the command:
 
-`snakemake --snakefile 8-protein-half-life/Snakefile --configfile config-files/s288c.config --use-conda --conda-frontend conda -c all`
+```bash
+git clone 
+https://github.com/pallucs/PTMGPT2.git
+```
+
+This repository includes the `Tokenizer` folder. Next, download the required models (again, do this outside of this repository):
+
+```bash
+mkdir PTMGPT-2-models
+cd PTMGPT-2-models
+wget https://zenodo.org/records/11371883/files/PTMGPT2-models-Part1.zip
+wget https://zenodo.org/records/11362322/files/PTMGPT2-models-Part2.zip
+gunzip https://zenodo.org/records/11371883/files/PTMGPT2-models-Part1.zip
+gunzip https://zenodo.org/records/11362322/files/PTMGPT2-models-Part2.zip
+```
+
+Then, update `config-files/full-rerun-s288c.config` to have the lines:
+
+```json
+gpt_model_path: "/absolute/path/to/PTMGPT-2-models"
+tokenizer_path: "/absolute/path/to/PTMGPT2/Tokenizer"
+```
+
+Note that we direct `gpt_model_path` to a single directory containing all of the contents of `PTMGPT2-models-Part1.zip` and `PTMGPT2-models-Part2.zip` named `PTMGPT-2-models`
+
+4) AlphaFold2 structure predictions
+
+* By default, the pipeline compares reference sequences from the SGD to the sequences in the supplied AlphaFold2 predictions and, if there is a mismatch, tries to find a "rescue" structure in the path provided at the `AF2_dir` variable in the configuration file. If you want to rerun this step as well, you will need to supply AlphaFold2 structures matching the proteins in:
+
+`/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/5-dG-calculations/alphafold2-structures`
+* You will then need to supply the absolute path to the directory containing protein-level directories each containing predictions in `config-files/full-rerun-s288c.config` for the variable `AF2_dir`.
+* If you want to omit only this step, follow the instructions in `(3) Updated AlphaFold2 predictions needed by the pipeline` at the bottom of the `Run Mode 2` section of the README above.
+
+**Step 5 - execute the complute pipeline**
+
+```bash
+bash full-rerun.sh config-files/full-rerun-s288c.config
+```
