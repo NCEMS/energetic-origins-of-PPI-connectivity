@@ -6,11 +6,7 @@ For each task, the **best-performing model** (marked **FINAL**) was selected for
 
 - **Figure 4A**: ROC curves for the four final models (MS-degree, MS-betweenness, Y2H-degree, Y2H-betweenness), generated from their `roc_model*.csv` files.  
 - **Figure 4B**: SHAP summary for the **MS-degree** final model (`SHAP_random_forest3.svg`).  
-- **Figure 4C**: SHAP summary for the **Y2H-degree** final model (`SHAP_random_forest12.svg`).
-
-
-- **Environment & Dependencies (placeholder):**  
-- A reproducible environment file is available at `../../env/energy-jupyter.yml`.  
+- **Figure 4C**: SHAP summary for the **Y2H-degree** final model (`SHAP_random_forest12.svg`). 
 
 ---
 
