@@ -1,4 +1,7 @@
 
+![](images/center-sized.jpg)
+![](images/NSF-NCEMS-Blue.svg)
+
 ## Background and structure
 
 ### Repository contents
@@ -49,6 +52,7 @@
 |N/A|config-files| Contains the configuration file used to control inputs and outputs for Snakemake |
 |N/A|docker| Contains information needed to build the Docker container associated with this repository |
 |N/A|figures| Contains subdirectories corresponding to all files in [MANUSCRIPT LINK] |
+|N/A|images| Contains a few images rendered in the README.md |
 |N/A|`.dockerignore`| Files and folders not to be included in the Docker build |
 |N/A|`.gitignore`| Files and folders not to be included in the Git repo |
 |N/A|`README.md`| The file you are reading now |
