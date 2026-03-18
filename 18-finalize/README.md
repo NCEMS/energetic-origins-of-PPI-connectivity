@@ -1,8 +1,8 @@
-### `flatten`: Finally, produce the analysis-ready data product
+### `18-finalize`: Finally, produce the analysis-ready data product
 
 Corresponding configuration file section: `FINALIZE NODES`
 
-Anticipated execution time: ~5 min
+Anticipated execution time: ~1 min
 
 To run this pipeline step in isolation, run the command:
 
