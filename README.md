@@ -10,14 +10,14 @@
 ### What is ANYI?
 
 * This repository contains the code required to create, analyze, and explore the ANotated Yeast Interactome (ANYI), a heavily annotated yeast protein-protein interaction dataset. 
-* Steps zero through eighteen (each with a correspond directory) are run in series to produce the annotated interactome, saved in the file `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
+* Steps zero through eighteen (each with a correspond directory from `0-download-inputs` through to `18-finalize`) are run in series to produce the annotated interactome, saved in the file `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
 * In addition to the code required to generate this file, we also include a Docker image and interactive browser tool, ANYI Browser. See the Quick Start instructions below for details.
 
 ### Repository structure
 
 * Nineteen directories with a numerical prefix {0, ..., 18} constitute the 19 steps required to assembled the ANotated Yeast Interactome. Each contains an individual Snakemake pipeline that carries out an action like downloading input data or adding an annotation to the base node file. 
 * There are three ways of using this repository and its associated Docker image. 
-	* Run Mode 1 (Quick start) - you can clone this repository and the Docker image onto your machine and follow the `Quick start` instructions below to launch the ANYI Browser tool to visualize yeast PPIs. 
+	* Run Mode 1 (Quick start) - you can clone this repository and the Docker image onto your machine following the `Quick start` instructions below to launch the ANYI Browser tool to visualize yeast PPIs. 
 	* Run Mode 2 (Reproduce key results) - you can use the repository and Docker image to reproduce all figures and key results without dealing with licensing agreements and expensive calculations
 	* Run Mode 3 (Complete pipeline run) - you can rerun the entire pipeline including expensive calculations
 
@@ -47,13 +47,15 @@
 |17|16-Y2H-data| Add yeast two-hybrid data from Yu et al. 2008 |
 |18|17-meltome-atlas| Add Meltome Atlas thermal stability data |
 |19|18-finalize| Post-process the annotated node network for easy analysis |
-|N/A|`README.md`| The file you are reading now |
 |N/A|config-files| Contains the configuration file used to control inputs and outputs for Snakemake |
 |N/A|docker| Contains information needed to build the Docker container associated with this repository |
-|N/A|`docker_build.sh`| Contains the bash command used to build the Docker image |
 |N/A|figures| Contains subdirectories corresponding to all files in [MANUSCRIPT LINK] |
-|N/A|`minimal-rerun.sh`| Bash script that automates rerunning the entire pipeline except for expensive steps / steps requiring licensed software |
+|N/A|`.dockerignore`| Files and folders not to be included in the Docker build |
+|N/A|`.gitignore`| Files and folders not to be included in the Git repo |
+|N/A|`README.md`| The file you are reading now |
+|N/A|`docker_build.sh`| Contains the bash command used to build the Docker image |
 |N/A|`full-rerun.sh`| Bash script that automates rerunning the entire pipeline |
+|N/A|`minimal-rerun.sh`| Bash script that automates rerunning the entire pipeline except for expensive steps / steps requiring licensed software |
 
 * All folders include their own `README.md` files explaining their contents. 
 
