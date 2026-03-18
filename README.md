@@ -1,9 +1,3 @@
-# TO DO LIST
-* finish checking run instructions; make sure two new configuration files are correct and instructions are clear
-* remove extra information from individual README files that is now included in the main README.md
-* add a README.md to docker/ANYI-browser
-* add instructions for opening jupyter-lab in the container in the figures/1-figure etc directories
-* test rerun instructions for Run Modes 1, 2, & 3 on separate computer
 
 ## Background and structure
 
@@ -75,6 +69,8 @@
 
 ## Run Mode 1 (Quick Start)
 
+* This run option lets you immediately start interacting with ANYI
+
 ### Using the ANotated Yeast Interactome (ANYI) Browser tool
 
 * This repository is designed to be used with a pre-built Docker image that contains the full ANYI runtime environment (JupyterLab + required Python packages). 
@@ -111,20 +107,21 @@ docker run --rm -it -p 8888:8888 \
 * You can then use the navigation pane on the left to enter the `docker` folder and then `ANYI-browser` and then open `ANYI-browser.ipynb`. 
 * By executing the code cells in this notebook and then clicking the `Launch` button, you can interact with the annotations in ANYI as well as their protein structures and key proteostasis metrics.
 
-### Run Mode 2 (Reproduce Key Results)
+## Run Mode 2 (Reproduce Key Results)
 
-* This run option allows you to skip dealing with licensed software and long runtimes by using precomputed data.
+* This run option allows you to skip dealing with licensed software and long runtimes by using precomputed data while still following the assembly process for ANYI.
 * Following these instructions will allow for the generation of the same data currently in `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
 * In some places, you will need to update `config-files/minimal-rerun-s288c.config` while following the below instructions.
 
 **Step 1 - Clone this repository**
-
 ```bash
 git clone https://github.com/NCEMS/energetic-origins-of-PPI-connectivity.git
 cd energetic-origins-of-PPI-connectivity
 ```
 
 **Step 2 - Create the environment**
+
+* You can also use the default environment from Run Mode 1 (i.e., within the Docker container) to execute this run mode. If you would prefer to build your own environment, however, use the below commands. 
 
 ```bash
 conda env create -f docker/environment.yaml
@@ -134,11 +131,12 @@ conda activate anyi
 **Step 3 - Setup `gocommands`**
 
 * Follow the instructions to install `gocommands` in `0-download-inputs/README.md`
-* Insert the absolute path to the `gocmd` executable into the file `config-files/rerun-s288c.config` for the term `gocommands` so that you have the line `gocommands: "/absolute/path/gocmd"` in the `download_inputs` section
+* Insert the absolute path to the `gocmd` executable into the file `config-files/minimal-rerun-s288c.config` for the term `gocommands` so that you have the line `gocommands: "/absolute/path/gocmd"` in the `download_inputs` section
+* This series of steps enables the Snakemake pipeline in `0-download-inputs` to pull data from the CyVerse data store
 
 **Step 4 - Download required data from CyVerse**
 
-* To avoid rerunning expensive calculations we need to download some data from CyVerse. 
+* To avoid rerunning expensive calculations we need to download some additional data from CyVerse. These downloads represent outputs from particularly long calculations.
 
 (1) Rosetta data: from the repo root directory, run the following commands:
 
@@ -146,7 +144,7 @@ conda activate anyi
 cd 6-Rosetta-scoring
 gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz .
 tar -xvf Rosetta-N10_20251016.tar.gz
-touch 6-Rosetta-scoring/processed-data/scores/.all_scores_done
+touch processed-data/scores/.all_scores_done
 ```
 
 (2) PTMGPT2 data: from the repo root directory, run the following commands:
@@ -163,7 +161,7 @@ tar -xvf PTMGPT2-predictions.tar.gz
 gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/5-dG-calculations/alphafold2-structures .
 ```
 
-After this data download completes, update the `AF2_dir` parameter in `config-files/rerun-s288c.config` to point to the `alphafold2-structures/s288c` directory in your downloads folder, like this:
+After this download completes, update the `AF2_dir` parameter in `config-files/rerun-s288c.config` to point to the `alphafold2-structures/s288c` directory in your downloads folder, like this:
 
 ```json
 AF2_dir: "/absolute/path/alphafold2_structures/s288c"
@@ -177,11 +175,12 @@ bash minimal-rerun.sh config-files/minimal-rerun-s288c.config
 
 * This helper script will rerun all pipeline steps except for slow calculations or calculations requiring licensed software in `2-sequence-parsing`, `5-dG-calculations`, `6-Rosetta-scoring`, and `10-predict-PTMs`.
 * The final output will be written to `18-finalize/processed-data/minimal-rerun-20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
-* This run will take ~30 min
+* The `20260210-s288c` part of this file name indicates the current ANYI build for the database
+* This run will take ~60 min, most of which is required to download data
 
-### Run Mode 3 - Complete pipeline run
+## Run Mode 3 (Complete Pipeline Run)
 
-* This run option will require significant time and computational resources (45 days with 112 CPUs)
+* This run option will require significant time and computational resources (approximately 45 days with 112 CPUs)
 * Following these instructions will generate slightly different results from the data currently in `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl` for Rosetta calculations
 * In some places, you will need to update `config-files/full-rerun-s288c.config` while following the instructions below. 
 
@@ -276,6 +275,8 @@ Note that we direct `gpt_model_path` to a single directory containing all of the
 
 **Step 5 - execute the complute pipeline**
 
+* You can run all required commands in series by executing the helper bash script `full-rerun.sh`:
+
 ```bash
-bash full-rerun.sh config-files/full-rerun-s288c.config
+bash full-rerun.sh
 ```
