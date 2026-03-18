@@ -16,9 +16,9 @@ snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-input
 
 *N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
 
-#### Download data from CyVerse with gocmds
+#### Requirements for running this pipeline
 
-This section of the pipeline requires that have a working `gocmd` executable on your machine. You will need:
+This pipeline requires that have a working `gocmd` executable on your machine. You will need:
 
 1. a CyVerse account (sign up [here](https://user.cyverse.org/register))
 2. the `gocmd` executable (download it [here](https://learning.cyverse.org/ds/gocommands/installation/))
