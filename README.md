@@ -89,7 +89,7 @@ cd energetic-origins-of-PPI-connectivity
 * Run the command below to pull the Docker image
 
 ```bash
-docker pull dannissleypsu/anyi:0.1.0
+docker pull dannissleypsu/anyi-browser:v1.0.0
 ```
 
 **Step 3** - Launch JupyterLab
@@ -100,7 +100,7 @@ docker pull dannissleypsu/anyi:0.1.0
 docker run --rm -it -p 8888:8888 \
   -e NB_UID=$(id -u) -e NB_GID=$(id -g) \
   -v "$PWD":/home/jovyan/work \
-  dannissleypsu/anyi:0.1.0
+  dannissleypsu/anyi-browser:v1.0.0
 ```
 
 * Once you have run the command above, copy the URL from your terminal into a web browser window.
