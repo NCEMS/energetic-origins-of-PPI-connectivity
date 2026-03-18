@@ -7,7 +7,7 @@
 
 ## Background and structure
 
-### What is ANYI?
+### Repository contents
 
 * This repository contains the code required to create, analyze, and explore the ANotated Yeast Interactome (ANYI), a heavily annotated yeast protein-protein interaction dataset. 
 * Steps zero through eighteen (each with a correspond directory from `0-download-inputs` through to `18-finalize`) are run in series to produce the annotated interactome, saved in the file `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
@@ -16,12 +16,17 @@
 ### Repository structure
 
 * Nineteen directories with a numerical prefix {0, ..., 18} constitute the 19 steps required to assembled the ANotated Yeast Interactome. Each contains an individual Snakemake pipeline that carries out an action like downloading input data or adding an annotation to the base node file. 
-* There are three ways of using this repository and its associated Docker image. 
+* The directory `figures` contains sub directories with Jupyter Notebooks that generate the figures for [INSERT CITATION]
+* The directory `docker` contains code and examples associated with the ANYI Browser tool
+
+### Ways to use this reposistory
+
+* There are three ways of using this repository and its associated Docker image:
 	* Run Mode 1 (Quick start) - you can clone this repository and the Docker image onto your machine following the `Quick start` instructions below to launch the ANYI Browser tool to visualize yeast PPIs. 
 	* Run Mode 2 (Reproduce key results) - you can use the repository and Docker image to reproduce all figures and key results without dealing with licensing agreements and expensive calculations
 	* Run Mode 3 (Complete pipeline run) - you can rerun the entire pipeline including expensive calculations
 
-#### Files and directories
+### Files and directories
 
 * The repository root directory contains the following files and folders:
 
@@ -68,9 +73,9 @@
 * Runtimes in the `README.md` files of individual pipeline steps, e.g. `1-netowork-centrality/README.md`, refer to the expected runtime on an equivalent system. 
 * All input data requires ~110 GB of storage; all intermediate files and outputs bring the total size to ~250 GB.
 
-### Run Mode 1 - Quick start
+## Run Mode 1 (Quick Start)
 
-#### Using the ANotated Yeast Interactome (ANYI) Browser tool
+### Using the ANotated Yeast Interactome (ANYI) Browser tool
 
 * This repository is designed to be used with a pre-built Docker image that contains the full ANYI runtime environment (JupyterLab + required Python packages). 
 
@@ -106,7 +111,7 @@ docker run --rm -it -p 8888:8888 \
 * You can then use the navigation pane on the left to enter the `docker` folder and then `ANYI-browser` and then open `ANYI-browser.ipynb`. 
 * By executing the code cells in this notebook and then clicking the `Launch` button, you can interact with the annotations in ANYI as well as their protein structures and key proteostasis metrics.
 
-### Run Mode 2 - Reproduce key results
+### Run Mode 2 (Reproduce Key Results)
 
 * This run option allows you to skip dealing with licensed software and long runtimes by using precomputed data.
 * Following these instructions will allow for the generation of the same data currently in `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl`

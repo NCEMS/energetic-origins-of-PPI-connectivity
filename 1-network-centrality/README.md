@@ -39,7 +39,7 @@ Centrality Cosine Distance calculations are carried out using code from the [Muk
 
 The directory `1-network-centrality/test` contains input data used to perform a test at runtime that the CentralityCosDist code is functioning as expected. 
 
-Note: In the current version of the repository, CentralityCosDist calculations are run but not included in the data product. They can be added back in by comment out the line
+Note: In the current version of the repository, CentralityCosDist calculations are run but not included in the data product. They can be added back in by commenting out the line
 
 ```python
 nodes_df = nodes_df.drop(columns=["CentralityCosDist_rank", "CentralityCosDist_similarity_score"])
