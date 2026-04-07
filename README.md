@@ -77,7 +77,7 @@
 
 ### Using the ANotated Yeast Interactome (ANYI) Browser tool
 
-* This repository is designed to be used with a pre-built Docker image that contains the full ANYI runtime environment (JupyterLab + required Python packages). 
+* This repository is designed to be used with a pre-built Docker image (or Apptainer) that contains the full ANYI runtime environment (JupyterLab + required Python packages). 
 
 **Step 1** - Clone this repository
 
@@ -87,8 +87,9 @@
 git clone https://github.com/<your-org>/energetic-origins-of-PPI-connectivity.git
 cd energetic-origins-of-PPI-connectivity
 ```
+### Option A: Docker
 
-**Step 2** - Pull the Docker image
+**Step 2A** - Pull the Docker image
 
 * Run the command below to pull the Docker image
 
@@ -96,7 +97,7 @@ cd energetic-origins-of-PPI-connectivity
 docker pull dannissleypsu/anyi-browser:v1.0.0
 ```
 
-**Step 3** - Launch JupyterLab
+**Step 3A** - Launch JupyterLab with Docker
 
 * Run the command below to launch JupyterLab in the environment required by the ANYI Browser tool.
 
@@ -107,9 +108,39 @@ docker run --rm -it -p 8888:8888 \
   dannissleypsu/anyi-browser:v1.0.0
 ```
 
-* Once you have run the command above, copy the URL from your terminal into a web browser window.
-* You can then use the navigation pane on the left to enter the `docker` folder and then `ANYI-browser` and then open `ANYI-browser.ipynb`. 
-* By executing the code cells in this notebook and then clicking the `Launch` button, you can interact with the annotations in ANYI as well as their protein structures and key proteostasis metrics.
+Once you have run the command above, copy the URL from your terminal into a web browser window.
+
+### Option B: Apptainer
+
+**Step 2B** - Pull the Apptainer image
+
+Run the command below to build an Apptainer image from the published Docker container.
+
+```bash
+apptainer pull anyi-browser.sif docker://dannissleypsu/anyi-browser:v1.0.0
+```
+
+**Step 3B** - Launch JupyterLab with Apptainer
+
+Run the command below to launch the ANYI Browser environment with Apptainer.
+
+```bash
+apptainer run \
+  --bind "$PWD":/home/jovyan/work \
+  anyi-browser.sif
+```
+
+Once the command above starts, follow the instructions printed in the terminal to connect to the JupyterLab server in your web browser.
+
+**Step 4** - Open the ANYI Browser notebook
+
+After launching the container with either Docker or Apptainer, use the file browser in JupyterLab to navigate to:
+
+```text
+docker/ANYI-browser/ANYI-browser.ipynb
+```
+
+Open `ANYI-browser.ipynb`, execute the code cells, and click the `Launch` button to interact with the annotations in ANYI, along with associated protein structures and key proteostasis metrics.
 
 ## Run Mode 2 (Reproduce Key Results)
 
