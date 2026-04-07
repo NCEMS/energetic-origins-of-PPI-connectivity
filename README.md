@@ -284,3 +284,16 @@ Note that we direct `gpt_model_path` to a single directory containing all of the
 ```bash
 bash full-rerun.sh
 ```
+
+## License and Attribution
+
+This repository is an output of the National Synthesis Center for Emergence in the Molecular and Cellular Sciences (NCEMS) and is associated with the **Energetic Origins of Connectivity Within Protein Interaction Networks Working Group**.
+
+Unless otherwise noted, the source code in this repository is licensed under the **GNU General Public License, version 3 or later (GPL-3.0-or-later)**. Please refer to the `LICENSE` file for the complete license text.
+
+Users of this repository should provide appropriate attribution to **NCEMS** and the **Energetic Origins of Connectivity Within Protein Interaction Networks Working Group** in derivative works, presentations, publications, and other reuse, where applicable.
+
+Please appropriately cite the relevant manuscript(s) arising from this Working Group:
+
+- Nissley DA, Goel M, Castellanos-Girouard X, Kuntz CP, Wang Y, Mukhtar MS, Serohijos A, Schlebach JP. **ANYI: The ANnotated Yeast Interactome**. *Manuscript in preparation*.
+- Goel M, Nissley DA, Castellanos-Girouard X, Kuntz CP, Wang Y, Mukhtar MS, Serohijos A, Schlebach JP. **Protein Stability, Turnover Kinetics, and Abundance Constrain the Scaling of Protein Interaction Networks**. *Manuscript in preparation*.
