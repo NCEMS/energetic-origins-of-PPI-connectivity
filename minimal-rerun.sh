@@ -13,6 +13,9 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   exit 2
 fi
 
+# repo root = directory containing this script
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 STAGES=(
   "0-download-inputs"
   "1-network-centrality"
