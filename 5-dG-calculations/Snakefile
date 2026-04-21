@@ -5,6 +5,7 @@ LOCAL_CONFIG  = config["dG_predictions"]
 
 # define variables
 WORK_DIR      = Path(workflow.basedir)
+REPO_ROOT     = WORK_DIR.parent
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
@@ -16,6 +17,25 @@ ESM_MODEL     = Path(LOCAL_CONFIG["ESM_model"])
 SEQ_COLUMN    = LOCAL_CONFIG["seq_column"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
 AF2_DIR       = LOCAL_CONFIG["AF2_dir"]
+
+# optional switch for using precomputed cagiada results
+USE_PRECOMP_CAGIADA = bool(LOCAL_CONFIG.get("use_precomputed_cagiada", False))
+PRECOMP_CAGIADA_RAW = LOCAL_CONFIG.get("precomputed_cagiada_csv", "")
+
+if USE_PRECOMP_CAGIADA:
+    if not PRECOMP_CAGIADA_RAW:
+        raise ValueError(
+            "use_precomputed_cagiada=True but no precomputed_cagiada_csv was provided in config."
+        )
+    precomp_path = Path(PRECOMP_CAGIADA_RAW)
+    if not precomp_path.is_absolute():
+        precomp_path = REPO_ROOT / precomp_path
+    PRECOMP_CAGIADA = str(precomp_path)
+else:
+    PRECOMP_CAGIADA = None
+
+GENERATED_CAGIADA = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
+MERGE_ENV = "env/prepare-structures.yml" if USE_PRECOMP_CAGIADA else "env/cagiada-stability.yml"
 
 # overall goal
 rule all:
@@ -61,53 +81,54 @@ rule ghosh_dill_stability:
         temperature    = TEMPERATURE,
         seq_column     = SEQ_COLUMN
     output:
-        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
     shell:
         f"""
         python {WORK_DIR}/python-scripts/ghosh-dill-stability.py \
-        --nodes         {{input.nodes}} \
-        --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --organism_tag  {{params.organism_tag}} \
-        --temperature   {{params.temperature}} \
-        --seq_column_to_use {{params.seq_column}}
+        --nodes              {{input.nodes}} \
+        --output_dir         {{params.output_dir}} \
+        --output_prefix      {{params.output_prefix}} \
+        --organism_tag       {{params.organism_tag}} \
+        --temperature        {{params.temperature}} \
+        --seq_column_to_use  {{params.seq_column}}
         """
 
-# predict |dG| with Cagiada et al. 2025 model
-rule cagiada_stability:
-    input:
-        nodes          = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
-    conda:
-        "env/cagiada-stability.yml"
-    params:
-        output_prefix  = OUTPUT_PREFIX,
-        output_dir     = str(OUTPUT_DIR),
-        organism_tag   = ORGANISM_TAG,
-        structure_dir  = STRUCTURE_DIR,
-        ESM_model      = ESM_MODEL,
-        test_dir       = TEST_DIR
-    output:
-        csv = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
-    shell:
-        f"""
-        python {WORK_DIR}/python-scripts/cagiada-stability.py \
-        --nodes          {{input.nodes}} \
-        --output_dir     {{params.output_dir}} \
-        --output_prefix  {{params.output_prefix}} \
-        --organism_tag   {{params.organism_tag}} \
-        --structure_dir  {{params.structure_dir}} \
-        --ESM_model      {{params.ESM_model}} \
-        --test_dir       {{params.test_dir}} \
-        > {WORK_DIR}/cagiada.log
-        """
+# default path: compute cagiada values
+if not USE_PRECOMP_CAGIADA:
+    rule cagiada_stability:
+        input:
+            nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl")
+        conda:
+            "env/cagiada-stability.yml"
+        params:
+            output_prefix = OUTPUT_PREFIX,
+            output_dir    = str(OUTPUT_DIR),
+            organism_tag  = ORGANISM_TAG,
+            structure_dir = STRUCTURE_DIR,
+            ESM_model     = ESM_MODEL,
+            test_dir      = TEST_DIR
+        output:
+            csv = GENERATED_CAGIADA
+        shell:
+            f"""
+            python {WORK_DIR}/python-scripts/cagiada-stability.py \
+            --nodes          {{input.nodes}} \
+            --output_dir     {{params.output_dir}} \
+            --output_prefix  {{params.output_prefix}} \
+            --organism_tag   {{params.organism_tag}} \
+            --structure_dir  {{params.structure_dir}} \
+            --ESM_model      {{params.ESM_model}} \
+            --test_dir       {{params.test_dir}} \
+            > {WORK_DIR}/cagiada.log
+            """
 
 # merge Cagiada et al. 2025 results with nodes_df
 rule merge_cagiada_with_nodes:
     input:
         nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-GhoshDill.pkl"),
-        cagiada = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-cagiada-dG.csv")
+        cagiada = PRECOMP_CAGIADA if USE_PRECOMP_CAGIADA else GENERATED_CAGIADA
     conda:
-        "env/cagiada-stability.yml"
+        MERGE_ENV
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
     shell:
