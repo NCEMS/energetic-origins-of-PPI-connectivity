@@ -5,6 +5,7 @@ dependencies:
   - pip
   - numpy==2.3.2
   - pandas>=2.2.2
+  - compilers
+  - tqdm
   - pip:
     - git+https://git@github.com/idptools/sparrow.git
-    - tqdm
