@@ -53,6 +53,40 @@ def truncate_row_structure(row) -> Optional[str]:
         print(f"Error processing {input_path}: {e}")
         return None
 
+def normalize_path(path_value: typing.Any) -> Optional[str]:
+    """
+    Normalize a value intended to represent a filesystem path.
+
+    Args:
+        path_value (typing.Any): Candidate path value, possibly missing or non-path-like.
+
+    Returns:
+        Optional[str]: A normalized string path if the value is path-like; otherwise None.
+    """
+
+    if isinstance(path_value, (str, os.PathLike)):
+        return os.fspath(path_value)
+
+    return None
+
+
+def path_exists(path_value: typing.Any) -> int:
+    """
+    Determine whether a candidate path exists on disk.
+
+    Args:
+        path_value (typing.Any): Candidate path value, possibly missing or non-path-like.
+
+    Returns:
+        int: 1 if the value is path-like and exists on disk, otherwise 0.
+    """
+
+    path = normalize_path(path_value)
+
+    if path is None:
+        return 0
+
+    return 1 if os.path.exists(path) else 0
 
 def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame:
     """
@@ -72,9 +106,7 @@ def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame
     )
 
     # create the structure_exists column by checking if the file actually exists
-    nodes_df["structure_exists"] = nodes_df["structure_path"].apply(
-        lambda path: 1 if path is not None and os.path.exists(path) else 0
-    )
+    nodes_df["structure_exists"] = nodes_df["structure_path"].apply(path_exists)
 
     return nodes_df
 
@@ -143,7 +175,6 @@ def extract_sequence_from_af2_pdb(pdb_path: str) -> Optional[str]:
 
     return "".join(seq_chars)
 
-
 def read_fasta_sequence(fasta_path: str) -> Optional[str]:
     """
     Read in the sequence stored in a fasta file and return it
@@ -151,8 +182,11 @@ def read_fasta_sequence(fasta_path: str) -> Optional[str]:
     Args:
         fasta_path (str): path to the fasta file
 
-    Returns: either the sequence as a str or None
+    Returns:
+        either the sequence as a str or None
     """
+
+    fasta_path = normalize_path(fasta_path)
 
     if fasta_path is None:
         return None
@@ -168,7 +202,6 @@ def read_fasta_sequence(fasta_path: str) -> Optional[str]:
     except Exception as e:
         print(f"Error reading {fasta_path}: {e}")
         return None
-
 
 def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
     """
@@ -244,11 +277,12 @@ def extract_plddt_ca_only(pdb_filename):
 
 
 def compute_mean_plddt(row):
-    path = row.get("final_structure_path")
-    if path and os.path.isfile(path):
-        return extract_plddt_ca_only(path)
-    return np.nan
+    path = normalize_path(row.get("final_structure_path"))
 
+    if path is not None and os.path.isfile(path):
+        return extract_plddt_ca_only(path)
+
+    return np.nan
 
 def select_final_structure(row, af2_dir):
     """
