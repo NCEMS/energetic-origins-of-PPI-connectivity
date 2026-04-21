@@ -5,6 +5,7 @@ dependencies:
   - setuptools>=61
   - numpy==2.3.2
   - pip
+  - compilers
   - pip:
     - biopython
     - git+https://github.com/idptools/sparrow.git
