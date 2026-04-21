@@ -7,5 +7,7 @@ dependencies:
   - biopython>=1.83
   - pytest
   - pip
-  - pip:
-      - goatools==1.2.3
+  - setuptools<82
+  - wheel
+  - goatools=1.2.3
+
