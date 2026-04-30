@@ -209,7 +209,7 @@ bash minimal-rerun.sh config-files/minimal-rerun-s288c.config
 ```
 
 * This helper script will rerun all pipeline steps except for slow calculations or calculations requiring licensed software in `2-sequence-parsing`, `5-dG-calculations`, `6-Rosetta-scoring`, and `10-predict-PTMs`.
-* The final output will be written to `18-finalize/processed-data/minimal-rerun-20260210-s288c-ANnnotated-Yeast-Interactome.pkl`
+* The final output will be written to `18-finalize/processed-data/20260210-s288c-rerun-ANnnotated-Yeast-Interactome.{pkl,csv}`
 * The `20260210-s288c` part of this file name indicates the current ANYI build for the database
 * This run will take ~60 min, most of which is required to download data
 
