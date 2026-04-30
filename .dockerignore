@@ -23,6 +23,9 @@ __pycache__/
 .snakemake
 *.snakemake
 
+# --- Licensed software ---
+2-sequence-parsing/python-scripts/signalp6_fast/
+
 # --- System files ---
 .DS_Store
 */.DS_Store
