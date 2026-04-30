@@ -6,6 +6,7 @@ dependencies:
   - python=3.11
   - numpy==2.3.2
   - pandas>=2.2.2
+  - pyarrow
   - pint
   - pint-pandas
   - tqdm
