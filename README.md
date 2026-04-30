@@ -84,7 +84,7 @@
 * Run the command below to clone this repository and then enter its root directory.
 
 ```bash
-git clone https://github.com/<your-org>/energetic-origins-of-PPI-connectivity.git
+git clone https://github.com/NCEMS/energetic-origins-of-PPI-connectivity.git
 cd energetic-origins-of-PPI-connectivity
 ```
 
