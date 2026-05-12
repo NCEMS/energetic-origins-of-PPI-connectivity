@@ -110,6 +110,8 @@ docker run --rm -it -p 8888:8888 \
 * Once you have run the command above, copy the URL from your terminal into a web browser window.
 * You can then use the navigation pane on the left to enter the `docker` folder and then `ANYI-browser` and then open `ANYI-browser.ipynb`. 
 * By executing the code cells in this notebook and then clicking the `Launch` button, you can interact with the annotations in ANYI as well as their protein structures and key proteostasis metrics.
+* You can also use the ANYI Browser environment to access and run the interactive example `docker/ANYI-browser/examples/testing-hypotheses-with-ANYI.ipynb`, which walks through loading ANYI into Pandas and using it to test hypotheses
+
 
 ## Run Mode 2 (Reproduce Key Results)
 
