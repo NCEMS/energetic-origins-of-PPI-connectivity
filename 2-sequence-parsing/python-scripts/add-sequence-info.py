@@ -3,6 +3,16 @@ from Bio import SeqIO
 import typing
 import argparse
 import numpy as np
+from collections import defaultdict
+
+def get_base_locus_id(record_id: str) -> str:
+    """
+    Convert a TAIR protein isoform ID to a base locus ID.
+
+    Example:
+        AT1G01010.1 -> AT1G01010
+    """
+    return record_id.split(".")[0]
 
 
 def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
@@ -18,12 +28,38 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
     """
 
     # read sequences
-    seqs = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
+    seqs_by_locus = defaultdict(list)
+
+    for record in SeqIO.parse(fasta_file, "fasta"):
+        locus_id = get_base_locus_id(record.id)
+        seqs_by_locus[locus_id].append(record)
+
+    ambiguous_nodes = {
+        node: [record.id for record in seqs_by_locus[node]]
+        for node in nodes_df["node"]
+        if node in seqs_by_locus and len(seqs_by_locus[node]) > 1
+    }
+
+    if ambiguous_nodes:
+        print("Error: multiple isoform sequences found for one or more nodes.")
+        print(f"Number of ambiguous nodes: {len(ambiguous_nodes):,}")
+        print("Examples:")
+
+        for node, isoform_ids in list(ambiguous_nodes.items())[:10]:
+            print(f"{node}: {', '.join(isoform_ids)}")
+
+        raise ValueError("Multiple isoform sequences found. Refusing to choose one arbitrarily.")
+
+    seqs = {
+        locus_id: records[0]
+        for locus_id, records in seqs_by_locus.items()
+        if len(records) == 1
+    }
 
     # add column stating which nodes have sequence info
     nodes_df["has_verified_sequence"] = nodes_df["node"].isin(seqs.keys())
 
-    # add the sequence information
+    # add sequence information
     nodes_df["sequence"] = nodes_df["node"].apply(
         lambda x: str(seqs[x].seq).rstrip("*") if x in seqs else np.nan
     )
@@ -47,6 +83,7 @@ def add_mappings(nodes_df: pd.DataFrame, map_file: str) -> pd.DataFrame:
     column_names = ["UniProtKB-AC", "ID_type", "ID"]
     cross_df = pd.read_csv(map_file, names=column_names, sep="\t")
     cross_df = cross_df[cross_df["ID_type"] == "Gene_OrderedLocusName"]
+    cross_df["ID"] = cross_df["ID"].str.upper()
 
     # add information to nodes_df with a left merge
     nodes_df = nodes_df.merge(
