@@ -2,6 +2,17 @@
 ![](images/center-sized.jpg)
 ![](images/NSF-NCEMS-Blue.svg)
 
+
+### Current status
+
+* config file config-files/athaliana.config in progress
+* pipeline step 0 functional and tied to CyVerse Data Store folder via config
+* pipeline step 1 updated to include preprocessing rule/script that generates edge and node tables
+* pipeline step 2 updates in progress
+
+# LEGACY YEAST README.md FOLLOWS
+
+
 ## Background and structure
 
 ### Repository contents

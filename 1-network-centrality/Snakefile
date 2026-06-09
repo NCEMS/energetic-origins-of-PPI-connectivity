@@ -11,8 +11,7 @@ OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 ORGANISM_TAG  = config["organism_label"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
-EDGES         = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
-NODES         = Path(config["data_dir"]) / LOCAL_CONFIG["nodes"]
+INTERACTOME   = Path(config["data_dir"]) / LOCAL_CONFIG["interactome"]
 COSDISTPATH   = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
 
 # overall goal 
@@ -20,11 +19,26 @@ rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
+# preprocess the interactome into the expected format for centrality calculations
+rule preprocess_centrality:
+    input:
+        inter = INTERACTOME
+    output:
+        edges = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-edges.csv"),
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes.csv")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/preprocess-athaliana-interactome.py \
+            --input {{input.inter}} \
+            --edges {{output.edges}} \
+            --nodes {{output.nodes}}
+        """
+
 # compute centrality metrics
 rule network_centrality:
     input:
-        edges = str(EDGES),
-        nodes = str(NODES)
+        edges = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-edges.csv"),
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-nodes.csv")
     conda:
         str(WORK_DIR / "env/network-analysis.yml")
     params:

@@ -14,8 +14,6 @@ snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-input
 
 * The runtime of this pipeline depends on connection speeds
 
-*N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
-
 #### Requirements for running this pipeline
 
 This pipeline requires that have a working `gocmd` executable on your machine. You will need:
@@ -40,10 +38,18 @@ You are now ready to run this phase of the overall pipeline - be sure to insert 
 
 No input data files are distributed on GitHub. All data for *S. cerevisiae* are archived on CyVerse Data Store at the path 
 ```text
-/iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/0-download-inputs/data-files`
+/iplant/home/shared/NCEMS/working-groups/energetic-origins/arabidopsis-thaliana/0-download-inputs/data-files`
 ```
 
-This path is encoded in `../config-files/s288c.config`
+This path is encoded in `../config-files/athaliana.config`
+
+#### Current data files downloaded
+
+* `arabidopsis_candidate_pairs_ranked.tsv`: the post-processed interactions from DOI: 10.1016/j.cell.2020.02.049 (supplementary files S4 and https://doi.org/10.5281/zenodo.3666940)
+
+* currently the pipeline gives an error message because the file download counts are incorrect
+
+### Legacy README.md from s288c
 
 The following 31 files will be downloaded:
 

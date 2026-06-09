@@ -21,6 +21,10 @@ To run this pipeline step in isolation, use the command:
 snakemake -c all --use-conda --conda-frontend conda --snakefile 1-network-centrality/Snakefile --configfile config-files/s288c.config
 ```
 
+* In the new version for A. thaliana, a pre-processing program is used to convert the raw file from Yiqing into the required format. 
+
+### Legacy yeast README.md information
+
 Cytoscape version 3.10.3 was used to convert `The_Yeast_Interactome.cys` to edge and node tables. These two files are the key inputs to this step (see the configuration file)
 
 Weighted k-shell decomposition was pre-computed in Cytoscape using The Yeast Interactome as the input; this information is stored in `../0-download-inputs/data-files/The_Yeast_Interactome_nodes.csv`
