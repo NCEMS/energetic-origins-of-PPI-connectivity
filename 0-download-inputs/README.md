@@ -1,5 +1,15 @@
 ### `0-download-inputs`: Download input files used by downstream pipeline steps
 
+Run the command:
+
+```bash
+python check-node-count.py --file1 data-files/ppi_in_vivo_edges.csv --file2 data-files/ppi_in_vitro_edges.csv --merged_edges data-files/merged-edges.csv --merged_nodes data-files/merged-nodes.csv
+```
+
+To generate the merged node and edge files
+
+
+
 Corresponding configuration file section: `DOWNLOAD INPUT FILES`
 
 Anticipated execution time: 60-120 min

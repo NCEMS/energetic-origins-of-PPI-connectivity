@@ -10,6 +10,8 @@ To run this pipeline step in isolation, run the command:
 snakemake -c all --use-conda --conda-frontend conda --snakefile 2-sequence-parsing/Snakefile --configfile config-files/s288c.config
 ```
 
+### LEGACY S288C README.md
+
 This pipeline will:
 
 (1) Add sequence information for genes as possible (sourced from SGD; see `../0-download-inputs/README.md` for details)
