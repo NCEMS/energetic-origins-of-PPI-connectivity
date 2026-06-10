@@ -13,15 +13,17 @@ This pipeline step computes the following centrality metrics:
 * Load centrality
 * Page rank
 * Information centrality (run on the largest connected subgraph)
-* CentralityCosDist (using each of the above as part of the vector; default is to use all nodes as seed nodes)
 
-To run this pipeline step in isolation, use the command:
+Current A. thaliana centrality calculations:
 
-```bash
-snakemake -c all --use-conda --conda-frontend conda --snakefile 1-network-centrality/Snakefile --configfile config-files/s288c.config
-```
+| Input Node file | Input Edge file | Config file | Centrality Metric Output File |
+|:---|:---|:---|:---|
+| `../0-download-inputs/data-files/merged-nodes.csv` | `../0-download-inputs/data-files/merged-edges.csv` | `../config-files/union-athaliana.config` | `processed-data/union-athaliana-step1.csv` |
+| `../0-download-inputs/data-files/in-vivo-nodes.csv` | `../0-download-inputs/data-files/in-vivo-edges.csv` | `../config-files/in-vivo-athaliana.config` | `processed-data/in-vivo-athaliana-step1.csv` |
+| `../0-download-inputs/data-files/in-vitro-nodes.csv` | `../0-download-inputs/data-files/in-vitro-edges.csv` | `../config-files/in-vitro-athaliana.config` | `processed-data/in-vitro-athaliana-step1.csv` |
+| `../0-download-inputs/data-files/intersection-nodes.csv` | `../0-download-inputs/data-files/intersection-edges-in_vivo.csv` | `../config-files/intersection-in-vivo-athaliana.config` | `processed-data/intersection-in-vivo-athaliana-step1.csv` |
+| `../0-download-inputs/data-files/intersection-nodes.csv` | `../0-download-inputs/data-files/intersection-edges-in_vitro.csv` | `../config-files/intersection-in-vitro-athaliana.config` | `processed-data/intersection-in-vitro-athaliana-step1.csv` |
 
-* In the new version for A. thaliana, a pre-processing program is used to convert the raw file from Yiqing into the required format. 
 
 ### Legacy yeast README.md information
 
