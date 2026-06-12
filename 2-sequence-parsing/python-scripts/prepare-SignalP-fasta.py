@@ -23,6 +23,8 @@ def write_SignalP_fasta(
         for _, row in nodes_df.iterrows():
             if row["DeepTMHMM_class"] in DeepTMHMM_classes_to_use:
                 f.write(f">{row['node']}\n{row['sequence']}\n")
+            else:
+                print (f">{row['node']}\n{row['sequence']}")
 
     return
 

@@ -127,7 +127,7 @@ def main():
     nodes_df = add_UniProt_info(nodes_df, args.uniprot)
 
     # add additional PTM information from PTMeXchange
-    nodes_df = add_PTM_exchange_info(nodes_df, args.ptmexchange)
+    #nodes_df = add_PTM_exchange_info(nodes_df, args.ptmexchange)
 
     # save the updated nodes_df to file
     nodes_df.to_csv(
