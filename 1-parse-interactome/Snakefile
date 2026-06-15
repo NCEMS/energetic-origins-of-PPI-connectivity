@@ -4,11 +4,12 @@ from pathlib import Path
 LOCAL_CONFIG  = config["preprocess_interactome"]
 
 # define variables
-WORK_DIR      = Path(workflow.basedir)
-DATA_DIR      = WORK_DIR / config["data_dir"]
-OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
-BIOGRID       = Path(config["data_dir"]) / LOCAL_CONFIG["biogrid_data"]
-TABLES1       = Path(config["data_dir"]) / LOCAL_CONFIG["yilmaz_data"]
+WORK_DIR          = Path(workflow.basedir)
+DATA_DIR          = WORK_DIR / config["data_dir"]
+OUTPUT_DIR        = WORK_DIR / LOCAL_CONFIG["output_dir"]
+BIOGRID           = Path(config["data_dir"]) / LOCAL_CONFIG["biogrid_data"]
+TABLES1           = Path(config["data_dir"]) / LOCAL_CONFIG["yilmaz_data"]
+IDMAPPING = Path(config["data_dir"]) / LOCAL_CONFIG["uniprot_idmapping"]
 
 # overall goal
 rule all:
@@ -21,18 +22,21 @@ rule all:
         str(OUTPUT_DIR / f"in-vitro-edges.csv"),
         str(OUTPUT_DIR / f"intersection-nodes.csv"),
         str(OUTPUT_DIR / f"intersection-in-vivo-edges.csv"),
-        str(OUTPUT_DIR / f"intersection-in-vitro-edges.csv")
+        str(OUTPUT_DIR / f"intersection-in-vitro-edges.csv"),
+        str(OUTPUT_DIR / f"identifier-mapping-in-vivo-report.csv"),
+        str(OUTPUT_DIR / f"identifier-mapping-in-vitro-report.csv")
+
 
 # process raw data from BIOGRID & https://doi.org/10.3390/plants11030350
 rule process_data:
     input:
         biogrid = BIOGRID,
-        tables1 = TABLES1 
+        tables1 = TABLES1
     conda:
         str(WORK_DIR / "env/preprocessing.yml")
     output:
-        invivo  = str(OUTPUT_DIR / f"ppi-in-vivo-edges.csv"),
-        invitro = str(OUTPUT_DIR / f"ppi-in-vitro-edges.csv"),
+        invivo  = str(OUTPUT_DIR / f"ppi-in-vivo-edges.raw.csv"),
+        invitro = str(OUTPUT_DIR / f"ppi-in-vitro-edges.raw.csv"),
         unknown = str(OUTPUT_DIR / f"ppi-unknown-methods.csv")
     shell:
         f"""
@@ -44,7 +48,38 @@ rule process_data:
         --unknown-methods-output {{output.unknown}}
         """
 
-# rule map_identifiers
+
+# map all edge-list identifiers to AGI locus IDs
+rule map_identifiers:
+    input:
+        invivo = str(OUTPUT_DIR / f"ppi-in-vivo-edges.raw.csv"),
+        invitro = str(OUTPUT_DIR / f"ppi-in-vitro-edges.raw.csv"),
+        idmapping = IDMAPPING
+    conda:
+        str(WORK_DIR / "env/preprocessing.yml")
+    output:
+        invivo = str(OUTPUT_DIR / f"ppi-in-vivo-edges.csv"),
+        invitro = str(OUTPUT_DIR / f"ppi-in-vitro-edges.csv"),
+        invivo_report = str(OUTPUT_DIR / f"identifier-mapping-in-vivo-report.csv"),
+        invitro_report = str(OUTPUT_DIR / f"identifier-mapping-in-vitro-report.csv")
+    shell:
+        f"""
+        set -euo pipefail
+
+        python {WORK_DIR}/python-scripts/map-edge-identifiers-to-agi.py \
+        --edges {{input.invivo}} \
+        --idmapping {{input.idmapping}} \
+        --output {{output.invivo}} \
+        --report {{output.invivo_report}} \
+        --drop-unmapped
+
+        python {WORK_DIR}/python-scripts/map-edge-identifiers-to-agi.py \
+        --edges {{input.invitro}} \
+        --idmapping {{input.idmapping}} \
+        --output {{output.invitro}} \
+        --report {{output.invitro_report}} \
+        --drop-unmapped
+        """
 
 # create five edge and node lists for downstream analysis
 rule merge_and_intersect:
