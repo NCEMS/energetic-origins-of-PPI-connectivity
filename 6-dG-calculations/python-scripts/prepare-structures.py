@@ -27,53 +27,197 @@ class CleavageSelect(Select):
         return residue.id[1] > self.cut_pos
 
 
-def truncate_structure(pdb_path: str, cut_pos: int, output_path: str) -> None:
+def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
+    """
+    Creates a truncated FASTA sequence based on the original AF2 sequence and
+    the SignalP predicted cleavage site.
 
+    Args:
+        seq (str): sequence to be trimmed
+        cut (Optional[int]): number of residues to remove from the N-terminus,
+            or None/NaN if no trimming should be performed
+
+    Returns:
+        The truncated sequence, the original sequence, or None if seq is missing
+    """
+
+    if not isinstance(seq, str):
+        return None
+
+    seq = seq.strip().rstrip("*")
+
+    if pd.isna(cut) or cut is None:
+        return seq
+
+    try:
+        cut = int(cut)
+    except (TypeError, ValueError):
+        return None
+
+    return seq[cut:]
+
+
+def truncate_structure(pdb_path: str, cut_pos: int, output_path: str) -> None:
     parser = PDBParser(QUIET=True)
     structure = parser.get_structure("structure", pdb_path)
+
     io = PDBIO()
     io.set_structure(structure)
     io.save(output_path, CleavageSelect(cut_pos))
 
 
 def truncate_row_structure(row) -> Optional[str]:
+    """
+    Create a cleaved PDB file if a structure exists and a SignalP cleavage site
+    is available.
+    """
 
-    if row["structure_exists"] == 0 or pd.isna(row["cleavage_site_start"]):
+    if row.get("structure_exists") != 1:
         return None
 
-    input_path = row["structure_path"]
-    cut_pos = int(row["cleavage_site_start"])
+    if pd.isna(row.get("cleavage_site_start")):
+        return None
+
+    input_path = row.get("structure_path")
+
+    if not isinstance(input_path, str) or not os.path.isfile(input_path):
+        return None
+
+    try:
+        cut_pos = int(row["cleavage_site_start"])
+    except (TypeError, ValueError):
+        return None
 
     output_path = input_path.replace(".pdb", "-cleaved.pdb")
 
     try:
         truncate_structure(input_path, cut_pos, output_path)
         return output_path
+
     except Exception as e:
         print(f"Error processing {input_path}: {e}")
         return None
 
 
+def parse_uniprot_accessions(value) -> list[str]:
+    """
+    Parse a UniProtKB-AC field that may contain one or more semicolon-delimited
+    accessions. Missing values return an empty list.
+
+    Examples:
+        Q9SP32 -> ["Q9SP32"]
+        F4HQG6;Q56Y50;Q9SP32 -> ["F4HQG6", "Q56Y50", "Q9SP32"]
+        np.nan -> []
+        "nan" -> []
+    """
+
+    if value is None or pd.isna(value):
+        return []
+
+    accessions = []
+
+    for accession in str(value).split(";"):
+        accession = accession.strip()
+
+        if not accession:
+            continue
+
+        if accession.lower() in {"nan", "none", "na", "null"}:
+            continue
+
+        accessions.append(accession)
+
+    return accessions
+
+
+def choose_first_uniprot_accession(value) -> Optional[str]:
+    """
+    Choose the first UniProt accession from a potentially semicolon-delimited
+    field. Return None if no valid accession is available.
+    """
+
+    accessions = parse_uniprot_accessions(value)
+    return accessions[0] if accessions else None
+
+
 def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame:
     """
-    Adds information to nodes_df regarding if a structure exists for a node and, if so, its path
+    Adds AF2-EBI structure path information to nodes_df.
 
-    Args:
-        nodes_df (pd.DataFrame): DataFrame to which structure information will be added
-        structure_dir (str): path to the directory containing AlphaFold2 structures
+    Handles UniProtKB-AC values that are:
+        - missing
+        - single accessions, e.g. Q9SP32
+        - semicolon-delimited accessions, e.g. F4HQG6;Q56Y50;Q9SP32
 
-    Returns:
-        Updated nodes_df with structure_path and structure_exists columns inserted
+    If multiple accessions have existing structures, this is logged. The first
+    accession in the UniProtKB-AC field is chosen deterministically.
     """
 
-    # locate and add structures to dataframe
-    nodes_df["structure_path"] = nodes_df["UniProtKB-AC"].apply(
-        lambda id: f"{structure_dir}/AF-{id}-F1-model_v4.pdb" if pd.notna(id) else None
+    nodes_df = nodes_df.copy()
+
+    def existing_structure_accessions(uniprot_field):
+        existing = []
+
+        for accession in parse_uniprot_accessions(uniprot_field):
+            path = os.path.join(
+                structure_dir,
+                f"AF-{accession}-F1-model_v6.pdb",
+            )
+
+            if os.path.isfile(path):
+                existing.append(accession)
+
+        return existing
+
+    nodes_df["n_UniProtKB_AC"] = nodes_df["UniProtKB-AC"].apply(
+        lambda x: len(parse_uniprot_accessions(x))
     )
 
-    # create the structure_exists column by checking if the file actually exists
+    nodes_df["existing_AF2_EBI_structure_accessions"] = nodes_df["UniProtKB-AC"].apply(
+        existing_structure_accessions
+    )
+
+    nodes_df["n_existing_AF2_EBI_structures"] = nodes_df[
+        "existing_AF2_EBI_structure_accessions"
+    ].apply(len)
+
+    n_missing_uniprot = nodes_df["n_UniProtKB_AC"].eq(0).sum()
+    n_multiple_uniprot = nodes_df["n_UniProtKB_AC"].gt(1).sum()
+    n_multiple_structures = nodes_df["n_existing_AF2_EBI_structures"].gt(1).sum()
+
+    print(f"Nodes with no UniProtKB-AC mapping: {n_missing_uniprot:,}")
+    print(f"Nodes with multiple UniProtKB-AC mappings: {n_multiple_uniprot:,}")
+    print(f"Nodes with multiple existing AF2-EBI structures: {n_multiple_structures:,}")
+
+    if n_multiple_structures > 0:
+        print("Examples of nodes with multiple existing AF2-EBI structures:")
+
+        example_rows = nodes_df.loc[
+            nodes_df["n_existing_AF2_EBI_structures"].gt(1),
+            ["node", "UniProtKB-AC", "existing_AF2_EBI_structure_accessions"],
+        ].head(10)
+
+        for _, row in example_rows.iterrows():
+            print(
+                f"{row['node']}: "
+                f"UniProtKB-AC={row['UniProtKB-AC']}; "
+                f"existing={','.join(row['existing_AF2_EBI_structure_accessions'])}"
+            )
+
+    nodes_df["selected_UniProtKB_AC_for_structure"] = nodes_df["UniProtKB-AC"].apply(
+        choose_first_uniprot_accession
+    )
+
+    nodes_df["structure_path"] = nodes_df["selected_UniProtKB_AC_for_structure"].apply(
+        lambda accession: (
+            os.path.join(structure_dir, f"AF-{accession}-F1-model_v6.pdb")
+            if accession is not None
+            else None
+        )
+    )
+
     nodes_df["structure_exists"] = nodes_df["structure_path"].apply(
-        lambda path: 1 if path is not None and os.path.exists(path) else 0
+        lambda path: 1 if isinstance(path, str) and os.path.isfile(path) else 0
     )
 
     return nodes_df
@@ -81,22 +225,29 @@ def locate_structure(nodes_df: pd.DataFrame, structure_dir: str) -> pd.DataFrame
 
 def locate_structure_fasta(nodes_df: pd.DataFrame, fasta_dir: str) -> pd.DataFrame:
     """
-    Adds information to nodes_df regarding the fasta sequence extracted from the AF2 structure
+    Adds AF2-derived FASTA path and sequence information.
 
-    Args:
-        nodes_df (pd.DataFrame): DataFrame to which structure information will be added
-        fasta_dir (str): path to the directory containing AlphaFold2 structure-based sequencers
-
-    Returns:
-        Updated nodes_df with AF2_fasta_path column inserted
+    Uses selected_UniProtKB_AC_for_structure if present. Missing UniProt IDs
+    produce None rather than AF-nan paths.
     """
 
-    # locate the fasta file and add to dataframe
-    nodes_df["structure_fasta_path"] = nodes_df["UniProtKB-AC"].apply(
-        lambda id: f"{fasta_dir}/AF-{id}-F1-model_v4.fasta" if pd.notna(id) else None
+    nodes_df = nodes_df.copy()
+
+    if "selected_UniProtKB_AC_for_structure" not in nodes_df.columns:
+        nodes_df["selected_UniProtKB_AC_for_structure"] = nodes_df["UniProtKB-AC"].apply(
+            choose_first_uniprot_accession
+        )
+
+    nodes_df["structure_fasta_path"] = nodes_df[
+        "selected_UniProtKB_AC_for_structure"
+    ].apply(
+        lambda accession: (
+            os.path.join(fasta_dir, f"AF-{accession}-F1-model_v6.fasta")
+            if accession is not None
+            else None
+        )
     )
 
-    # add the sequence from this fasta file if it exists
     nodes_df["structure_sequence"] = nodes_df["structure_fasta_path"].apply(
         read_fasta_sequence
     )
@@ -146,15 +297,13 @@ def extract_sequence_from_af2_pdb(pdb_path: str) -> Optional[str]:
 
 def read_fasta_sequence(fasta_path: str) -> Optional[str]:
     """
-    Read in the sequence stored in a fasta file and return it
-
-    Args:
-        fasta_path (str): path to the fasta file
-
-    Returns: either the sequence as a str or None
+    Read the sequence stored in a FASTA file and return it.
     """
 
-    if fasta_path is None:
+    if fasta_path is None or pd.isna(fasta_path):
+        return None
+
+    if not isinstance(fasta_path, str):
         return None
 
     if not os.path.isfile(fasta_path):
@@ -163,27 +312,11 @@ def read_fasta_sequence(fasta_path: str) -> Optional[str]:
 
     try:
         record = next(SeqIO.parse(fasta_path, "fasta"))
-        return str(record.seq)
+        return str(record.seq).rstrip("*")
 
     except Exception as e:
         print(f"Error reading {fasta_path}: {e}")
         return None
-
-
-def truncate_fasta(seq: str, cut: Optional[int]) -> Optional[str]:
-    """
-    Creates a truncated fasta sequence based on the original AF2 sequence and the SignalP predicted cleavage site
-    Args:
-        seq (str): sequence to be trimmed
-        cut (Optional[int]): the integer value of the first value to keep, or None
-    Returns:
-        The truncated sequence
-    """
-
-    if pd.isna(cut) or cut is None:
-        return seq
-
-    return seq[int(cut) :]
 
 
 def compare_sequence(row) -> bool:
@@ -219,14 +352,18 @@ def compare_sequence(row) -> bool:
 
 def extract_plddt_ca_only(pdb_filename):
     """
-    Extracts pLDDT values from CA atoms in B-factor field of an AlphaFold2 PDB file.
-
-    Parameters:
-    - pdb_filename (str): Path to the PDB file.
-
-    Returns:
-    - avg_plddt (float): Mean pLDDT value across all residues.
+    Extract pLDDT values from CA atoms in the B-factor field of an AlphaFold2 PDB file.
     """
+
+    if pdb_filename is None or pd.isna(pdb_filename):
+        return np.nan
+
+    if not isinstance(pdb_filename, (str, bytes, os.PathLike)):
+        return np.nan
+
+    if not os.path.isfile(pdb_filename):
+        return np.nan
+
     plddt_values = []
 
     with open(pdb_filename, "r") as f:
@@ -236,17 +373,26 @@ def extract_plddt_ca_only(pdb_filename):
                     b_factor = float(line[60:66].strip())
                     plddt_values.append(b_factor)
                 except ValueError:
-                    continue  # skip lines with malformed B-factors
+                    continue
 
-    plddt_array = np.array(plddt_values)
-    avg_plddt = np.mean(plddt_array) if len(plddt_array) > 0 else float("nan")
-    return avg_plddt
+    if len(plddt_values) == 0:
+        return np.nan
+
+    return float(np.mean(plddt_values))
 
 
 def compute_mean_plddt(row):
     path = row.get("final_structure_path")
-    if path and os.path.isfile(path):
+
+    if path is None or pd.isna(path):
+        return np.nan
+
+    if not isinstance(path, (str, bytes, os.PathLike)):
+        return np.nan
+
+    if os.path.isfile(path):
         return extract_plddt_ca_only(path)
+
     return np.nan
 
 
@@ -366,17 +512,34 @@ def main():
     # add AF2 fasta information as well; adds "structure_fasta_path" and "structure_sequence" to the pd.DataFrame
     nodes_df = locate_structure_fasta(nodes_df, args.input_dir)
 
+    print("Structure preparation diagnostics:")
+    print(f"Total nodes: {len(nodes_df):,}")
+    print(f"Nodes with UniProtKB-AC: {nodes_df['UniProtKB-AC'].notna().sum():,}")
+    print(
+        "Nodes with selected UniProt accession: "
+        f"{nodes_df['selected_UniProtKB_AC_for_structure'].notna().sum():,}"
+    )
+    print(f"Nodes with existing structures: {nodes_df['structure_exists'].sum():,}")
+    print(
+        "Nodes with structure_sequence strings: "
+        f"{nodes_df['structure_sequence'].apply(lambda x: isinstance(x, str)).sum():,}"
+    )
+    print(
+        "Nodes with SignalP cleavage sites: "
+        f"{nodes_df['cleavage_site_start'].notna().sum():,}"
+    )
+
     # for proteins with a cleavage site predicted by SignalP, create a truncated structure and update structure_path value
     nodes_df["cleaved_structure_path"] = nodes_df.apply(truncate_row_structure, axis=1)
 
     # for proteins with a cleavage site predicted by SignalP, create a truncated FASTA based on the sequence from the AF2 structure
     nodes_df["cleaved_structure_sequence"] = nodes_df.apply(
         lambda row: truncate_fasta(
-            row["structure_sequence"], row["cleavage_site_start"]
+            row.get("structure_sequence"),
+            row.get("cleavage_site_start"),
         ),
         axis=1,
     )
-
     # compare sequences between structures and trimmed sequences and add this information to a Boolean column named "sequence_matches_structure"
     nodes_df["sequence_matches_structure"] = nodes_df.apply(compare_sequence, axis=1)
 

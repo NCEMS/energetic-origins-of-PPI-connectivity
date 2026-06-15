@@ -81,8 +81,9 @@ def filter_edges_to_node_set(edges_df: pd.DataFrame, node_set: set) -> pd.DataFr
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "Compute union network outputs, individual node lists, and "
-            "node-intersection-filtered edge lists from two protein edge files."
+            "Compute union network outputs, individual reformatted edge lists, "
+            "individual node lists, and node-intersection-filtered edge lists "
+            "from two protein edge files."
         )
     )
 
@@ -93,6 +94,24 @@ def main():
         "--sep",
         default=",",
         help="Input file delimiter. Default: comma. Use '\\t' for TSV files.",
+    )
+
+    parser.add_argument(
+        "--file1_edges",
+        required=True,
+        help=(
+            "Output CSV file for reformatted file1 edge list with columns "
+            "source and target."
+        ),
+    )
+
+    parser.add_argument(
+        "--file2_edges",
+        required=True,
+        help=(
+            "Output CSV file for reformatted file2 edge list with columns "
+            "source and target."
+        ),
     )
 
     parser.add_argument(
@@ -154,7 +173,8 @@ def main():
     edges1 = read_edges(args.file1, sep)
     edges2 = read_edges(args.file2, sep)
 
-    # Canonicalize as undirected PPI edges
+    # Canonicalize as undirected PPI edges.
+    # These are also the reformatted individual edge lists.
     edges1 = canonicalize_undirected_edges(edges1)
     edges2 = canonicalize_undirected_edges(edges2)
 
@@ -187,6 +207,9 @@ def main():
     )
 
     # Write outputs
+    edges1.to_csv(args.file1_edges, index=False)
+    edges2.to_csv(args.file2_edges, index=False)
+
     union_edges.to_csv(args.union_edges, index=False)
     union_nodes.to_csv(args.union_nodes, index=False)
 
@@ -211,6 +234,8 @@ def main():
     print(f"File2 edges within intersection nodes:    {len(file2_intersection_edges):,}")
 
     print()
+    print(f"Wrote reformatted file1 edge list to:     {args.file1_edges}")
+    print(f"Wrote reformatted file2 edge list to:     {args.file2_edges}")
     print(f"Wrote union edge list to:                 {args.union_edges}")
     print(f"Wrote union node list to:                 {args.union_nodes}")
     print(f"Wrote file1 node list to:                 {args.file1_nodes}")

@@ -1,0 +1,83 @@
+from pathlib import Path
+
+# read configfile params
+LOCAL_CONFIG  = config["preprocess_interactome"]
+
+# define variables
+WORK_DIR      = Path(workflow.basedir)
+DATA_DIR      = WORK_DIR / config["data_dir"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+BIOGRID       = Path(config["data_dir"]) / LOCAL_CONFIG["biogrid_data"]
+TABLES1       = Path(config["data_dir"]) / LOCAL_CONFIG["yilmaz_data"]
+
+# overall goal
+rule all:
+    input:
+        str(OUTPUT_DIR / f"union-nodes.csv"),
+        str(OUTPUT_DIR / f"union-edges.csv"),
+        str(OUTPUT_DIR / f"in-vivo-nodes.csv"),
+        str(OUTPUT_DIR / f"in-vivo-edges.csv"),
+        str(OUTPUT_DIR / f"in-vitro-nodes.csv"),
+        str(OUTPUT_DIR / f"in-vitro-edges.csv"),
+        str(OUTPUT_DIR / f"intersection-nodes.csv"),
+        str(OUTPUT_DIR / f"intersection-in-vivo-edges.csv"),
+        str(OUTPUT_DIR / f"intersection-in-vitro-edges.csv")
+
+# process raw data from BIOGRID & https://doi.org/10.3390/plants11030350
+rule process_data:
+    input:
+        biogrid = BIOGRID,
+        tables1 = TABLES1 
+    conda:
+        str(WORK_DIR / "env/preprocessing.yml")
+    output:
+        invivo  = str(OUTPUT_DIR / f"ppi-in-vivo-edges.csv"),
+        invitro = str(OUTPUT_DIR / f"ppi-in-vitro-edges.csv"),
+        unknown = str(OUTPUT_DIR / f"ppi-unknown-methods.csv")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/curate-athaliana-ppi-evidence.py \
+        --biogrid                {{input.biogrid}} \
+        --table-s1               {{input.tables1}} \
+        --in-vivo-output         {{output.invivo}} \
+        --in-vitro-output        {{output.invitro}} \
+        --unknown-methods-output {{output.unknown}}
+        """
+
+# rule map_identifiers
+
+# create five edge and node lists for downstream analysis
+rule merge_and_intersect:
+    input:
+        invivo  = str(OUTPUT_DIR / f"ppi-in-vivo-edges.csv"),
+        invitro = str(OUTPUT_DIR / f"ppi-in-vitro-edges.csv")
+    conda:
+        str(WORK_DIR / "env/preprocessing.yml")
+    params:
+        sep = ","
+    output:
+        union_nodes                = str(OUTPUT_DIR / f"union-nodes.csv"),
+        union_edges                = str(OUTPUT_DIR / f"union-edges.csv"),
+        invivo_nodes               = str(OUTPUT_DIR / f"in-vivo-nodes.csv"),
+        invivo_edges               = str(OUTPUT_DIR / f"in-vivo-edges.csv"),
+        invitro_nodes              = str(OUTPUT_DIR / f"in-vitro-nodes.csv"),
+        invitro_edges              = str(OUTPUT_DIR / f"in-vitro-edges.csv"),
+        intersection_nodes         = str(OUTPUT_DIR / f"intersection-nodes.csv"),
+        intersection_invivo_edges  = str(OUTPUT_DIR / f"intersection-in-vivo-edges.csv"),
+        intersection_invitro_edges = str(OUTPUT_DIR / f"intersection-in-vitro-edges.csv")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/merge-and-intersect.py \
+        --file1                    {{input.invitro}} \
+        --file2                    {{input.invivo}} \
+        --sep                      {{params.sep}} \
+        --file1_edges              {{output.invitro_edges}} \
+        --file2_edges              {{output.invivo_edges}} \
+        --union_edges              {{output.union_edges}} \
+        --union_nodes              {{output.union_nodes}} \
+        --file1_nodes              {{output.invitro_nodes}} \
+        --file2_nodes              {{output.invivo_nodes}} \
+        --file1_intersection_edges {{output.intersection_invitro_edges}} \
+        --file2_intersection_edges {{output.intersection_invivo_edges}} \
+        --intersection_nodes       {{output.intersection_nodes}}
+        """

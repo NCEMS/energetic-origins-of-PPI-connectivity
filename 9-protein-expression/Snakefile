@@ -1,0 +1,55 @@
+from pathlib import Path
+
+# read configfile information
+LOCAL_CONFIG  = config["protein_expression"]
+
+# define variables
+INPUT_NODES     = Path(LOCAL_CONFIG["input_nodes"])
+OUTPUT_SUFFIX   = LOCAL_CONFIG["output_suffix"]
+WORK_DIR        = Path(workflow.basedir)
+OUTPUT_PREFIX   = config["output_prefix"]
+OUTPUT_DIR      = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG    = config["organism_label"]
+ABUNDANCE_FILES = [Path(p) for p in LOCAL_CONFIG["abundance_files"]]
+
+HARMONIZED_ABUNDANCE = (
+    OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-harmonized-abundance-{OUTPUT_SUFFIX}.csv"
+)
+
+FINAL_OUTPUT = (
+    OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+)
+
+# overall goal
+rule all:
+    input:
+        FINAL_OUTPUT,
+        HARMONIZED_ABUNDANCE
+
+# integrate abundance data
+rule add_expression:
+    input:
+        nodes = INPUT_NODES,
+        abundance_files = ABUNDANCE_FILES
+    conda:
+        "env/add-protein-expression.yml"
+    params:
+        output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
+        output_dir = str(OUTPUT_DIR),
+        organism_tag = ORGANISM_TAG,
+        harmonized_abundance = str(HARMONIZED_ABUNDANCE)
+    output:
+        pkl = FINAL_OUTPUT,
+        harmonized_abundance = HARMONIZED_ABUNDANCE
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-expression.py \
+        --nodes {{input.nodes}} \
+        --output_dir {{params.output_dir}} \
+        --output_prefix {{params.output_prefix}} \
+        --output_suffix {{params.output_suffix}} \
+        --organism_tag {{params.organism_tag}} \
+        --harmonized_abundance_out {{params.harmonized_abundance}} \
+        --abundance_files {{input.abundance_files}}
+        """
