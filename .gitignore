@@ -6,15 +6,14 @@ cyverse-access-token
 docker/examples/.ipynb_checkpoints
 
 # do not copy SignalP into the GitHub repo
-2-sequence-parsing/python-scripts/signalp6_fast
+3-sequence-parsing/python-scripts/signalp6_fast
 
 # ignore everything in 0-download-inputs/data-files
 0-download-inputs/data-files/*
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
-6-Rosetta-scoring/processed-data/scores
-6-Rosetta-scoring/old
-7-FoldX-scoring/processed-data/scores
+7-Rosetta-scoring/processed-data/scores
+7-Rosetta-scoring/old
 
 # do not upload all protein structures to GitHub
 # helper function is provided to copy them into place when creating the container
