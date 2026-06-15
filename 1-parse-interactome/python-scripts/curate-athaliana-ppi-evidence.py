@@ -24,7 +24,11 @@ from typing import Iterable
 import pandas as pd
 
 
-TAIR_LOCUS_RE = re.compile(r"\bAT(?:[1-5]G|MG|CG)\d{5}\b", re.IGNORECASE)
+ARABIDOPSIS_ID_RE = re.compile(
+    r"\b(?:AT(?:[1-5]G|MG|CG)\d{5}|ARTHCP\d{3}|ARTHMP\d{3})\b",
+    re.IGNORECASE,
+)
+TABLE_S1_DIRECT_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
 
 OUTPUT_COLUMNS = [
     "protein_a",
@@ -65,6 +69,7 @@ BIOGRID_B_COLUMNS = [
 ]
 
 TABLE_S1_A_COLUMNS = [
+    "_table_s1_agi_a",
     "Protein A",
     "Protein 1",
     "Protein1",
@@ -87,6 +92,7 @@ TABLE_S1_A_COLUMNS = [
 ]
 
 TABLE_S1_B_COLUMNS = [
+    "_table_s1_agi_b",
     "Protein B",
     "Protein 2",
     "Protein2",
@@ -109,6 +115,7 @@ TABLE_S1_B_COLUMNS = [
 ]
 
 METHOD_COLUMNS = [
+    "_table_s1_method",
     "Experimental System",
     "Method",
     "method",
@@ -132,6 +139,7 @@ SOURCE_COLUMNS = [
 ]
 
 LABEL_COLUMNS = [
+    "_table_s1_label_hint",
     "label",
     "Label",
     "Evidence class",
@@ -151,7 +159,6 @@ IN_VIVO_METHOD_PATTERNS = [
     "co ip",
     "coip",
     "co purifications",
-    "co purification",
     "immunoaffinity purification",
 ]
 
@@ -272,20 +279,43 @@ def discover_endpoint_columns(df: pd.DataFrame, side: str) -> list[str]:
     return columns
 
 
-def extract_tair_loci(value: object) -> list[str]:
+def normalize_arabidopsis_id(value: str) -> str:
+    upper = value.upper()
+    if upper.startswith("ARTHCP"):
+        return f"ArthCp{upper.removeprefix('ARTHCP')}"
+    if upper.startswith("ARTHMP"):
+        return f"ArthMp{upper.removeprefix('ARTHMP')}"
+    return upper
+
+
+def extract_arabidopsis_ids_ordered(value: object) -> list[str]:
     text = clean_text(value)
     if text is None:
         return []
-    matches = TAIR_LOCUS_RE.findall(text.upper())
-    return sorted(set(matches))
+    return [normalize_arabidopsis_id(match.group(0)) for match in ARABIDOPSIS_ID_RE.finditer(text)]
+
+
+def extract_tair_loci(value: object) -> list[str]:
+    return sorted(set(extract_arabidopsis_ids_ordered(value)))
 
 
 def row_loci(row: pd.Series, columns: list[str]) -> list[str]:
     for column in columns:
-        loci = extract_tair_loci(row.get(column))
+        value = row.get(column)
+        loci = extract_tair_loci(value)
         if loci:
             return loci
+        if str(column).startswith("_table_s1_agi_"):
+            direct_id = clean_text(value)
+            if direct_id is not None and TABLE_S1_DIRECT_ID_RE.fullmatch(direct_id):
+                return [direct_id]
     return []
+
+
+def protein_sort_key(protein_id: str) -> tuple[int, str]:
+    if protein_id.startswith(("ArthCp", "ArthMp")):
+        return 0, protein_id
+    return 1, protein_id
 
 
 def classify_method(method: str | None, label_hint: str | None) -> str | None:
@@ -313,6 +343,89 @@ def parse_sheet_name(value: str | None) -> int | str:
         return int(value)
     except ValueError:
         return value
+
+
+def parse_agi_key_pair(value: object) -> tuple[str | None, str | None]:
+    loci = extract_arabidopsis_ids_ordered(value)
+    if len(loci) < 2:
+        return None, None
+    return loci[0], loci[1]
+
+
+def normalized_lookup_key(value: object) -> str | None:
+    cleaned = clean_text(value)
+    if cleaned is None:
+        return None
+    return re.sub(r"\s+", " ", cleaned).strip().lower()
+
+
+def read_table_s1_method_map(path: Path, sheet_name: str | None) -> dict[str, dict[str, str]]:
+    if sheet_name is None or path.suffix.lower() not in {".xlsx", ".xls"}:
+        return {}
+
+    lookup = pd.read_excel(
+        path,
+        sheet_name=parse_sheet_name(sheet_name),
+        header=None,
+        dtype=str,
+    ).dropna(how="all")
+    if lookup.empty or lookup.shape[1] < 3:
+        return {}
+
+    lookup = lookup.iloc[:, :3].copy()
+    lookup.columns = ["source", "method", "label_hint"]
+
+    mapping: dict[str, dict[str, str]] = {}
+    for _, row in lookup.iterrows():
+        key = normalized_lookup_key(row["source"])
+        method = clean_text(row["method"])
+        label_hint = clean_text(row["label_hint"])
+        if key is None or method is None:
+            continue
+        mapping[key] = {
+            "method": method,
+            "label_hint": label_hint or "",
+        }
+
+    return mapping
+
+
+def prepare_table_s1_dataframe(
+    df: pd.DataFrame,
+    source_path: Path,
+    method_map_sheet: str | None,
+) -> pd.DataFrame:
+    df = df.copy()
+
+    agi_key_column = find_column(df, "AGI KEY")
+    if agi_key_column is not None:
+        parsed_pairs = df[agi_key_column].map(parse_agi_key_pair)
+        df["_table_s1_agi_a"] = parsed_pairs.map(lambda pair: pair[0])
+        df["_table_s1_agi_b"] = parsed_pairs.map(lambda pair: pair[1])
+
+        protein_a_column = find_column(df, "Protein A")
+        protein_b_column = find_column(df, "Protein B")
+        if protein_a_column is not None and protein_b_column is not None:
+            missing_pair = df["_table_s1_agi_a"].isna() | df["_table_s1_agi_b"].isna()
+            df.loc[missing_pair, "_table_s1_agi_a"] = df.loc[
+                missing_pair, protein_a_column
+            ].map(clean_text)
+            df.loc[missing_pair, "_table_s1_agi_b"] = df.loc[
+                missing_pair, protein_b_column
+            ].map(clean_text)
+
+    source_column = find_column(df, "Source")
+    method_map = read_table_s1_method_map(source_path, method_map_sheet)
+    if source_column is not None and method_map:
+        keys = df[source_column].map(normalized_lookup_key)
+        df["_table_s1_method"] = keys.map(
+            lambda key: method_map.get(key, {}).get("method") if key else None
+        )
+        df["_table_s1_label_hint"] = keys.map(
+            lambda key: method_map.get(key, {}).get("label_hint") if key else None
+        )
+
+    return df
 
 
 def read_source_table(path: Path, sheet_name: str | None, header_row: int) -> pd.DataFrame:
@@ -348,6 +461,7 @@ def iter_evidence_records(
     label_column: str | None,
     fallback_source: str,
     unknown_method_policy: str,
+    source_file_label: str,
 ) -> tuple[list[dict[str, str]], pd.DataFrame]:
     records: list[dict[str, str]] = []
     unknown_methods: list[dict[str, str]] = []
@@ -379,13 +493,13 @@ def iter_evidence_records(
 
         for left in left_loci:
             for right in right_loci:
-                protein_a, protein_b = sorted([left, right])
+                protein_a, protein_b = sorted([left, right], key=protein_sort_key)
                 records.append(
                     {
                         "protein_a": protein_a,
                         "protein_b": protein_b,
                         "label": label,
-                        "source_file": source_file.name,
+                        "source_file": source_file_label,
                         "source": source_value,
                         "method": method_value,
                     }
@@ -439,9 +553,13 @@ def curate_one_source(
     label_override: str | None,
     fallback_source: str,
     unknown_method_policy: str,
+    source_file_label: str | None = None,
+    table_s1_method_map_sheet: str | None = None,
 ) -> tuple[list[dict[str, str]], pd.DataFrame]:
     df = read_source_table(path, sheet_name, header_row)
     df = df.dropna(how="all")
+    if table_s1_method_map_sheet is not None:
+        df = prepare_table_s1_dataframe(df, path, table_s1_method_map_sheet)
 
     protein_a_columns = resolve_columns(df, a_candidates, a_override, side="A")
     protein_b_columns = resolve_columns(df, b_candidates, b_override, side="B")
@@ -477,6 +595,7 @@ def curate_one_source(
         label_column=label_column,
         fallback_source=fallback_source,
         unknown_method_policy=unknown_method_policy,
+        source_file_label=source_file_label or path.name,
     )
 
 
@@ -502,6 +621,7 @@ def curate_evidence(args: argparse.Namespace) -> None:
         label_override=args.biogrid_label_column,
         fallback_source="BioGRID",
         unknown_method_policy=args.unknown_method_policy,
+        source_file_label=args.biogrid_source_file_label,
     )
     all_records.extend(biogrid_records)
     unknown_reports.append(biogrid_unknown)
@@ -519,6 +639,8 @@ def curate_evidence(args: argparse.Namespace) -> None:
         label_override=args.table_s1_label_column,
         fallback_source="Arabidopsis consortium",
         unknown_method_policy=args.unknown_method_policy,
+        source_file_label=args.table_s1_source_file_label,
+        table_s1_method_map_sheet=args.table_s1_method_map_sheet,
     )
     all_records.extend(table_s1_records)
     unknown_reports.append(table_s1_unknown)
@@ -583,6 +705,14 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--biogrid-sheet", default="0", help="Excel sheet index/name.")
     parser.add_argument("--table-s1-sheet", default="0", help="Excel sheet index/name.")
+    parser.add_argument(
+        "--table-s1-method-map-sheet",
+        default="Sheet2",
+        help=(
+            "Optional Table S1 sheet mapping Source to method and in-vivo/in-vitro "
+            "class. Use an empty string to disable."
+        ),
+    )
     parser.add_argument("--biogrid-header-row", type=int, default=0)
     parser.add_argument("--table-s1-header-row", type=int, default=0)
 
@@ -591,14 +721,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--biogrid-method-column")
     parser.add_argument("--biogrid-source-column")
     parser.add_argument("--biogrid-label-column")
+    parser.add_argument(
+        "--biogrid-source-file-label",
+        help="Optional source_files label to write instead of the BioGRID input basename.",
+    )
 
     parser.add_argument("--table-s1-protein-a-columns")
     parser.add_argument("--table-s1-protein-b-columns")
     parser.add_argument("--table-s1-method-column")
     parser.add_argument("--table-s1-source-column")
     parser.add_argument("--table-s1-label-column")
+    parser.add_argument(
+        "--table-s1-source-file-label",
+        help="Optional source_files label to write instead of the Table S1 input basename.",
+    )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.table_s1_method_map_sheet == "":
+        args.table_s1_method_map_sheet = None
+    return args
 
 
 def main() -> None:
