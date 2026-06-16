@@ -2,6 +2,10 @@
 
 Corresponding configuration file section: `ANNOTATION WITH UNIPROT INFO`
 
+With 2-sequence-parsing updated to choose a single UniProt ID where possible based on sequence matching, this section now functions as intended. 
+
+### Legacy S288C README.md information follows
+
 Anticipated executation time: 5 min
 
 To run this pipeline step in isolation, use the command:

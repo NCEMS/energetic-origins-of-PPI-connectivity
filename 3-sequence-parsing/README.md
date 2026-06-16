@@ -2,15 +2,55 @@
 
 Corresponding configuration file section: `SEQUENCE PARSING`
 
+Critical notes for understanding the A. thaliana processing pipeline:
+
+Node/edge data do not include isoform IDs, but the TAIR12 proteome release used to source sequence information does contain isoform IDs. We always choose isoform 1, suffix ".1", from the TAIR12 proteome sequences. 
+
+Below is the current stdout from this pipeline step:
+
+```text
+Warning: some nodes had TAIR12 sequence records but no matching .1 isoform.
+Number of affected nodes: 1
+Examples:
+AT1G06515: expected AT1G06515.1; found AT1G06515.2
+Input nodes: 11,695
+Nodes with TAIR12 .1 sequence: 11,550
+Nodes without TAIR12 .1 sequence: 145
+AGIs with at least one UniProtKB-AC candidate: 28,613
+AGIs with multiple UniProtKB-AC candidates: 10,362
+UniProt FASTA accessions parsed: 27,496
+
+UniProt sequence-mapping status counts:
+uniprot_match_status
+exact_sequence_match                      9058
+best_nonexact_sequence_match              1570
+no_candidate_sequence_in_uniprot_fasta     906
+no_tair12_sequence                         119
+no_uniprot_candidates                       42
+
+UniProt exact sequence-match counts:
+uniprot_exact_sequence_match
+True     9058
+False    1570
+<NA>     1067
+
+Wrote sequence-annotated nodes to: /home/dan182/energetic-origins/arabidopsis-branch/energetic-origins-of-PPI-connectivity/3-sequence-parsing/processed-data/union-athaliana-seqs-step3.csv
+```
+
 Anticipated execution time: ~5 min
 
 To run this pipeline step in isolation, run the command:
 
 ```bash
-snakemake -c all --use-conda --conda-frontend conda --snakefile 2-sequence-parsing/Snakefile --configfile config-files/s288c.config
+snakemake -c all --use-conda --conda-frontend conda --snakefile 2-sequence-parsing/Snakefile --configfile config-files/union-athaliana.config
 ```
 
 ### LEGACY S288C README.md
+
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 2-sequence-parsing/Snakefile --configfile config-files/s288c.config
+```
 
 This pipeline will:
 

@@ -13,6 +13,7 @@ OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 ORGANISM_TAG  = config["organism_label"]
 MAP_FILE      = DATA_DIR / LOCAL_CONFIG["map_file"]
 FASTA         = DATA_DIR / LOCAL_CONFIG["fasta"]
+UNIPROT_FASTA = DATA_DIR / LOCAL_CONFIG["uniprot_fasta"]
 SIGNALP_FASTA = OUTPUT_DIR / str(OUTPUT_PREFIX + "-" + ORGANISM_TAG + LOCAL_CONFIG["signalp_fasta_suffix"])
 ORGANISM_TYPE = LOCAL_CONFIG["organism_type"]
 
@@ -29,7 +30,8 @@ rule all:
 rule add_sequences:
     input:
         nodes = str(INPUT_NODES),
-        fasta = str(FASTA)
+        fasta = str(FASTA),
+        uniprot_fasta = str(UNIPROT_FASTA)
     conda:
         str(WORK_DIR / "env/add-sequence-info.yml")
     params:
@@ -45,6 +47,7 @@ rule add_sequences:
         python {WORK_DIR}/python-scripts/add-sequence-info.py \
         --nodes         {{input.nodes}} \
         --fasta         {{input.fasta}} \
+        --uniprot_fasta {{input.uniprot_fasta}} \
         --output_prefix {{params.output_prefix}} \
         --output_suffix {{params.output_suffix}} \
         --output_dir    {{params.output_dir}} \

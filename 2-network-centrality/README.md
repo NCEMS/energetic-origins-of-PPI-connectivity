@@ -18,11 +18,11 @@ Current A. thaliana centrality calculations:
 
 | Input Node file | Input Edge file | Config file | Centrality Metric Output File |
 |:---|:---|:---|:---|
-| `../0-download-inputs/data-files/merged-nodes.csv` | `../0-download-inputs/data-files/merged-edges.csv` | `../config-files/union-athaliana.config` | `processed-data/union-athaliana-step1.csv` |
-| `../0-download-inputs/data-files/in-vivo-nodes.csv` | `../0-download-inputs/data-files/in-vivo-edges.csv` | `../config-files/in-vivo-athaliana.config` | `processed-data/in-vivo-athaliana-step1.csv` |
-| `../0-download-inputs/data-files/in-vitro-nodes.csv` | `../0-download-inputs/data-files/in-vitro-edges.csv` | `../config-files/in-vitro-athaliana.config` | `processed-data/in-vitro-athaliana-step1.csv` |
-| `../0-download-inputs/data-files/intersection-nodes.csv` | `../0-download-inputs/data-files/intersection-edges-in_vivo.csv` | `../config-files/intersection-in-vivo-athaliana.config` | `processed-data/intersection-in-vivo-athaliana-step1.csv` |
-| `../0-download-inputs/data-files/intersection-nodes.csv` | `../0-download-inputs/data-files/intersection-edges-in_vitro.csv` | `../config-files/intersection-in-vitro-athaliana.config` | `processed-data/intersection-in-vitro-athaliana-step1.csv` |
+| `../1-parse-interactome/processed-data/merged-nodes.csv` | `../1-parse-interactome/processed-data/merged-edges.csv` | `../config-files/union-athaliana.config` | `processed-data/union-athaliana-step2.csv` |
+| `../1-parse-interactome/processed-data/in-vivo-nodes.csv` | `../1-parse-interactome/processed-data/in-vivo-edges.csv` | `../config-files/in-vivo-athaliana.config` | `processed-data/in-vivo-athaliana-step2.csv` |
+| `../1-parse-interactome/processed-data/in-vitro-nodes.csv` | `../1-parse-interactome/processed-data/in-vitro-edges.csv` | `../config-files/in-vitro-athaliana.config` | `processed-data/in-vitro-athaliana-step2.csv` |
+| `../1-parse-interactome/processed-data/intersection-nodes.csv` | `../1-parse-interactome/processed-data/intersection-in-vivo-edges.csv` | `../config-files/intersection-in-vivo-athaliana.config` | `processed-data/intersection-in-vivo-athaliana-step2.csv` |
+| `../1-parse-interactome/processed-data/intersection-nodes.csv` | `../1-parse-interactome/processed-data/intersection-edges-in-vitro-edges.csv` | `../config-files/intersection-in-vitro-athaliana.config` | `processed-data/intersection-in-vitro-athaliana-step2.csv` |
 
 
 ### Legacy yeast README.md information

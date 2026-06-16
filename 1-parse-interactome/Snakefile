@@ -102,7 +102,7 @@ rule merge_and_intersect:
         intersection_invitro_edges = str(OUTPUT_DIR / f"intersection-in-vitro-edges.csv")
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/merge-and-intersect.py \
+        python {WORK_DIR}/python-scripts/merge-and-intersect-with-self-loops.py \
         --file1                    {{input.invitro}} \
         --file2                    {{input.invivo}} \
         --sep                      {{params.sep}} \

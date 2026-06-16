@@ -11,8 +11,8 @@ OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 ORGANISM_TAG  = config["organism_label"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
-EDGES         = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
-NODES         = Path(config["data_dir"]) / LOCAL_CONFIG["nodes"]
+EDGES         = Path(LOCAL_CONFIG["edges"])
+NODES         = Path(LOCAL_CONFIG["nodes"])
 COSDISTPATH   = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
 
 # overall goal 

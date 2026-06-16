@@ -16,7 +16,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description=(
             "Map mixed Arabidopsis protein identifiers in an edge list to AGI locus IDs "
-            "using a UniProt idmapping.dat file."
+            "using a UniProt idmapping.dat file. Self-interactions are retained."
         )
     )
 
@@ -81,7 +81,7 @@ def normalize_identifier(identifier):
         if AGI_PATTERN.match(possible_base):
             ident = possible_base
 
-    # Normalize UniProt isoform suffix, e.g. Q8VZJ1-1
+    # Normalize UniProt isoform suffix, e.g. Q8VZJ1-1 -> Q8VZJ1
     m = UNIPROT_ISOFORM_PATTERN.match(ident)
     if m:
         ident = m.group(1)
@@ -156,7 +156,9 @@ def build_identifier_to_agi_map(idmapping_path):
                 if value_norm:
                     accession_to_aliases[accession].add(value_norm)
                 if str(value).startswith("ath:"):
-                    accession_to_aliases[accession].add(str(value).replace("ath:", "", 1))
+                    accession_to_aliases[accession].add(
+                        str(value).replace("ath:", "", 1)
+                    )
 
     alias_to_agis = defaultdict(set)
 
@@ -195,7 +197,7 @@ def map_identifier(identifier, identifier_to_agi, ambiguous):
     if ident_norm is None:
         return pd.NA, "missing"
 
-    # Already an AGI
+    # Already an AGI.
     if AGI_PATTERN.match(ident_norm):
         return ident_norm.upper(), "already_agi"
 
@@ -227,30 +229,10 @@ def standardize_edge_columns(df):
     )
 
 
-def main():
-    args = parse_args()
-
-    identifier_to_agi, ambiguous = build_identifier_to_agi_map(args.idmapping)
-
-    edges = pd.read_csv(args.edges)
-    edges = standardize_edge_columns(edges)
-
-    mapped_a = edges["protein_a"].apply(
-        lambda x: map_identifier(x, identifier_to_agi, ambiguous)
-    )
-    mapped_b = edges["protein_b"].apply(
-        lambda x: map_identifier(x, identifier_to_agi, ambiguous)
-    )
-
-    edges["original_protein_a"] = edges["protein_a"]
-    edges["original_protein_b"] = edges["protein_b"]
-
-    edges["protein_a"] = [x[0] for x in mapped_a]
-    edges["protein_b"] = [x[0] for x in mapped_b]
-
-    edges["protein_a_mapping_status"] = [x[1] for x in mapped_a]
-    edges["protein_b_mapping_status"] = [x[1] for x in mapped_b]
-
+def build_mapping_report(edges):
+    """
+    Build endpoint-level report before dropping unmapped edges.
+    """
     report_rows = []
 
     for endpoint_col, status_col, original_col in [
@@ -268,32 +250,110 @@ def main():
                 }
             )
         )
-        tmp["endpoint"] = original_col
+
+        tmp["endpoint"] = endpoint_col
         report_rows.append(tmp)
 
     report = pd.concat(report_rows, ignore_index=True)
+
     report = report[
         ["endpoint", "original_identifier", "mapped_identifier", "mapping_status"]
     ].drop_duplicates()
 
+    return report
+
+
+def count_self_edges(edges):
+    """
+    Count mapped self-interactions where protein_a == protein_b.
+
+    Missing endpoints are ignored.
+    """
+    complete_edges = edges.dropna(subset=["protein_a", "protein_b"])
+    return int((complete_edges["protein_a"] == complete_edges["protein_b"]).sum())
+
+
+def canonicalize_mapped_undirected_edges(edges):
+    """
+    Canonicalize mapped undirected edges after identifier mapping.
+
+    This makes A-B and B-A equivalent while preserving A-A self-interactions.
+
+    Rows with missing endpoints are left unchanged. In the usual pipeline,
+    --drop-unmapped is used before this function, so missing endpoints should
+    already be gone.
+    """
+    edges = edges.copy()
+
+    complete_mask = edges["protein_a"].notna() & edges["protein_b"].notna()
+
+    complete_edges = edges.loc[complete_mask].copy()
+    incomplete_edges = edges.loc[~complete_mask].copy()
+
+    if not complete_edges.empty:
+        edge_min = complete_edges[["protein_a", "protein_b"]].min(axis=1)
+        edge_max = complete_edges[["protein_a", "protein_b"]].max(axis=1)
+
+        complete_edges["protein_a"] = edge_min
+        complete_edges["protein_b"] = edge_max
+
+    if incomplete_edges.empty:
+        return complete_edges
+
+    return pd.concat([complete_edges, incomplete_edges], ignore_index=True)
+
+
+def main():
+    args = parse_args()
+
+    identifier_to_agi, ambiguous = build_identifier_to_agi_map(args.idmapping)
+
+    input_edges = pd.read_csv(args.edges)
+    edges = standardize_edge_columns(input_edges)
+
+    mapped_a = edges["protein_a"].apply(
+        lambda x: map_identifier(x, identifier_to_agi, ambiguous)
+    )
+    mapped_b = edges["protein_b"].apply(
+        lambda x: map_identifier(x, identifier_to_agi, ambiguous)
+    )
+
+    edges["original_protein_a"] = edges["protein_a"]
+    edges["original_protein_b"] = edges["protein_b"]
+
+    edges["protein_a"] = [x[0] for x in mapped_a]
+    edges["protein_b"] = [x[0] for x in mapped_b]
+
+    edges["protein_a_mapping_status"] = [x[1] for x in mapped_a]
+    edges["protein_b_mapping_status"] = [x[1] for x in mapped_b]
+
+    # Build report before dropping anything so unmapped/ambiguous identifiers
+    # remain visible in the report.
+    report = build_mapping_report(edges)
+
     if args.drop_unmapped:
-        before = len(edges)
+        before_drop = len(edges)
+
         edges = edges.dropna(subset=["protein_a", "protein_b"])
+
         edges = edges[
             ~edges["protein_a_mapping_status"].isin(["unmapped", "ambiguous", "missing"])
             & ~edges["protein_b_mapping_status"].isin(["unmapped", "ambiguous", "missing"])
         ].copy()
-        after = len(edges)
-        dropped = before - after
+
+        dropped_mapping_issues = before_drop - len(edges)
     else:
-        dropped = 0
+        dropped_mapping_issues = 0
 
-    # Remove self-edges introduced after identifier harmonization
-    before_self = len(edges)
-    edges = edges[edges["protein_a"] != edges["protein_b"]].copy()
-    self_edges_removed = before_self - len(edges)
+    # Self-interactions are intentionally retained.
+    self_edges_retained_before_dedup = count_self_edges(edges)
 
-    # Output clean edge list. Preserve extra metadata columns except temporary mapping columns.
+    # Canonicalize after mapping so A-B and B-A collapse to the same edge.
+    # This preserves A-A self-interactions.
+    edges = canonicalize_mapped_undirected_edges(edges)
+
+    # Output clean edge list. Preserve extra metadata columns except temporary
+    # mapping columns.
     drop_cols = [
         "original_protein_a",
         "original_protein_b",
@@ -302,7 +362,19 @@ def main():
     ]
 
     output_cols = [c for c in edges.columns if c not in drop_cols]
-    edges_out = edges[output_cols].drop_duplicates()
+    edges_for_output = edges[output_cols].copy()
+
+    before_dedup = len(edges_for_output)
+
+    # Remove duplicate mapped topological edges.
+    # This removes duplicate A-B rows and duplicate A-A rows, but does not
+    # remove self-interactions as a class.
+    edges_out = edges_for_output.drop_duplicates(
+        subset=["protein_a", "protein_b"]
+    ).copy()
+
+    duplicate_edges_removed = before_dedup - len(edges_out)
+    self_edges_retained_after_dedup = count_self_edges(edges_out)
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.report).parent.mkdir(parents=True, exist_ok=True)
@@ -310,16 +382,20 @@ def main():
     edges_out.to_csv(args.output, index=False)
     report.to_csv(args.report, index=False)
 
-    print(f"Input edges:                         {len(pd.read_csv(args.edges)):,}")
-    print(f"Output edges:                        {len(edges_out):,}")
-    print(f"Edges dropped due to mapping issues: {dropped:,}")
-    print(f"Self-edges removed after mapping:    {self_edges_removed:,}")
+    print(f"Input edges:                                  {len(input_edges):,}")
+    print(f"Output edges:                                 {len(edges_out):,}")
+    print(f"Edges dropped due to mapping issues:          {dropped_mapping_issues:,}")
+    print(f"Duplicate mapped edges removed:               {duplicate_edges_removed:,}")
+    print(f"Self-edges retained before deduplication:     {self_edges_retained_before_dedup:,}")
+    print(f"Self-edges retained after deduplication:      {self_edges_retained_after_dedup:,}")
+
     print()
     print("Endpoint mapping status counts:")
-    print(report["mapping_status"].value_counts().to_string())
+    print(report["mapping_status"].value_counts(dropna=False).to_string())
+
     print()
-    print(f"Wrote mapped edges to:               {args.output}")
-    print(f"Wrote mapping report to:             {args.report}")
+    print(f"Wrote mapped edges to:                        {args.output}")
+    print(f"Wrote mapping report to:                      {args.report}")
 
 
 if __name__ == "__main__":
