@@ -2,7 +2,17 @@
 
 Corresponding configuration file section: `IDR IDENTIFICATION & PROPERTY PREDICTION`
 
-Anticipated execution time: ~10 min
+Anticipated execution time: ~30 min
+
+| Input Node file | Input Edge file | Config file | Centrality Metric Output File |
+|:---|:---|:---|:---|
+| `../1-parse-interactome/processed-data/merged-nodes.csv` | `../1-parse-interactome/processed-data/merged-edges.csv` | `../config-files/union-athaliana.config` | `processed-data/union-athaliana-step5.pkl` |
+| `../1-parse-interactome/processed-data/in-vivo-nodes.csv` | `../1-parse-interactome/processed-data/in-vivo-edges.csv` | `../config-files/in-vivo-athaliana.config` | `processed-data/in-vivo-athaliana-step5.pkl` |
+| `../1-parse-interactome/processed-data/in-vitro-nodes.csv` | `../1-parse-interactome/processed-data/in-vitro-edges.csv` | `../config-files/in-vitro-athaliana.config` | `processed-data/in-vitro-athaliana-step5.pkl` |
+| `../1-parse-interactome/processed-data/intersection-nodes.csv` | `../1-parse-interactome/processed-data/intersection-in-vivo-edges.csv` | `../config-files/intersection-in-vivo-athaliana.config` | `processed-data/intersection-in-vivo-athaliana-step5.pkl` |
+| `../1-parse-interactome/processed-data/intersection-nodes.csv` | `../1-parse-interactome/processed-data/intersection-edges-in-vitro-edges.csv` | `../config-files/intersection-in-vitro-athaliana.config` | `processed-data/intersection-in-vitro-athaliana-step5.pkl` |
+
+### Legacy yeast information follows
 
 To run this pipeline step in isolation, run the command:
 
