@@ -1,0 +1,28 @@
+Structure accession diagnostics:
+Nodes with no selected UniProtKB-AC:        147
+Nodes with >1 UniProtKB-AC value:           0
+Nodes with existing selected AF2-EBI PDB:   3,115
+
+Structure preparation diagnostics:
+Total nodes:                              3,278
+Nodes with selected UniProtKB-AC:          3,131
+Nodes with existing AF2-EBI structures:    3,115
+Nodes with structure sequence strings:     3,115
+Nodes with SignalP-trimmed sequences:      3,259
+Nodes with SignalP cleavage sites:         196
+
+Structure sequence-check status counts:
+structure_sequence_check_status
+match                                      2702
+mismatch                                    413
+missing_structure_sequence                  144
+missing_structure_and_expected_sequence      19
+
+Final structure source counts:
+final_structure_source
+EBI-selected-UniProt            2527
+None                             576
+EBI-selected-UniProt-cleaved     175
+
+Wrote structure-prepared pickle to: /home/dan182/energetic-origins/arabidopsis-branch/energetic-origins-of-PPI-connectivity/6-dG-calculations/processed-data/intersection-in-vitro-athaliana-temp.pkl
+Wrote structure-prepared CSV to:    /home/dan182/energetic-origins/arabidopsis-branch/energetic-origins-of-PPI-connectivity/6-dG-calculations/processed-data/intersection-in-vitro-athaliana-temp.csv
