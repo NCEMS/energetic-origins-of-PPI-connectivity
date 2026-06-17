@@ -1,0 +1,47 @@
+from pathlib import Path
+
+# read configfile params
+LOCAL_CONFIG   = config["phenotype"]
+
+# define variables
+INPUT_NODES    = Path(LOCAL_CONFIG["input_nodes"])
+DATA_DIR       = Path(config["data_dir"])
+WORK_DIR       = Path(workflow.basedir)
+OUTPUT_PREFIX  = config["output_prefix"]
+OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
+OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG   = config["organism_label"]
+PHENOTYPE_DATA = DATA_DIR / LOCAL_CONFIG["phenotype_data"]
+LETHAL_DATA    = DATA_DIR / LOCAL_CONFIG["lethal_data"]
+
+# overall goal
+rule all:
+    input:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+
+# add to annotated nodes_df
+rule add_essentiality:
+    input:
+        nodes  = INPUT_NODES,
+        pheno  = PHENOTYPE_DATA,
+        lethal = LETHAL_DATA
+    conda:
+        "env/essentiality.yml"
+    params:
+        output_dir    = OUTPUT_DIR,
+        organism_tag  = ORGANISM_TAG,
+        output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX
+    output:
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-phenotype.py \
+        --output_dir     {{params.output_dir}}               \
+        --output_prefix  {{params.output_prefix}}            \
+        --output_suffix  {{params.output_suffix}}            \
+        --organism_tag   {{params.organism_tag}}             \
+        --phenotype_data {{input.pheno}}                     \
+        --lethal_data    {{input.lethal}}                    \
+        --input_nodes    {{input.nodes}}
+        """

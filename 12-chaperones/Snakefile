@@ -12,7 +12,7 @@ OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
 CHAP_DATA      = DATA_DIR / LOCAL_CONFIG["chaperone_data"]
-EDGES          = DATA_DIR / config["network_centrality"]["edges"]
+EDGES          = config["network_centrality"]["edges"]
 
 # overall goal
 rule all:
