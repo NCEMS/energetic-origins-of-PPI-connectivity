@@ -5,18 +5,86 @@ LOCAL_CONFIG  = config["protein_half_life"]
 
 # define variables
 WORK_DIR      = Path(workflow.basedir)
+DATA_DIR      = Path(config["data_dir"])
 OUTPUT_PREFIX = config["output_prefix"]
 OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
 INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
 OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG  = config["organism_label"]
-HALFLIFE_DB1   = Path(LOCAL_CONFIG["halflife_db1"])
-HALFLIFE_DB2   = Path(LOCAL_CONFIG["halflife_db2"])
+HALFLIFE_DB1  = DATA_DIR / LOCAL_CONFIG["halflife_db1"]
+HALFLIFE_DB2  = DATA_DIR / LOCAL_CONFIG["halflife_db2"]
+HALFLIFE_DB3  = DATA_DIR / LOCAL_CONFIG["halflife_db3"]
+
+PROCESSED_DB1 = OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-halflifeDB1.csv"
+PROCESSED_DB2 = OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-halflifeDB2.csv"
+PROCESSED_DB3 = OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-halflifeDB3.csv"
 
 # overall goal
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+        str(PROCESSED_DB1),
+        str(PROCESSED_DB2),
+        str(PROCESSED_DB3)
+
+# pre-process dataset1, assumed to be Fan2016 Table S1
+rule process_db1:
+    input:
+        db1 = str(HALFLIFE_DB1)
+    conda:
+        "env/add-protein-half-life.yml"
+    params:
+        source_prefix    = "Fan2016",
+        duplicate_policy = "error"
+    output:
+        processed_db1 = str(PROCESSED_DB1)
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/process-halflife-db1.py \
+            --input_file       {{input.db1}} \
+            --output_file      {{output.processed_db1}} \
+            --source_prefix    {{params.source_prefix}} \
+            --duplicate_policy {{params.duplicate_policy}}
+        """
+
+# pre-process dataset2, assumed to be Fan2024 Table S2
+rule process_db2:
+    input:
+        db2 = str(HALFLIFE_DB2)
+    conda:
+        "env/add-protein-half-life.yml"
+    params:
+        source_prefix    = "Fan2024",
+        duplicate_policy = "median"
+    output:
+        processed_db2 = str(PROCESSED_DB2)
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/process-halflife-db2.py \
+            --input_file       {{input.db2}} \
+            --output_file      {{output.processed_db2}} \
+            --source_prefix    {{params.source_prefix}} \
+            --duplicate_policy {{params.duplicate_policy}}
+        """
+
+# pre-process dataset3, assumed to be Li2017
+rule process_db3:
+    input:
+        db3 = str(HALFLIFE_DB3)
+    conda:
+        "env/add-protein-half-life.yml"
+    params:
+        source_prefix    = "Li2017",
+        duplicate_policy = "median"
+    output:
+        processed_db3 = str(PROCESSED_DB3)
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/process-halflife-db3.py \
+            --input_file       {{input.db3}} \
+            --output_file      {{output.processed_db3}} \
+            --source_prefix    {{params.source_prefix}} \
+            --duplicate_policy {{params.duplicate_policy}}
+        """
 
 # integrate half-life data into PPI network
 rule add_half_life:

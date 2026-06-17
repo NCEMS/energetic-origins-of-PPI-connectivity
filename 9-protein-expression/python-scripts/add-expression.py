@@ -61,63 +61,101 @@ def parse_uniprot_accessions(value) -> list[str]:
     return accessions
 
 
-def build_uniprot_to_node_map(nodes_df: pd.DataFrame) -> pd.DataFrame:
+def build_harmonized_abundance(
+    abundance_files: List[str],
+    uniprot_to_node_df: pd.DataFrame,
+) -> pd.DataFrame:
     """
-    Build a long-form mapping table from UniProt accession to TAIR node.
+    Combine abundance values from multiple abundance files.
 
-    Returns:
-        DataFrame with columns:
-            node
-            UniProtKB_AC_single
+    For each TAIR node:
+        - abundance_file_1 ... abundance_file_N are per-file TAIR-level values
+        - if one file has a value, harmonized_abundance is that value
+        - if 2 or more files have values, harmonized_abundance is the median
+        - if 2 or more files have values, abundance_range_across_files is max - min
+        - if 2 or more files have values, abundance_std_across_files is the sample SD
     """
 
-    required_cols = {NODE_COL, NODE_UNIPROT_COL}
-    missing_cols = required_cols - set(nodes_df.columns)
+    if len(abundance_files) == 0:
+        raise ValueError("No abundance files were provided.")
 
-    if missing_cols:
-        raise ValueError(
-            f"nodes_df is missing required column(s): {', '.join(sorted(missing_cols))}"
-        )
+    abundance_dfs = []
 
-    mapping_rows = []
-
-    for _, row in nodes_df[[NODE_COL, NODE_UNIPROT_COL]].iterrows():
-        node = str(row[NODE_COL]).strip().upper()
-        accessions = parse_uniprot_accessions(row[NODE_UNIPROT_COL])
-
-        for accession in accessions:
-            mapping_rows.append(
-                {
-                    NODE_COL: node,
-                    "UniProtKB_AC_single": accession,
-                }
+    for i, path in enumerate(abundance_files, start=1):
+        abundance_dfs.append(
+            read_abundance_file(
+                path=path,
+                file_index=i,
+                uniprot_to_node_df=uniprot_to_node_df,
             )
-
-    mapping_df = pd.DataFrame(mapping_rows)
-
-    if mapping_df.empty:
-        raise ValueError(
-            "No usable UniProtKB-AC mappings were found in nodes_df. "
-            "Check the UniProtKB-AC column."
         )
 
-    mapping_df = mapping_df.drop_duplicates()
+    harmonized_df = abundance_dfs[0]
 
-    n_nodes_with_uniprot = mapping_df[NODE_COL].nunique()
-    n_total_nodes = nodes_df[NODE_COL].nunique()
-    n_nodes_multi_uniprot = (
-        mapping_df.groupby(NODE_COL)["UniProtKB_AC_single"]
-        .nunique()
-        .gt(1)
-        .sum()
+    for next_df in abundance_dfs[1:]:
+        harmonized_df = harmonized_df.merge(
+            next_df,
+            on=NODE_COL,
+            how="outer",
+            validate="one_to_one",
+        )
+
+    abundance_cols = [
+        col for col in harmonized_df.columns
+        if col.startswith("abundance_file_")
+    ]
+
+    harmonized_df["n_abundance_files_with_values"] = harmonized_df[
+        abundance_cols
+    ].notna().sum(axis=1)
+
+    # Primary harmonized abundance value.
+    harmonized_df["harmonized_abundance"] = harmonized_df[abundance_cols].median(
+        axis=1,
+        skipna=True,
     )
 
-    print(f"Total unique nodes in nodes_df: {n_total_nodes:,}")
-    print(f"Nodes with at least one UniProtKB-AC mapping: {n_nodes_with_uniprot:,}")
-    print(f"Nodes with multiple UniProtKB-AC mappings: {n_nodes_multi_uniprot:,}")
-    print(f"Unique UniProt accessions in node mapping: {mapping_df['UniProtKB_AC_single'].nunique():,}")
+    # Deviation / spread metrics across abundance datasets.
+    # These are only meaningful when a node has values from 2 or more files.
+    has_multiple_values = harmonized_df["n_abundance_files_with_values"].ge(2)
 
-    return mapping_df
+    abundance_min = harmonized_df[abundance_cols].min(axis=1, skipna=True)
+    abundance_max = harmonized_df[abundance_cols].max(axis=1, skipna=True)
+
+    harmonized_df["abundance_range_across_files"] = np.where(
+        has_multiple_values,
+        abundance_max - abundance_min,
+        np.nan,
+    )
+
+    harmonized_df["abundance_std_across_files"] = np.where(
+        has_multiple_values,
+        harmonized_df[abundance_cols].std(axis=1, skipna=True, ddof=1),
+        np.nan,
+    )
+
+    harmonized_df = harmonized_df.sort_values(NODE_COL).reset_index(drop=True)
+
+    print("\nHarmonized abundance summary:")
+    print(f"  Total TAIR nodes across abundance files: {len(harmonized_df):,}")
+    print(
+        "  TAIR nodes with at least one abundance value: "
+        f"{harmonized_df['n_abundance_files_with_values'].gt(0).sum():,}"
+    )
+    print(
+        "  TAIR nodes with abundance values from two or more files: "
+        f"{harmonized_df['n_abundance_files_with_values'].ge(2).sum():,}"
+    )
+    print(
+        "  TAIR nodes with abundance range across files: "
+        f"{harmonized_df['abundance_range_across_files'].notna().sum():,}"
+    )
+    print(
+        "  TAIR nodes with abundance SD across files: "
+        f"{harmonized_df['abundance_std_across_files'].notna().sum():,}"
+    )
+
+    return harmonized_df
 
 
 def read_abundance_file(
@@ -222,6 +260,68 @@ def read_abundance_file(
     )
 
     return node_abundance
+
+
+def build_uniprot_to_node_map(nodes_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Build a long-form mapping table from UniProt accession to TAIR node.
+
+    Returns:
+        DataFrame with columns:
+            node
+            UniProtKB_AC_single
+    """
+
+    required_cols = {NODE_COL, NODE_UNIPROT_COL}
+    missing_cols = required_cols - set(nodes_df.columns)
+
+    if missing_cols:
+        raise ValueError(
+            f"nodes_df is missing required column(s): {', '.join(sorted(missing_cols))}"
+        )
+
+    mapping_rows = []
+
+    for _, row in nodes_df[[NODE_COL, NODE_UNIPROT_COL]].iterrows():
+        node = str(row[NODE_COL]).strip().upper()
+        accessions = parse_uniprot_accessions(row[NODE_UNIPROT_COL])
+
+        for accession in accessions:
+            mapping_rows.append(
+                {
+                    NODE_COL: node,
+                    "UniProtKB_AC_single": accession,
+                }
+            )
+
+    mapping_df = pd.DataFrame(mapping_rows)
+
+    if mapping_df.empty:
+        raise ValueError(
+            "No usable UniProtKB-AC mappings were found in nodes_df. "
+            "Check the UniProtKB-AC column."
+        )
+
+    mapping_df = mapping_df.drop_duplicates()
+
+    n_nodes_with_uniprot = mapping_df[NODE_COL].nunique()
+    n_total_nodes = nodes_df[NODE_COL].nunique()
+    n_nodes_multi_uniprot = (
+        mapping_df.groupby(NODE_COL)["UniProtKB_AC_single"]
+        .nunique()
+        .gt(1)
+        .sum()
+    )
+
+    print(f"Total unique nodes in nodes_df: {n_total_nodes:,}")
+    print(f"Nodes with at least one UniProtKB-AC mapping: {n_nodes_with_uniprot:,}")
+    print(f"Nodes with multiple UniProtKB-AC mappings: {n_nodes_multi_uniprot:,}")
+    print(
+        "Unique UniProt accessions in node mapping: "
+        f"{mapping_df['UniProtKB_AC_single'].nunique():,}"
+    )
+
+    return mapping_df
 
 
 def build_harmonized_abundance(

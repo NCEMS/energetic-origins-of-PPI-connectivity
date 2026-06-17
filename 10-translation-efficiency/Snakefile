@@ -6,39 +6,53 @@ LOCAL_CONFIG   = config["translation_efficiency"]
 # define variables
 INPUT_NODES    = LOCAL_CONFIG["input_nodes"]
 WORK_DIR       = Path(workflow.basedir)
+DATA_DIR       = Path(config["data_dir"])
 OUTPUT_PREFIX  = config["output_prefix"]
 OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
 OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
 ORGANISM_TAG   = config["organism_label"]
-RAW_DATA_DIR   = Path(LOCAL_CONFIG["raw_data_dir"])
-DATA_FILE      = RAW_DATA_DIR / LOCAL_CONFIG["data_file"]
+
+DATA_FILES = [
+    DATA_DIR / data_file
+    for data_file in LOCAL_CONFIG["data_files"]
+]
+
+HARMONIZED_TE_OUT = (
+    OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-harmonized-translation-efficiency.csv"
+)
+
+FINAL_OUTPUT = OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+
 
 # overall goal
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+        str(FINAL_OUTPUT)
+
 
 # integrate translation efficiency information
 rule add_translation_efficiency:
     input:
         nodes = INPUT_NODES,
-        data  = DATA_FILE
+        data_files = DATA_FILES
     conda:
         "env/add-translation-speed.yml"
     params:
-        output_prefix  = OUTPUT_PREFIX,
-        output_suffix  = OUTPUT_SUFFIX,
-        output_dir     = str(OUTPUT_DIR),
-        organism_tag   = ORGANISM_TAG
+        output_prefix = OUTPUT_PREFIX,
+        output_suffix = OUTPUT_SUFFIX,
+        output_dir    = str(OUTPUT_DIR),
+        organism_tag  = ORGANISM_TAG,
+        harmonized_te_out = str(HARMONIZED_TE_OUT)
     output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+        str(FINAL_OUTPUT)
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-translation-efficiency.py \
-        --nodes            {{input.nodes}} \
-        --output_dir       {{params.output_dir}} \
-        --output_prefix    {{params.output_prefix}} \
-        --output_suffix    {{params.output_suffix}} \
-        --organism_tag     {{params.organism_tag}} \
-        --input_file       {{input.data}}
+        --nodes                         {{input.nodes}} \
+        --output_dir                    {{params.output_dir}} \
+        --output_prefix                 {{params.output_prefix}} \
+        --output_suffix                 {{params.output_suffix}} \
+        --organism_tag                  {{params.organism_tag}} \
+        --harmonized_translation_efficiency_out {{params.harmonized_te_out}} \
+        --input_files                   {{input.data_files}}
         """

@@ -4,6 +4,10 @@ Corresponding configfile section: `Protein half-life`
 
 Anticipated execution time: 1 min
 
+In the Fan2016 dataset (DB1), the column for half-life is labelled with units of "hr-1", which I am assuming is actually hours. 
+
+### Legacy s288c information
+
 To run this pipeline step in isolation, run the command:
 
 ```bash
