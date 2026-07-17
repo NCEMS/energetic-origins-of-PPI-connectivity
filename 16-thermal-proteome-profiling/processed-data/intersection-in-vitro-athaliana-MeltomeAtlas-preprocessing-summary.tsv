@@ -1,0 +1,2 @@
+source_file	input_rows	organism_column	selected_organism_rows	identifier_column	temperature_column	r2_column	node_uniprot_column	mapped_unique_rows	unmapped_rows	ambiguous_rows	rows_with_numeric_tm	usable_rows	unique_usable_genes	duplicate_rows	duplicate_genes	node_aliases	idmapping_aliases
+melting-point-meltome.csv	2967	none	2967	Protein ID	Melting point [°C]	R2 of curve fit	UniProtKB-AC	388	2578	1	2493	313	313	0	0	5972	1650615

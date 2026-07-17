@@ -1,0 +1,2 @@
+source_file	input_rows	expanded_rows	rows_with_valid_agi	rows_with_numeric_tm	usable_rows	unique_usable_genes	duplicate_rows	duplicate_genes	replicate_r2_columns	retained_output_columns
+melting-point-Volkining2019.csv	922	978	978	978	978	978	0	0	C1.r2;C2.r2;C3.r2;C4.r2;C5.r2;C6.r2	Volkening2019_Tm_median;Volkening2019_Tm_sd;Volkening2019_n_modeled;Volkening2019_R2_median

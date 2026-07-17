@@ -1,0 +1,11 @@
+experiment,source_file,source_row,source_protein,source_gene_name,mapping_accession,protein_accession,protein_gene_name_match,gene,mapping_status,selection_rank,selected_for_wide_table,Tm,R2,RSE
+lysate_cell_MS2,melting-point-Lyu2023-lysate-cell-MS2.csv,688,P34788,P34788,P34788,P34788,True,,ambiguous_node_mapping,,False,44.29349078,0.9949314,0.024280352
+lysate_cell_MS2,melting-point-Lyu2023-lysate-cell-MS2.csv,721,P42798,P42798,P42798,P42798,True,,ambiguous_node_mapping,,False,32.88362353,0.995985352,0.022587316
+lysate_cell_MS2,melting-point-Lyu2023-lysate-cell-MS2.csv,814,P59259,P59259,P59259,P59259,True,,ambiguous_node_mapping,,False,36.73571295,0.996315718,0.022491384
+lysate_cell_MS2,melting-point-Lyu2023-lysate-cell-MS2.csv,2792,P59226,P59226,P59226,P59226,True,,ambiguous_node_mapping,,False,50.98043784,0.99428979,0.029990288
+intact_cell_MS2,melting-point-Lyu2023-intact-cell-MS2.csv,1174,P34788,P34788,P34788,P34788,True,,ambiguous_node_mapping,,False,56.28595872,0.993060049,0.034911281
+intact_cell_MS2,melting-point-Lyu2023-intact-cell-MS2.csv,1214,P42798,P42798,P42798,P42798,True,,ambiguous_node_mapping,,False,51.48425834,0.999107046,0.014238899
+intact_cell_MS2,melting-point-Lyu2023-intact-cell-MS2.csv,1340,P59259,P59259,P59259,P59259,True,,ambiguous_node_mapping,,False,58.1397297,0.984269895,0.04414036
+intact_cell_MS3,melting-point-Lyu2023-intact-cell-MS3.csv,938,P34788,P34788,P34788,P34788,True,,ambiguous_node_mapping,,False,56.44686309,0.996198078,0.027927984
+intact_cell_MS3,melting-point-Lyu2023-intact-cell-MS3.csv,976,P42798,P42798,P42798,P42798,True,,ambiguous_node_mapping,,False,50.74201565,0.999398138,0.011926389
+intact_cell_MS3,melting-point-Lyu2023-intact-cell-MS3.csv,1067,P59259,P59259,P59259,P59259,True,,ambiguous_node_mapping,,False,58.95916691,0.959840476,0.080873616

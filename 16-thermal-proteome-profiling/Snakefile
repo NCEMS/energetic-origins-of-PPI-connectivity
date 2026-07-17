@@ -1,44 +1,180 @@
 from pathlib import Path
 
-# read configfile params
-LOCAL_CONFIG  = config["meltome"]
+# Read configfile parameters
+LOCAL_CONFIG         = config["melting_temperature"]
 
-# define variables
-INPUT_NODES   = LOCAL_CONFIG["input_nodes"]
-DATA_DIR      = Path(config["data_dir"])
-WORK_DIR      = Path(workflow.basedir)
-OUTPUT_PREFIX = config["output_prefix"]
-OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
-OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
-ORGANISM_TAG  = config["organism_label"]
-MELTOME_DATA  = DATA_DIR / LOCAL_CONFIG["meltome_data"]
+# Define variables
+INPUT_NODES          = LOCAL_CONFIG["input_nodes"]
+DATA_DIR             = Path(config["data_dir"])
+WORK_DIR             = Path(workflow.basedir)
+OUTPUT_PREFIX        = config["output_prefix"]
+OUTPUT_SUFFIX        = LOCAL_CONFIG["output_suffix"]
+OUTPUT_DIR           = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG         = config["organism_label"]
+MELTING_POINT_DB1    = DATA_DIR / LOCAL_CONFIG["melting_point_DB1"]  # Meltome Atlas
+MELTING_POINT_DB2    = DATA_DIR / LOCAL_CONFIG["melting_point_DB2"]  # Volkening 2019
+MELTING_POINT_DB3    = DATA_DIR / LOCAL_CONFIG["melting_point_DB3"]  # Lyu lysate-cell MS2
+MELTING_POINT_DB4    = DATA_DIR / LOCAL_CONFIG["melting_point_DB4"]  # Lyu intact-cell MS2
+MELTING_POINT_DB5    = DATA_DIR / LOCAL_CONFIG["melting_point_DB5"]  # Lyu intact-cell MS3
 
-# overall goal
+# Uses the config value when present, while retaining the filename stated for
+# this Arabidopsis pipeline as a backwards-compatible default.
+UNIPROT_IDMAPPING    = DATA_DIR / LOCAL_CONFIG.get("uniprot_idmapping", "ARATH_3702_idmapping.dat",)
+
+MELTOME_STEM         = f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-MeltomeAtlas"
+VOLKENING_STEM       = f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-Volkening2019"
+LYU_STEM             = f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-Lyu2023"
+
+# Meltome Atlas outputs
+MELTOME_PROCESSED    = str(OUTPUT_DIR / f"{MELTOME_STEM}-preprocessed.csv")
+MELTOME_AUDIT        = str(OUTPUT_DIR / f"{MELTOME_STEM}-mapping-audit.csv")
+MELTOME_UNMAPPED     = str(OUTPUT_DIR / f"{MELTOME_STEM}-unmapped.csv")
+MELTOME_AMBIGUOUS    = str(OUTPUT_DIR / f"{MELTOME_STEM}-ambiguous-mappings.csv")
+MELTOME_DUPLICATES   = str(OUTPUT_DIR / f"{MELTOME_STEM}-duplicate-genes.csv")
+MELTOME_SUMMARY      = str(OUTPUT_DIR / f"{MELTOME_STEM}-preprocessing-summary.tsv")
+
+# Volkening outputs
+VOLKENING_PROCESSED  = str(OUTPUT_DIR / f"{VOLKENING_STEM}-preprocessed.csv")
+VOLKENING_AUDIT      = str(OUTPUT_DIR / f"{VOLKENING_STEM}-processing-audit.csv")
+VOLKENING_DUPLICATES = str(OUTPUT_DIR / f"{VOLKENING_STEM}-duplicate-genes.csv")
+VOLKENING_SUMMARY    = str(OUTPUT_DIR / f"{VOLKENING_STEM}-preprocessing-summary.tsv")
+
+# Lyu outputs
+LYU_PROCESSED        = str(OUTPUT_DIR / f"{LYU_STEM}-preprocessed.csv")
+LYU_AUDIT            = str(OUTPUT_DIR / f"{LYU_STEM}-mapping-audit.csv")
+LYU_UNMAPPED         = str(OUTPUT_DIR / f"{LYU_STEM}-unmapped.csv")
+LYU_AMBIGUOUS        = str(OUTPUT_DIR / f"{LYU_STEM}-ambiguous-mappings.csv")
+LYU_DUPLICATES       = str(OUTPUT_DIR / f"{LYU_STEM}-duplicate-gene-experiments.csv")
+LYU_SUMMARY          = str(OUTPUT_DIR / f"{LYU_STEM}-preprocessing-summary.tsv")
+
+# final output of the run
+FINAL_OUTPUT         = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
+
+# Development target: generate all three study-level preprocessed tables and
+# retain their audit products for manual checking. This can later be replaced
+# by the final harmonized step16 pickle target.
 rule all:
     input:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+        FINAL_OUTPUT
 
-# integrate Meltome Atlas TPP data
-rule add_meltome:
+rule preprocess_meltome_atlas:
     input:
-        meltome = str(MELTOME_DATA),
-        nodes = INPUT_NODES
+        meltome     = str(MELTING_POINT_DB1),
+        nodes       = INPUT_NODES,
+        idmapping   = str(UNIPROT_IDMAPPING)
+    output:
+        processed   = MELTOME_PROCESSED,
+        audit       = MELTOME_AUDIT,
+        unmapped    = MELTOME_UNMAPPED,
+        ambiguous   = MELTOME_AMBIGUOUS,
+        duplicates  = MELTOME_DUPLICATES,
+        summary     = MELTOME_SUMMARY
+    params:
+        node_col    = "node",
+        uniprot_col = "UniProtKB-AC",
+        tm_col      = "Melting point [°C]",
+        R2_col      = "R2 of curve fit"
     conda:
         "env/merge-meltome.yml"
-    params:
-        output_dir      = OUTPUT_DIR,
-        output_prefix   = OUTPUT_PREFIX,
-        output_suffix   = OUTPUT_SUFFIX,
-        organism_tag    = ORGANISM_TAG
-    output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
     shell:
-        f"""
-        python {WORK_DIR}/python-scripts/merge-meltome.py \
-        --nodes         {{input.nodes}} \
-        --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --output_suffix {{params.output_suffix}} \
-        --organism_tag  {{params.organism_tag}} \
-        --meltome_data  {{input.meltome}}
+        """
+        python {WORK_DIR}/python-scripts/preprocess-meltome-atlas.py \
+            --input            {input.meltome:q} \
+            --nodes            {input.nodes:q} \
+            --idmapping        {input.idmapping:q} \
+            --output           {output.processed:q} \
+            --audit_output     {output.audit:q} \
+            --unmapped_output  {output.unmapped:q} \
+            --ambiguous_output {output.ambiguous:q} \
+            --duplicate_output {output.duplicates:q} \
+            --summary_output   {output.summary:q} \
+            --node_col         {params.node_col:q} \
+            --uniprot_col      {params.uniprot_col:q} \
+            --id_col           auto \
+            --tm_col           {params.tm_col:q} \
+            --r2_col           {params.R2_col:q} \
+            --organism_col     auto
+        """
+
+
+rule preprocess_volkening2019:
+    input:
+        volkening  = str(MELTING_POINT_DB2)
+    output:
+        processed  = VOLKENING_PROCESSED,
+        audit      = VOLKENING_AUDIT,
+        duplicates = VOLKENING_DUPLICATES,
+        summary    = VOLKENING_SUMMARY
+    conda:
+        "env/merge-meltome.yml"
+    shell:
+        """
+        python {WORK_DIR}/python-scripts/preprocess-volkening2019.py \
+            --input            {input.volkening:q} \
+            --output           {output.processed:q} \
+            --audit_output     {output.audit:q} \
+            --duplicate_output {output.duplicates:q} \
+            --summary_output   {output.summary:q}
+        """
+
+
+rule preprocess_lyu2023:
+    input:
+        nodes       = INPUT_NODES,
+        lysate_ms2  = str(MELTING_POINT_DB3),
+        intact_ms2  = str(MELTING_POINT_DB4),
+        intact_ms3  = str(MELTING_POINT_DB5)
+    output:
+        processed   = LYU_PROCESSED,
+        audit       = LYU_AUDIT,
+        unmapped    = LYU_UNMAPPED,
+        ambiguous   = LYU_AMBIGUOUS,
+        duplicates  = LYU_DUPLICATES,
+        summary     = LYU_SUMMARY
+    params:
+        node_col    = "node",
+        uniprot_col = "UniProtKB-AC"
+    conda:
+        "env/merge-meltome.yml"
+    shell:
+        """
+        python {WORK_DIR}/python-scripts/preprocess-Lyu2023.py \
+            --nodes            {input.nodes:q} \
+            --lysate_ms2       {input.lysate_ms2:q} \
+            --intact_ms2       {input.intact_ms2:q} \
+            --intact_ms3       {input.intact_ms3:q} \
+            --output           {output.processed:q} \
+            --audit_output     {output.audit:q} \
+            --unmapped_output  {output.unmapped:q} \
+            --ambiguous_output {output.ambiguous:q} \
+            --duplicate_output {output.duplicates:q} \
+            --summary_output   {output.summary:q} \
+            --node_col         {params.node_col:q} \
+            --uniprot_col      {params.uniprot_col:q}
+        """
+
+
+rule add_melting_temperatures:
+    input:
+        nodes     = INPUT_NODES,
+        lyu       = LYU_PROCESSED,
+        meltome   = MELTOME_PROCESSED,
+        volkening = VOLKENING_PROCESSED
+    output:
+        FINAL_OUTPUT
+    params:
+        node_col  = "node",
+        gene_col  = "gene"
+    conda:
+        "env/merge-meltome.yml"
+    shell:
+        """
+        python {WORK_DIR}/python-scripts/add-melting-temperatures.py \
+            --nodes          {input.nodes:q} \
+            --lyu_data       {input.lyu:q} \
+            --meltome_data   {input.meltome:q} \
+            --volkening_data {input.volkening:q} \
+            --output         {output:q} \
+            --node_col       {params.node_col:q} \
+            --gene_col       {params.gene_col:q}
         """

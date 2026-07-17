@@ -1,0 +1,4 @@
+experiment	source_file	input_rows	rows_with_mapping_accession	protein_gene_name_mismatches	mapped_unique_rows	unmapped_rows	missing_uniprot_rows	ambiguous_node_mapping_rows	duplicate_mapped_rows	duplicate_gene_groups	selected_gene_rows	node_mapping_unique_accessions	node_mapping_ambiguous_accessions
+lysate_cell_MS2	melting-point-Lyu2023-lysate-cell-MS2.csv	3917	3917	0	2107	1800	0	10	0	0	2107	9007	19
+intact_cell_MS2	melting-point-Lyu2023-intact-cell-MS2.csv	4085	4085	0	2152	1920	0	13	0	0	2152	9007	19
+intact_cell_MS3	melting-point-Lyu2023-intact-cell-MS3.csv	2804	2804	0	1584	1210	0	10	0	0	1584	9007	19

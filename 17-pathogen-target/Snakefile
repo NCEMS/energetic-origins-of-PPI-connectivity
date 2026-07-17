@@ -1,17 +1,17 @@
 from pathlib import Path
 
 # read configfile params
-LOCAL_CONFIG   = config["pathogen_target"]
+LOCAL_CONFIG  = config["pathogen_target"]
 
 # define variables
-INPUT_NODES    = Path(LOCAL_CONFIG["input_nodes"])
-DATA_DIR       = Path(config["data_dir"])
-WORK_DIR       = Path(workflow.basedir)
-OUTPUT_PREFIX  = config["output_prefix"]
-OUTPUT_SUFFIX  = LOCAL_CONFIG["output_suffix"]
-OUTPUT_DIR     = WORK_DIR / LOCAL_CONFIG["output_dir"]
-ORGANISM_TAG   = config["organism_label"]
-PATHOGEN_DATA  = DATA_DIR / LOCAL_CONFIG["pathogen_data"]
+INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
+DATA_DIR      = Path(config["data_dir"])
+WORK_DIR      = Path(workflow.basedir)
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+ORGANISM_TAG  = config["organism_label"]
+PATHOGEN_DATA = DATA_DIR / LOCAL_CONFIG["pathogen_data"]
 
 # overall goal
 rule all:
@@ -21,8 +21,8 @@ rule all:
 # add to annotated nodes_df
 rule add_pathogen_data:
     input:
-        nodes  = INPUT_NODES,
-        patho  = PATHOGEN_DATA
+        nodes         = INPUT_NODES,
+        patho         = PATHOGEN_DATA
     conda:
         "env/pathogen.yml"
     params:
@@ -35,10 +35,10 @@ rule add_pathogen_data:
     shell:
         f"""
         python {WORK_DIR}/python-scripts/add-pathogen-targets.py \
-        --output_dir     {{params.output_dir}}               \
-        --output_prefix  {{params.output_prefix}}            \
-        --output_suffix  {{params.output_suffix}}            \
-        --organism_tag   {{params.organism_tag}}             \
-        --pathogen_data  {{input.patho}}                     \
-        --input_nodes    {{input.nodes}}
+        --output_dir    {{params.output_dir}}               \
+        --output_prefix {{params.output_prefix}}            \
+        --output_suffix {{params.output_suffix}}            \
+        --organism_tag  {{params.organism_tag}}             \
+        --pathogen_data {{input.patho}}                     \
+        --input_nodes   {{input.nodes}}
         """
