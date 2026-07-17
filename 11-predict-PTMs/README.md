@@ -2,6 +2,16 @@
 
 Corresponding configuration file section: `Predict post-translational modifications`
 
+```bash
+micromamba env create -f env/ptmgpt2-v2.yml -n test-PTMGPT2-gpu --override-channels -y
+micromamba activate test-PTMGPT2-gpu
+micromamba --override-channels -c pytorch -c nvidia -c conda-forge -c bioconda snakemake -y
+snakemake -c 96 --configfile config-files/union-athaliana.config --snakefile 11-predict-PTMs/Snakefile
+```
+
+### Legacy yeast information follows below
+
+
 Anticipated execution time: 2-3 days (full run with 2 x GPUs) or 3 min (reuse pre-computed PTMs)
 
 To run this pipeline step in isolation, run the command:

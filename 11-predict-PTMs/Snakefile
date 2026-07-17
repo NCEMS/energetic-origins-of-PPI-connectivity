@@ -22,66 +22,66 @@ PTM_NAMES      = [ "Acetylation_K", "Amidation_V", "Formylation_K", "Glutarylati
 rule all:
     input:
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl",
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv",
+        #f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv",
         f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions-processed.csv"
 
 # predict PTMNs using GPUs [0,1] in coarse-grain parallel
-rule predict_PTMs:
-    input:
-        INPUT_NODES
-    conda:
-        "env/ptmgpt2.yml"
-    params:
-        output_prefix = OUTPUT_PREFIX,
-        output_dir    = str(OUTPUT_DIR),
-        organism_tag  = ORGANISM_TAG,
-        tokenizer     = str(TOKENIZER_PATH),
-        model_dir     = str(MODEL_PATH),
-        seq_column    = SEQ_COLUMN
-    output:
-        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
-    shell:
-        f"""
-        python {WORK_DIR}/python-scripts/run-PTMGPT2-parallel.py \
-        --nodes          {{input}} \
-        --output_dir     {{params.output_dir}} \
-        --output_prefix  {{params.output_prefix}} \
-        --organism_tag   {{params.organism_tag}} \
-        --tokenizer_path {{params.tokenizer}} \
-        --gpt_model_path {{params.model_dir}} \
-        --seq_column     {{params.seq_column}}
-        """
+#rule predict_PTMs:
+#    input:
+#        INPUT_NODES
+#    conda:
+#        "env/ptmgpt2.yml"
+#    params:
+#        output_prefix = OUTPUT_PREFIX,
+#        output_dir    = str(OUTPUT_DIR),
+#        organism_tag  = ORGANISM_TAG,
+#        tokenizer     = str(TOKENIZER_PATH),
+#        model_dir     = str(MODEL_PATH),
+#        seq_column    = SEQ_COLUMN
+#    output:
+#        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
+#    shell:
+#        f"""
+#        python {WORK_DIR}/python-scripts/run-PTMGPT2-parallel.py \
+#        --nodes          {{input}} \
+#        --output_dir     {{params.output_dir}} \
+#        --output_prefix  {{params.output_prefix}} \
+#        --organism_tag   {{params.organism_tag}} \
+#        --tokenizer_path {{params.tokenizer}} \
+#        --gpt_model_path {{params.model_dir}} \
+#        --seq_column     {{params.seq_column}}
+#        """
 
 # merge part0 and part1
-rule combine_PTMs:
-    input:
-        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
-    output:
-        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
-    run:
-        import pandas as pd
-        import re
-        from collections import defaultdict
-
-        parts = defaultdict(list)
-        for f in input:
-            ptm = re.sub(r"_part[01]\.csv$", "", os.path.basename(f))
-            parts[ptm].append(f)
-
-        for out_file in output:
-            ptm = os.path.splitext(os.path.basename(out_file))[0]
-            part_files = sorted(parts[ptm])
-            dfs = [pd.read_csv(pf) for pf in part_files]
-            pd.concat(dfs).to_csv(out_file, index=False)
+#rule combine_PTMs:
+#    input:
+#        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}_part{{part}}.csv", ptm=PTM_NAMES, part=[0, 1])
+#    output:
+#        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
+#    run:
+#        import pandas as pd
+#        import re
+#        from collections import defaultdict
+#
+#        parts = defaultdict(list)
+#        for f in input:
+#            ptm = re.sub(r"_part[01]\.csv$", "", os.path.basename(f))
+#            parts[ptm].append(f)
+#
+#        for out_file in output:
+#            ptm = os.path.splitext(os.path.basename(out_file))[0]
+#            part_files = sorted(parts[ptm])
+#            dfs = [pd.read_csv(pf) for pf in part_files]
+#            pd.concat(dfs).to_csv(out_file, index=False)
 
 # create single PTM summary file
-rule merge_all_PTMs:
-    input:
-        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
-    output:
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv"
-    shell:
-        "head -n 1 {input[0]} > {output} && tail -n +2 -q {input} >> {output}"
+#rule merge_all_PTMs:
+#    input:
+#        expand(f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-{{ptm}}.csv", ptm=PTM_NAMES)
+#    output:
+#        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv"
+#    shell:
+#        "head -n 1 {input[0]} > {output} && tail -n +2 -q {input} >> {output}"
 
 # output final pkl for this step
 rule process_PTMs:
@@ -89,7 +89,7 @@ rule process_PTMs:
         ptms = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}-{ORGANISM_TAG}-PTMGPT2-predictions.csv",
         nodes = INPUT_NODES
     conda:
-        "env/ptmgpt2.yml"
+        "env/utils.yml"
     params:
         output_prefix = OUTPUT_PREFIX,
         output_suffix = OUTPUT_SUFFIX,

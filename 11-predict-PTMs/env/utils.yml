@@ -1,0 +1,10 @@
+name: merge-utils
+channels:
+  - conda-forge
+dependencies:
+  - python==3.11
+  - biopython
+  - numpy==2.3.2
+  - pandas>=2.2.2
+  - pint
+  - pint-pandas
