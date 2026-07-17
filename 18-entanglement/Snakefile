@@ -1,0 +1,58 @@
+from pathlib import Path
+
+# Read configfile parameters
+LOCAL_CONFIG = config["entanglement"]
+
+# Define paths and labels
+WORK_DIR      = Path(workflow.basedir)
+DATA_DIR      = Path(config["data_dir"])
+INPUT_NODES   = Path(LOCAL_CONFIG["input_nodes"])
+OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
+OUTPUT_PREFIX = config["output_prefix"]
+OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
+ORGANISM_TAG  = config["organism_label"]
+
+ENT_DATA_DIR  = DATA_DIR / LOCAL_CONFIG["ent_data_path"]
+
+FINAL_OUTPUT  = OUTPUT_DIR / (
+    f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl"
+)
+
+ENTANGLEMENT_AUDIT = OUTPUT_DIR / (
+    f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-entanglement-file-audit.csv"
+)
+
+ENTANGLEMENT_UNMATCHED = OUTPUT_DIR / (
+    f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-entanglement-unmatched-files.csv"
+)
+
+# Overall pipeline target
+rule all:
+    input:
+        str(FINAL_OUTPUT)
+
+# Add structural-entanglement annotation
+rule add_entanglement:
+    input:
+        nodes = str(INPUT_NODES),
+        # Directory is included as an input so its timestamp contributes to
+        # Snakemake's rerun logic.
+        ent_data = directory(str(ENT_DATA_DIR))
+    output:
+        nodes = str(FINAL_OUTPUT),
+        audit = str(ENTANGLEMENT_AUDIT),
+        unmatched = str(ENTANGLEMENT_UNMATCHED)
+    params:
+        uniprot_col = "UniProtKB-AC"
+    conda:
+        "env/entanglement.yml"
+    shell:
+        """
+        python {WORK_DIR}/python-scripts/add-entanglement.py \
+            --nodes             {input.nodes:q} \
+            --ent_data_dir      {input.ent_data:q} \
+            --output            {output.nodes:q} \
+            --audit_output      {output.audit:q} \
+            --unmatched_output  {output.unmatched:q} \
+            --uniprot_col       {params.uniprot_col:q}
+        """

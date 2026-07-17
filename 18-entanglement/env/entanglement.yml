@@ -1,0 +1,11 @@
+name: entanglement-integration
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11
+  - pandas>=2.2,<3.0
+  - numpy>=1.26
+  - pint
+  - pint-pandas
