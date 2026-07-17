@@ -868,10 +868,10 @@ final_structure_source  = None
 
 Attempting prediction for AT1G06515
 Prediction skipped for AT1G06515:
-has_verified_seq       = False
+has_verified_seq       = True
 DeepTMHMM_class         = TM
-final_structure_path    = nan
-final_structure_source  = None
+final_structure_path    = 0-download-inputs/data-files/AF-A8MSB8-F1-model_v6.pdb
+final_structure_source  = EBI-selected-UniProt
 
 Attempting prediction for AT1G06530
 Done with ΔG prediction for: AT1G06530
@@ -36268,4 +36268,4 @@ DeepTMHMM_class         = nan
 final_structure_path    = nan
 final_structure_source  = None
 
-Total execution time is: 0:19:22.760115
+Total execution time is: 0:19:36.616943
