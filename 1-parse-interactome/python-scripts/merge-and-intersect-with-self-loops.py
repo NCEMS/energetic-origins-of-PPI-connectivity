@@ -64,14 +64,12 @@ def get_nodes(edges_df: pd.DataFrame) -> set:
 
 def build_node_list(nodes: set) -> pd.DataFrame:
     """
-    Build node list with dummy _wkshell column.
+    Build node list
 
     Output columns:
         name
-        _wkshell
     """
     nodes_df = pd.DataFrame({"name": sorted(nodes)})
-    nodes_df["_wkshell"] = 0
 
     return nodes_df
 
