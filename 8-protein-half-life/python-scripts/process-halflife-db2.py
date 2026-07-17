@@ -15,11 +15,11 @@ REQUIRED_COLUMNS = [
     "Fold change in k",
     "ctrl.mean",
     "30C.mean",
-    "p.value"
+    "p.value",
 ]
 
 
-VALUE_COLUMNS = [
+MEASUREMENT_COLUMNS = [
     "Diff. log2k",
     "Fold change in k",
     "ctrl.mean",
@@ -30,28 +30,30 @@ VALUE_COLUMNS = [
 RAW_TO_CLEAN_METRIC = {
     "Diff. log2k": "diff_log2k",
     "Fold change in k": "k_fold_change",
+    "ctrl.mean": "ctrl_log2k_mean",
+    "30C.mean": "temp30_log2k_mean",
 }
+
+
+AGI_RE = re.compile(r"^AT[1-5CM]G\d{5}$")
+
+
+FUSED_PVALUE_CTRL_RE = re.compile(
+    r"^\s*"
+    r"([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
+    r"([+-](?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
+    r"\s*$"
+)
 
 
 def clean_agi_string(value) -> list[str]:
     """
-    Convert a raw AGI field into a list of clean uppercase base AGI IDs.
+    Convert a raw AGI field into clean uppercase base AGI IDs.
 
-    Behavior:
-        "At1g56070; At1g56075"
-            -> ["AT1G56070", "AT1G56075"]
-
-        "At1g01010.1; At1g01010.2"
-            -> ["AT1G01010"]
-
-        "At1g01010.1; At1g02020.2"
-            -> ["AT1G01010", "AT1G02020"]
-
-    This function:
-        - splits distinct AGIs into separate IDs,
-        - uppercases all IDs,
-        - removes isoform suffixes such as .1, .2, .3,
-        - removes duplicate AGIs within a single source row.
+    Examples:
+        At4g33360 -> AT4G33360
+        AT1G01080.1,AT1G01080.2 -> AT1G01080
+        At1g56070; At1g56075 -> AT1G56070, AT1G56075
     """
     if pd.isna(value):
         return []
@@ -60,7 +62,6 @@ def clean_agi_string(value) -> list[str]:
     if not value:
         return []
 
-    # Tolerate semicolon- or comma-delimited AGI lists.
     parts = re.split(r"[;,]", value)
 
     clean_parts = []
@@ -72,10 +73,9 @@ def clean_agi_string(value) -> list[str]:
         if not agi:
             continue
 
-        # Remove isoform suffixes such as .1, .2, .3.
         agi = re.sub(r"\.\d+$", "", agi)
 
-        if agi and agi not in seen:
+        if AGI_RE.match(agi) and agi not in seen:
             clean_parts.append(agi)
             seen.add(agi)
 
@@ -85,12 +85,6 @@ def clean_agi_string(value) -> list[str]:
 def clean_label(value, fallback: str) -> str:
     """
     Convert tissue/fraction labels into safe column-name components.
-
-    Examples:
-        "Root" -> "root"
-        "30 °C" -> "30_c"
-        "100kg" -> "100kg"
-        "membrane fraction" -> "membrane_fraction"
     """
     if pd.isna(value):
         return fallback
@@ -101,18 +95,10 @@ def clean_label(value, fallback: str) -> str:
         return fallback
 
     label = label.lower()
-
-    # Make common symbols readable.
     label = label.replace("°", "")
     label = label.replace("%", "pct")
-
-    # Replace whitespace with underscores.
     label = re.sub(r"\s+", "_", label)
-
-    # Replace all remaining non-column-friendly characters.
     label = re.sub(r"[^a-z0-9._+-]+", "_", label)
-
-    # Collapse repeated underscores and trim.
     label = re.sub(r"_+", "_", label).strip("_")
 
     if not label:
@@ -123,7 +109,7 @@ def clean_label(value, fallback: str) -> str:
 
 def validate_columns(df: pd.DataFrame, input_file: str) -> None:
     """
-    Ensure all required columns are present in the input table.
+    Ensure all required columns are present after header cleanup.
     """
     missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
 
@@ -134,6 +120,72 @@ def validate_columns(df: pd.DataFrame, input_file: str) -> None:
         )
 
 
+def repair_fused_pvalue_ctrlmean_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Repair rows where the source file appears to have fused p.value and ctrl.mean.
+
+    Example problematic field:
+        p.value = '0.0181-5.159'
+
+    Expected interpretation:
+        p.value   = 0.0181
+        ctrl.mean = -5.159
+
+    Because the missing delimiter shifts later fields left, this also shifts:
+        old ctrl.mean -> 30C.mean
+        old 30C.mean  -> Tissue
+        old Tissue    -> Fraction
+    """
+    df = df.copy()
+
+    repaired = 0
+
+    for idx, value in df["p.value"].items():
+        match = FUSED_PVALUE_CTRL_RE.match(str(value))
+
+        if not match:
+            continue
+
+        fraction_missing = (
+            pd.isna(df.at[idx, "Fraction"])
+            or str(df.at[idx, "Fraction"]).strip() == ""
+        )
+
+        if not fraction_missing:
+            continue
+
+        old_ctrl_mean = df.at[idx, "ctrl.mean"]
+        old_30c_mean = df.at[idx, "30C.mean"]
+        old_tissue = df.at[idx, "Tissue"]
+
+        df.at[idx, "p.value"] = match.group(1)
+        df.at[idx, "ctrl.mean"] = match.group(2)
+        df.at[idx, "30C.mean"] = old_ctrl_mean
+        df.at[idx, "Tissue"] = old_30c_mean
+        df.at[idx, "Fraction"] = old_tissue
+
+        repaired += 1
+
+    if repaired:
+        print(f"Repaired rows with fused p.value/ctrl.mean fields: {repaired:,}")
+
+    return df
+
+
+def coerce_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Convert numeric source columns to floats.
+    """
+    df = df.copy()
+
+    numeric_columns = MEASUREMENT_COLUMNS + ["p.value"]
+
+    for col in numeric_columns:
+        df[col] = pd.to_numeric(df[col].astype(str).str.strip(), errors="coerce")
+
+    return df
+
+
 def handle_duplicate_agi_condition_rows(
     df: pd.DataFrame,
     duplicate_policy: str,
@@ -142,18 +194,8 @@ def handle_duplicate_agi_condition_rows(
     Handle duplicated AGI + Tissue + Fraction rows after AGI splitting.
 
     Different Tissue/Fraction combinations for the same AGI are expected and
-    are preserved. This function only handles cases where the same AGI appears
-    multiple times for the same Tissue/Fraction condition.
-
-    duplicate_policy:
-        error:
-            Fail on duplicated AGI + Tissue + Fraction rows.
-
-        first:
-            Keep the first row for each AGI + Tissue + Fraction.
-
-        mean:
-            Average numeric values across duplicated AGI + Tissue + Fraction rows.
+    are preserved. This function only resolves repeated rows for the same
+    AGI, Tissue, and Fraction condition.
     """
     duplicate_key = ["AGI", "Tissue_label", "Fraction_label"]
 
@@ -172,38 +214,40 @@ def handle_duplicate_agi_condition_rows(
             "Different Tissue/Fraction combinations for the same AGI are allowed, "
             "but repeated rows for the same AGI and same Tissue/Fraction require "
             "a policy decision.\n"
-            "Inspect the source table or rerun with --duplicate_policy first or mean.\n\n"
+            "Inspect the source table or rerun with --duplicate_policy first, "
+            "mean, or median.\n\n"
             f"Example duplicate rows:\n{example}"
         )
 
     if duplicate_policy == "first":
-        return df.drop_duplicates(subset=duplicate_key, keep="first").reset_index(
-            drop=True
-        )
-
-    if duplicate_policy == "mean":
         return (
-            df.groupby(duplicate_key, as_index=False)[VALUE_COLUMNS]
-            .mean(numeric_only=True)
+            df.drop_duplicates(subset=duplicate_key, keep="first")
             .reset_index(drop=True)
         )
 
-    if duplicate_policy == "median":
-        grouped = (
-            df.groupby(duplicate_key, as_index=False)
-            .agg(
-                {
-                    "Diff. log2k": "median",
-                }
-            )
-            .reset_index(drop=True)
-        )
+    if duplicate_policy not in {"mean", "median"}:
+        raise ValueError(f"Unsupported duplicate_policy: {duplicate_policy}")
 
+    agg_func = "mean" if duplicate_policy == "mean" else "median"
+
+    grouped = (
+        df.groupby(duplicate_key, as_index=False)
+        .agg(
+            {
+                "Diff. log2k": agg_func,
+                "ctrl.mean": agg_func,
+                "30C.mean": agg_func,
+            }
+        )
+        .reset_index(drop=True)
+    )
+
+    # Keep fold-change internally consistent with the aggregated log2 difference.
     grouped["Fold change in k"] = 2 ** grouped["Diff. log2k"]
 
-    return grouped
+    grouped = grouped[duplicate_key + MEASUREMENT_COLUMNS]
 
-    raise ValueError(f"Unsupported duplicate_policy: {duplicate_policy}")
+    return grouped
 
 
 def pivot_tissue_fraction_specific_columns(
@@ -213,13 +257,6 @@ def pivot_tissue_fraction_specific_columns(
     """
     Convert long AGI/Tissue/Fraction rows into one row per AGI with
     condition-specific columns.
-
-    Example output columns:
-        AGI
-        Fan2024_root_100kg_diff_log2k
-        Fan2024_root_100kg_k_fold_change
-        Fan2024_shoot_100kg_diff_log2k
-        Fan2024_shoot_100kg_k_fold_change
     """
     agis = (
         df[["AGI"]]
@@ -244,14 +281,14 @@ def pivot_tissue_fraction_specific_columns(
             & (df["Fraction_label"] == fraction_label)
         ].copy()
 
-        keep_cols = ["AGI"] + VALUE_COLUMNS
+        keep_cols = ["AGI"] + MEASUREMENT_COLUMNS
         condition_df = condition_df[keep_cols]
 
         condition_prefix = f"{source_prefix}_{tissue_label}_{fraction_label}"
 
         rename_map = {
             col: f"{condition_prefix}_{RAW_TO_CLEAN_METRIC[col]}"
-            for col in VALUE_COLUMNS
+            for col in MEASUREMENT_COLUMNS
         }
 
         condition_df = condition_df.rename(columns=rename_map)
@@ -268,14 +305,7 @@ def process_db2(
     duplicate_policy: str,
 ) -> None:
     """
-    Preprocess Fan2024 turnover-response data.
-
-    Input columns expected include:
-        AGI
-        Tissue
-        Fraction
-        Diff. log2k
-        Fold change in k
+    Preprocess Fan2024 protein turnover-response data.
 
     Output:
         One row per uppercase base AGI.
@@ -284,28 +314,26 @@ def process_db2(
         AGI
         <source_prefix>_<tissue>_<fraction>_diff_log2k
         <source_prefix>_<tissue>_<fraction>_k_fold_change
-
-    Multi-AGI rows are exploded first.
-    Different Tissue/Fraction rows for the same AGI are pivoted into separate columns.
+        <source_prefix>_<tissue>_<fraction>_ctrl_log2k_mean
+        <source_prefix>_<tissue>_<fraction>_temp30_log2k_mean
     """
     input_path = Path(input_file)
     output_path = Path(output_file)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # The provided example is tab-delimited.
-    df = pd.read_csv(input_path, sep="\t", dtype=str)
+    df = pd.read_csv(input_path, sep="\t", dtype=str, engine="python")
 
-    # Clean accidental whitespace from column names.
     # Important because the header can contain names such as "Diff. log2k ".
     df.columns = [col.strip() for col in df.columns]
 
     validate_columns(df, input_file)
 
-    # Retain only the AGI key, condition labels, and requested measurement columns.
+    # Repair apparent source-formatting issue before selecting/cleaning columns.
+    df = repair_fused_pvalue_ctrlmean_rows(df)
+
     df = df[REQUIRED_COLUMNS].copy()
 
-    # Clean condition labels for use in output column names.
     df["Tissue"] = df["Tissue"].astype(str).str.strip()
     df["Fraction"] = df["Fraction"].astype(str).str.strip()
 
@@ -314,28 +342,21 @@ def process_db2(
         lambda x: clean_label(x, "unknown_fraction")
     )
 
-    # Split multi-AGI fields into one AGI per row.
     df["AGI"] = df["AGI"].apply(clean_agi_string)
     df = df.explode("AGI", ignore_index=True)
 
-    # Remove rows with no usable AGI.
     df = df[df["AGI"].notna() & (df["AGI"].astype(str).str.len() > 0)].copy()
 
-    # Convert retained measurement columns to numeric.
-    for col in VALUE_COLUMNS:
-        df[col] = pd.to_numeric(df[col].astype(str).str.strip(), errors="coerce")
+    df = coerce_numeric_columns(df)
 
-    # Drop exact duplicate rows before checking true condition-level duplicates.
+    # Drop exact duplicate rows before handling true condition-level duplicates.
     df = df.drop_duplicates().reset_index(drop=True)
 
-    # Different Tissue/Fraction combinations for the same AGI are allowed.
-    # Only repeated AGI + same Tissue + same Fraction is considered a duplicate problem.
     df = handle_duplicate_agi_condition_rows(
         df=df,
         duplicate_policy=duplicate_policy,
     )
 
-    # Pivot to one row per AGI with tissue/fraction-specific columns.
     wide_df = pivot_tissue_fraction_specific_columns(
         df=df,
         source_prefix=source_prefix,
@@ -346,15 +367,19 @@ def process_db2(
     print(f"Wrote processed DB2 table: {output_path}")
     print(f"Rows written: {len(wide_df):,}")
     print(f"Unique AGIs: {wide_df['AGI'].nunique():,}")
+    print(f"Duplicate policy used: {duplicate_policy}")
 
     observed_conditions = (
         df[["Tissue_label", "Fraction_label"]]
         .drop_duplicates()
         .sort_values(["Tissue_label", "Fraction_label"])
     )
+
     print("Tissue/Fraction conditions observed:")
     for row in observed_conditions.itertuples(index=False):
         print(f"  {row.Tissue_label} / {row.Fraction_label}")
+
+    print(f"Output columns: {list(wide_df.columns)}")
 
 
 def main():
