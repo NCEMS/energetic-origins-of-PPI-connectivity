@@ -84,6 +84,31 @@ def get_node_column(nodes_df):
     raise ValueError("Nodes file must contain either a 'node' or 'name' column.")
 
 
+def parse_tair_isoform_record_id(record_id: str):
+    """
+    Parse a TAIR protein FASTA record ID into base AGI locus and isoform number.
+
+    Examples:
+        AT1G01010.1 -> ("AT1G01010", 1)
+        AT1G01010.2 -> ("AT1G01010", 2)
+        AT1G01010   -> ("AT1G01010", None)
+
+    Returns:
+        locus_id, isoform_number
+    """
+    record_id = str(record_id).strip().split()[0].upper()
+
+    match = AGI_ISOFORM_PATTERN.match(record_id)
+
+    if match is None:
+        return None, None
+
+    locus_id = match.group(1).upper()
+    isoform_number = int(match.group(2)) if match.group(2) is not None else None
+
+    return locus_id, isoform_number
+
+
 def get_base_locus_id(record_id: str) -> str:
     """
     Convert a TAIR protein isoform ID to a base locus ID.
@@ -96,11 +121,19 @@ def get_base_locus_id(record_id: str) -> str:
 
 def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
     """
-    Add TAIR12 .1 protein sequence information to the node table.
+    Add TAIR12 protein sequence information to the node table.
 
     Node names are expected to be base AGI locus IDs without isoform suffixes,
-    for example AT1G01010. The interactome is treated as representing the .1
-    isoform, so this function assigns sequence from AT1G01010.1 when available.
+    for example AT1G01010.
+
+    Sequence selection rule:
+      1. Use AT1G01010.1 if present.
+      2. If .1 is absent, fall back to the lowest available numbered isoform:
+         .2, then .3, etc.
+      3. If only an unsuffixed record exists, use it as a final fallback.
+
+    The selected FASTA record ID is stored in:
+        tair12_isoform_id
     """
     node_col = get_node_column(nodes_df)
 
@@ -108,58 +141,95 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
 
     # Read TAIR12 sequences and group them by base locus ID.
     seqs_by_locus = defaultdict(list)
+    malformed_record_ids = []
 
     for record in SeqIO.parse(fasta_file, "fasta"):
-        locus_id = get_base_locus_id(record.id)
-        seqs_by_locus[locus_id].append(record)
+        locus_id, isoform_number = parse_tair_isoform_record_id(record.id)
 
-    # Select the .1 isoform for each base locus ID.
+        if locus_id is None:
+            malformed_record_ids.append(record.id)
+            continue
+
+        seqs_by_locus[locus_id].append(
+            {
+                "record_id": record.id.upper(),
+                "isoform_number": isoform_number,
+                "sequence": str(record.seq).rstrip("*"),
+            }
+        )
+
+    if malformed_record_ids:
+        print("Warning: some FASTA record IDs could not be parsed as TAIR AGI isoforms.")
+        print(f"Number of malformed FASTA record IDs: {len(malformed_record_ids):,}")
+        print("Examples:")
+        for record_id in malformed_record_ids[:10]:
+            print(f"  {record_id}")
+
+    # Select the lowest available numbered isoform for each locus.
     seqs = {}
-    loci_without_isoform_1 = {}
-    duplicate_isoform_1 = {}
+    selected_isoform_ids = {}
+    selected_isoform_numbers = {}
+    duplicate_numbered_isoforms = {}
 
     for locus_id, records in seqs_by_locus.items():
-        expected_isoform_1_id = f"{locus_id}.1"
-
-        isoform_1_records = [
+        numbered_records = [
             record for record in records
-            if record.id.upper() == expected_isoform_1_id
+            if record["isoform_number"] is not None
         ]
 
-        if len(isoform_1_records) == 1:
-            seqs[locus_id] = str(isoform_1_records[0].seq).rstrip("*")
+        # Check for duplicate records for the same locus + numbered isoform.
+        records_by_isoform = defaultdict(list)
 
-        elif len(isoform_1_records) > 1:
-            duplicate_isoform_1[locus_id] = [record.id for record in isoform_1_records]
+        for record in numbered_records:
+            records_by_isoform[record["isoform_number"]].append(record["record_id"])
 
+        duplicate_isoforms = {
+            isoform_number: record_ids
+            for isoform_number, record_ids in records_by_isoform.items()
+            if len(record_ids) > 1
+        }
+
+        if duplicate_isoforms:
+            duplicate_numbered_isoforms[locus_id] = duplicate_isoforms
+            continue
+
+        if numbered_records:
+            selected = sorted(
+                numbered_records,
+                key=lambda record: (
+                    record["isoform_number"],
+                    record["record_id"],
+                ),
+            )[0]
         else:
-            loci_without_isoform_1[locus_id] = [record.id for record in records]
+            # Final fallback for unusual FASTA records that have a valid AGI
+            # but no isoform suffix.
+            selected = sorted(
+                records,
+                key=lambda record: record["record_id"],
+            )[0]
 
-    if duplicate_isoform_1:
-        examples = list(duplicate_isoform_1.items())[:10]
-        example_text = "\n".join(
-            f"{locus}: {', '.join(ids)}" for locus, ids in examples
-        )
+        seqs[locus_id] = selected["sequence"]
+        selected_isoform_ids[locus_id] = selected["record_id"]
+        selected_isoform_numbers[locus_id] = selected["isoform_number"]
+
+    if duplicate_numbered_isoforms:
+        examples = list(duplicate_numbered_isoforms.items())[:10]
+        example_text = []
+
+        for locus_id, dup_info in examples:
+            isoform_text = "; ".join(
+                f".{isoform_number}: {', '.join(record_ids)}"
+                for isoform_number, record_ids in dup_info.items()
+            )
+            example_text.append(f"{locus_id}: {isoform_text}")
+
         raise ValueError(
-            "Multiple TAIR12 .1 records were found for at least one locus. "
+            "Duplicate TAIR12 records were found for the same locus and isoform. "
             "FASTA record IDs should be unique.\n"
-            f"Examples:\n{example_text}"
+            "Examples:\n"
+            + "\n".join(example_text)
         )
-
-    # Report nodes with FASTA records but no matching .1 isoform.
-    nodes_missing_isoform_1 = {
-        node: loci_without_isoform_1[node]
-        for node in nodes_df[node_col]
-        if node in loci_without_isoform_1
-    }
-
-    if nodes_missing_isoform_1:
-        print("Warning: some nodes had TAIR12 sequence records but no matching .1 isoform.")
-        print(f"Number of affected nodes: {len(nodes_missing_isoform_1):,}")
-        print("Examples:")
-
-        for node, isoform_ids in list(nodes_missing_isoform_1.items())[:10]:
-            print(f"{node}: expected {node}.1; found {', '.join(isoform_ids)}")
 
     nodes_df["has_verified_sequence"] = nodes_df[node_col].isin(seqs.keys())
 
@@ -168,16 +238,48 @@ def add_sequences(nodes_df: pd.DataFrame, fasta_file: str) -> pd.DataFrame:
     )
 
     nodes_df["tair12_isoform_id"] = nodes_df[node_col].apply(
-        lambda x: f"{x}.1" if x in seqs else np.nan
+        lambda x: selected_isoform_ids[x] if x in selected_isoform_ids else np.nan
     )
 
     nodes_df["tair12_sequence_length"] = nodes_df["sequence"].apply(
         lambda x: len(x) if isinstance(x, str) else np.nan
     )
 
+    nodes_with_isoform_1 = nodes_df[node_col].apply(
+        lambda x: selected_isoform_numbers.get(x) == 1
+    )
+
+    nodes_with_fallback_isoform = nodes_df[node_col].apply(
+        lambda x: (
+            x in selected_isoform_numbers
+            and selected_isoform_numbers.get(x) != 1
+        )
+    )
+
+    if nodes_with_fallback_isoform.any():
+        print("Warning: some nodes lacked TAIR12 .1 records and used fallback isoforms.")
+        print(f"Number of affected nodes: {nodes_with_fallback_isoform.sum():,}")
+        print("Examples:")
+
+        fallback_nodes = nodes_df.loc[nodes_with_fallback_isoform, node_col].head(10)
+
+        for node in fallback_nodes:
+            available_ids = sorted(
+                record["record_id"]
+                for record in seqs_by_locus.get(node, [])
+            )
+            selected_id = selected_isoform_ids.get(node)
+            print(
+                f"{node}: expected {node}.1; "
+                f"selected {selected_id}; "
+                f"available {', '.join(available_ids)}"
+            )
+
     print(f"Input nodes: {len(nodes_df):,}")
-    print(f"Nodes with TAIR12 .1 sequence: {nodes_df['has_verified_sequence'].sum():,}")
-    print(f"Nodes without TAIR12 .1 sequence: {(~nodes_df['has_verified_sequence']).sum():,}")
+    print(f"Nodes with selected TAIR12 sequence: {nodes_df['has_verified_sequence'].sum():,}")
+    print(f"Nodes using TAIR12 .1 sequence: {nodes_with_isoform_1.sum():,}")
+    print(f"Nodes using fallback TAIR12 isoform: {nodes_with_fallback_isoform.sum():,}")
+    print(f"Nodes without any TAIR12 sequence: {(~nodes_df['has_verified_sequence']).sum():,}")
 
     return nodes_df
 
@@ -369,14 +471,16 @@ def choose_best_uniprot_for_node(
       1. Get UniProt candidates from idmapping.dat.
       2. Retrieve candidate sequences from UniProt FASTA.
       3. Prefer exact TAIR12 .1 sequence matches.
-      4. If no exact match, choose the candidate with highest global sequence identity.
-      5. Break ties by reviewed Swiss-Prot status, smaller length difference,
-         then accession string for determinism.
+      4. If one or more exact matches exist, choose among them using reviewed
+         Swiss-Prot status and accession string for deterministic tie-breaking.
+      5. If no exact match exists, retain the best nonexact candidate only for
+         diagnostics and leave UniProtKB-AC unpopulated.
     """
     candidates = sorted(agi_to_uniprot_candidates.get(agi, set()))
 
     result = {
         "UniProtKB-AC": np.nan,
+        "uniprot_best_candidate_accession": np.nan,
         "UniProtKB-AC_candidates": ";".join(candidates) if candidates else np.nan,
         "uniprot_candidate_count": len(candidates),
         "uniprot_candidate_count_with_sequence": 0,
@@ -443,16 +547,22 @@ def choose_best_uniprot_for_node(
 
     best = scored_candidates[0]
 
-    result["UniProtKB-AC"] = best["accession"]
+    # Always retain information about the best-ranked candidate for auditing,
+    # even when it is not an exact sequence match.
+    result["uniprot_best_candidate_accession"] = best["accession"]
     result["uniprot_exact_sequence_match"] = bool(best["exact_match"])
     result["uniprot_best_sequence_identity"] = round(float(best["identity"]), 6)
     result["uniprot_best_sequence_length"] = best["length"]
     result["uniprot_best_reviewed"] = bool(best["reviewed"])
 
+    # Only assign the canonical UniProt accession when its protein sequence
+    # exactly matches the selected TAIR12 sequence for this AGI.
     if best["exact_match"]:
+        result["UniProtKB-AC"] = best["accession"]
         result["uniprot_match_status"] = "exact_sequence_match"
     else:
-        result["uniprot_match_status"] = "best_nonexact_sequence_match"
+        result["UniProtKB-AC"] = np.nan
+        result["uniprot_match_status"] = "no_exact_sequence_match"
 
     return result
 
@@ -463,12 +573,16 @@ def add_sequence_vetted_uniprot_mappings(
     uniprot_fasta: str,
 ) -> pd.DataFrame:
     """
-    Add one sequence-vetted UniProt accession per AGI node.
+    Add one exact-sequence-matched UniProt accession per AGI node.
 
-    The selected accession is written to:
-        UniProtKB-AC
+    UniProtKB-AC is populated only when a candidate UniProt sequence is exactly
+    identical to the selected TAIR12 sequence.
 
-    All candidates are written to:
+    The best-ranked candidate accession, including nonexact candidates, is
+    retained separately in:
+        uniprot_best_candidate_accession
+
+    All mapped candidates are written to:
         UniProtKB-AC_candidates
     """
     node_col = get_node_column(nodes_df)
@@ -487,6 +601,7 @@ def add_sequence_vetted_uniprot_mappings(
         if agi is None:
             choice = {
                 "UniProtKB-AC": np.nan,
+                "uniprot_best_candidate_accession": np.nan,
                 "UniProtKB-AC_candidates": np.nan,
                 "uniprot_candidate_count": 0,
                 "uniprot_candidate_count_with_sequence": 0,
@@ -538,8 +653,9 @@ def add_sequence_vetted_uniprot_mappings(
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "Add TAIR12 .1 sequences to PPI network nodes and select one "
-            "sequence-vetted UniProt accession per AGI node."
+            "Add TAIR12 protein sequences to PPI network nodes and assign "
+            "a UniProt accession only when its sequence exactly matches the "
+            "selected TAIR12 sequence."
         )
     )
 
