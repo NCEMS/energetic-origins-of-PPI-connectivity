@@ -30,21 +30,33 @@ def load_authoritative_nodes(nodes_path: str) -> pd.DataFrame:
 
     Expected input columns:
         name
-        _wkshell
+    or:
+        node
 
     Output columns:
         node
-        _wkshell
     """
-    nodes_df = pd.read_csv(nodes_path, usecols=["name", "_wkshell"])
+    nodes_df = pd.read_csv(nodes_path)
 
-    nodes_df = nodes_df.rename(columns={"name": "node"})
+    if "node" in nodes_df.columns:
+        node_col = "node"
+    elif "name" in nodes_df.columns:
+        node_col = "name"
+    else:
+        raise ValueError(
+            "Input node file must contain either a 'node' or 'name' column. "
+            f"Available columns: {list(nodes_df.columns)}"
+        )
 
-    nodes_df["node"] = nodes_df["node"].astype(str)
-    nodes_df["_wkshell"] = nodes_df["_wkshell"].fillna(0.0)
+    nodes_df = nodes_df.rename(columns={node_col: "node"})
+
+    nodes_df["node"] = nodes_df["node"].astype(str).str.strip()
 
     if nodes_df["node"].isna().any():
         raise ValueError("Input node file contains missing node IDs.")
+
+    if (nodes_df["node"] == "").any():
+        raise ValueError("Input node file contains empty node IDs.")
 
     duplicated_mask = nodes_df["node"].duplicated()
 
@@ -227,7 +239,7 @@ def compute_centrality(
         nodes_df,
         output_dir,
         output_prefix,
-        ["node"] + centrality_cols + ["_wkshell"],
+        ["node"] + centrality_cols,
         CosDistPath,
         seeds=seeds,
     )

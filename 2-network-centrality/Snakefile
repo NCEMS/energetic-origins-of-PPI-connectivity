@@ -13,6 +13,7 @@ OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
 TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
 EDGES         = Path(LOCAL_CONFIG["edges"])
 NODES         = Path(LOCAL_CONFIG["nodes"])
+WKSHELL_NODES = Path(LOCAL_CONFIG["wkshell_nodes"])
 COSDISTPATH   = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
 
 # overall goal 
@@ -21,11 +22,29 @@ rule all:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
 
+# add pre-computed wkshell values to nodes
+rule add_wkshell_to_nodes:
+    input:
+        nodes   = str(NODES),
+        wkshell = str(WKSHELL_NODES)
+    conda:
+        str(WORK_DIR / "env/network-analysis.yml")
+    output:
+        str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}-temp-nodes.csv")
+    shell:
+        f"""
+        python {WORK_DIR}/python-scripts/add-wkshell-to-nodes.py \
+        --nodes   {{input.nodes}} \
+        --wkshell {{input.wkshell}} \
+        --output  {{output}}
+        """
+
+
 # compute centrality metrics
 rule network_centrality:
     input:
         edges = EDGES,
-        nodes = NODES
+        nodes = str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}-temp-nodes.csv")
     conda:
         str(WORK_DIR / "env/network-analysis.yml")
     params:
