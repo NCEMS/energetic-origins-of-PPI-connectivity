@@ -13,6 +13,7 @@ docker/examples/.ipynb_checkpoints
 
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 7-Rosetta-scoring/processed-data/scores
+7-Rosetta-scoring/*tar.gz
 7-Rosetta-scoring/old
 
 #
