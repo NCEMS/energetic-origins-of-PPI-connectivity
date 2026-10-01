@@ -4,6 +4,13 @@ Corresponding configuration file section: `Rosetta scoring`
 
 Anticipated execution time: 40 days (full run with 112 CPUs) or 2 min (to reuse Rosetta calculations)
 
+```bash
+python python-scripts/identify-incomplete-fastrelax.py \
+--nodes ../6-dG-calculations/processed-data/union-athaliana-step6.pkl \
+--output-dir processed-data/scores/ \
+--nstruct 10
+```
+
 To run this pipeline step in isolation, run the command:
 
 ```bash
