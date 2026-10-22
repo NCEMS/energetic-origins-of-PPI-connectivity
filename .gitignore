@@ -14,6 +14,15 @@ docker/examples/.ipynb_checkpoints
 # ignore all */processed-data/scores directories from Rosetta & FoldX
 6-Rosetta-scoring/processed-data/scores
 6-Rosetta-scoring/old
+6-Rosetta-scoring/*.csv
+6-Rosetta-scoring/*.tsv
+6-Rosetta-scoring/rosetta-audit-01/
+6-Rosetta-scoring/rosetta-copy-apply-01/
+6-Rosetta-scoring/rosetta-copy-dry-run-01/
+6-Rosetta-scoring/python-scripts/__pycache__/
+6-Rosetta-scoring/python-scripts/audit-rosetta-scores.py
+6-Rosetta-scoring/python-scripts/copy-nonredundant-rosetta.py
+6-Rosetta-scoring/python-scripts/estimate-ROAR-runtime.py
 7-FoldX-scoring/processed-data/scores
 
 # do not upload all protein structures to GitHub
