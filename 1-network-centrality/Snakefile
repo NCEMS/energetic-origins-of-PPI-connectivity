@@ -1,29 +1,62 @@
 from pathlib import Path
 
 # read configfile params
-LOCAL_CONFIG  = config["network_centrality"]
+LOCAL_CONFIG      = config["network_centrality"]
 
 # define variables
-WORK_DIR      = Path(workflow.basedir)
-DATA_DIR      = WORK_DIR / config["data_dir"]
-OUTPUT_PREFIX = config["output_prefix"]
-OUTPUT_SUFFIX = LOCAL_CONFIG["output_suffix"]
-ORGANISM_TAG  = config["organism_label"]
-OUTPUT_DIR    = WORK_DIR / LOCAL_CONFIG["output_dir"]
-TEST_DIR      = WORK_DIR / LOCAL_CONFIG["test_dir"]
-EDGES         = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
-NODES         = Path(config["data_dir"]) / LOCAL_CONFIG["nodes"]
-COSDISTPATH   = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
+WORK_DIR          = Path(workflow.basedir)
+DATA_DIR          = WORK_DIR / config["data_dir"]
+OUTPUT_PREFIX     = config["output_prefix"]
+OUTPUT_SUFFIX     = LOCAL_CONFIG["output_suffix"]
+ORGANISM_TAG      = config["organism_label"]
+OUTPUT_DIR        = WORK_DIR / LOCAL_CONFIG["output_dir"]
+TEST_DIR          = WORK_DIR / LOCAL_CONFIG["test_dir"]
+EDGES             = Path(config["data_dir"]) / LOCAL_CONFIG["edges"]
+NODES             = Path(config["data_dir"]) / LOCAL_CONFIG["nodes"]
+COSDISTPATH       = WORK_DIR / LOCAL_CONFIG["cos_dist_path"]
+REFORMAT_EDGES    = LOCAL_CONFIG.get("reformat_edges", False) is True
+REFORMATTED_EDGES = (OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-edges-reformatted.csv")
+CENTRALITY_EDGES  = REFORMATTED_EDGES if REFORMAT_EDGES else EDGES
 
-# overall goal 
+# overall goal
 rule all:
     input:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
 
+
+# optionally reformat edges output from Cytoscape
+if REFORMAT_EDGES:
+    rule reformat_edges:
+        input:
+            str(EDGES)
+        conda:
+            str(WORK_DIR / "env/merge-nodes.yml")
+        params:
+            from_name       = "source",
+            to_name         = "target",
+            column_to_parse = "name",
+            output_dir      = str(OUTPUT_DIR),
+            output_prefix   = OUTPUT_PREFIX,
+            organism_tag    = ORGANISM_TAG
+        output:
+            str(REFORMATTED_EDGES)
+        shell:
+            f"""
+            python "{WORK_DIR}/python-scripts/reformat-edges.py" \
+                --input_edges   {{input:q}} \
+                --from_name     {{params.from_name:q}} \
+                --to_name       {{params.to_name:q}} \
+                --column_name   {{params.column_to_parse:q}} \
+                --output_dir    {{params.output_dir:q}} \
+                --output_prefix {{params.output_prefix:q}} \
+                --organism_tag  {{params.organism_tag:q}}
+            """
+
+
 # compute centrality metrics
 rule network_centrality:
     input:
-        edges = str(EDGES),
+        edges = str(CENTRALITY_EDGES),
         nodes = str(NODES)
     conda:
         str(WORK_DIR / "env/network-analysis.yml")
@@ -38,13 +71,13 @@ rule network_centrality:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.csv")
     shell:
         f"""
-        python {WORK_DIR}/python-scripts/network-centrality.py \
-        --edges         {{input.edges}} \
-        --nodes         {{input.nodes}} \
-        --output_prefix {{params.output_prefix}} \
-        --output_suffix {{params.output_suffix}} \
-        --output_dir    {{params.output_dir}} \
-        --organism_tag  {{params.organism_tag}} \
-        --test_dir      {{params.test_dir}} \
-        --CosDistPath   {{params.cosdistpath}}
+        python "{WORK_DIR}/python-scripts/network-centrality.py" \
+            --edges         {{input.edges:q}} \
+            --nodes         {{input.nodes:q}} \
+            --output_prefix {{params.output_prefix:q}} \
+            --output_suffix {{params.output_suffix:q}} \
+            --output_dir    {{params.output_dir:q}} \
+            --organism_tag  {{params.organism_tag:q}} \
+            --test_dir      {{params.test_dir:q}} \
+            --CosDistPath   {{params.cosdistpath:q}}
         """
