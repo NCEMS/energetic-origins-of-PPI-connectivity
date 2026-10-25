@@ -14,48 +14,51 @@ ORGANISM_TAG  = config["organism_label"]
 NPROCS        = LOCAL_CONFIG["nprocessors"]
 RELAX_EXEC    = LOCAL_CONFIG["relax_executable"]
 NSTRUC        = LOCAL_CONFIG["n_structures"]
+SCORE_FILES   = sorted(str(path) for path in SCORE_DIR.glob("*.sc") if path.is_file())
 
 # overall goal
 rule all:
     input:
-        str(SCORE_DIR / ".all_scores_done"),
+        #str(SCORE_DIR / ".all_scores_done"),
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
 
 # run NSTRUC Rosetta jobs per protein structure
-rule run_Rosetta:
-    input:
-        INPUT_NODES
-    conda:
-        "env/run-Rosetta.yml"
-    params:
-        output_prefix  = OUTPUT_PREFIX,
-        output_dir     = SCORE_DIR,
-        organism_tag   = ORGANISM_TAG,
-        nprocessors    = NPROCS,
-        relax_exec     = RELAX_EXEC,
-        nstruc         = NSTRUC
-    output:
-        str(SCORE_DIR / ".all_scores_done")
-    shell:
-        f"""
-        python {WORK_DIR}/python-scripts/run-Rosetta.py \
-        --nodes            {{input}} \
-        --output_dir       {{params.output_dir}} \
-        --output_prefix    {{params.output_prefix}} \
-        --organism_tag     {{params.organism_tag}} \
-        --nprocessors      {{params.nprocessors}} \
-        --relax_executable {{params.relax_exec}} \
-        --nstruct          {{params.nstruc}}
-        """
+# Disabled for aggregation of completed calculations.
+#rule run_Rosetta:
+#    input:
+#        INPUT_NODES
+#    conda:
+#        "env/run-Rosetta.yml"
+#    params:
+#        output_prefix  = OUTPUT_PREFIX,
+#        output_dir     = SCORE_DIR,
+#        organism_tag   = ORGANISM_TAG,
+#        nprocessors    = NPROCS,
+#        relax_exec     = RELAX_EXEC,
+#        nstruc         = NSTRUC
+#    output:
+#        str(SCORE_DIR / ".all_scores_done")
+#    shell:
+#        f"""
+#        python {WORK_DIR}/python-scripts/run-Rosetta.py \
+#        --nodes            {{input}} \
+#        --output_dir       {{params.output_dir}} \
+#        --output_prefix    {{params.output_prefix}} \
+#        --organism_tag     {{params.organism_tag}} \
+#        --nprocessors      {{params.nprocessors}} \
+#        --relax_executable {{params.relax_exec}} \
+#        --nstruct          {{params.nstruc}}
+#        """
 
 # extract scores and add to pd.DataFrame
 rule add_scores_to_nodes:
     input:
-        input_nodes       = INPUT_NODES,
-        input_done_signal = str(SCORE_DIR / ".all_scores_done")
+        input_nodes = INPUT_NODES,
+        score_files = SCORE_FILES
     conda:
         "env/run-Rosetta.yml"
     params:
+        script        = str(WORK_DIR / "python-scripts/add-Rosetta-scores.py"),
         output_prefix = OUTPUT_PREFIX,
         output_suffix = OUTPUT_SUFFIX,
         input_dir     = SCORE_DIR,
@@ -65,13 +68,13 @@ rule add_scores_to_nodes:
     output:
         str(OUTPUT_DIR / f"{OUTPUT_PREFIX}-{ORGANISM_TAG}-{OUTPUT_SUFFIX}.pkl")
     shell:
-        f"""
-        python {WORK_DIR}/python-scripts/add-Rosetta-scores.py \
-        --nodes         {{input.input_nodes}} \
-        --input_dir     {{params.input_dir}} \
-        --output_dir    {{params.output_dir}} \
-        --output_prefix {{params.output_prefix}} \
-        --output_suffix {{params.output_suffix}} \
-        --organism_tag  {{params.organism_tag}} \
-        --nstruct       {{params.nstruc}}
+        """
+        python {params.script:q} \
+            --nodes         {input.input_nodes:q} \
+            --input_dir     {params.input_dir:q} \
+            --output_dir    {params.output_dir:q} \
+            --output_prefix {params.output_prefix:q} \
+            --output_suffix {params.output_suffix:q} \
+            --organism_tag  {params.organism_tag:q} \
+            --nstruct       {params.nstruc}
         """
