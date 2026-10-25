@@ -1,0 +1,6 @@
+stage,total_remaining,removed_at_step,hubs,non_hubs,missing_degree,ghosh_dill_nonnull,cagiada_nonnull,rosetta_nonnull,class_GLOB,class_TM,class_SP,class_SP+TM,class_Missing,class_BETA
+Before filtering,3927,0,393,3534,0,3357,3357,3357,3273,457,84,61,51,1
+After pLDDT >= 70,2964,963,365,2599,0,2528,2528,2528,2465,383,63,52,0,1
+After removing TM,2581,383,360,2221,0,2528,2528,2528,2465,0,63,52,0,1
+After removing SP+TM,2529,52,357,2172,0,2528,2528,2528,2465,0,63,0,0,1
+After removing BETA,2528,1,357,2171,0,2528,2528,2528,2465,0,63,0,0,0
