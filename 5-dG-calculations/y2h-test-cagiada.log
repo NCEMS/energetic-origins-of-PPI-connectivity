@@ -689,11 +689,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YAR066W
-Prediction skipped for YAR066W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YAR066W
+Structure used: 0-download-inputs/data-files/AF-P0CX18-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YDR074W
 Done with ΔG prediction for: YDR074W
@@ -1361,8 +1360,8 @@ Attempting prediction for YBR040W
 Prediction skipped for YBR040W:
 has_verified_seq       = True
 DeepTMHMM_class         = TM
-final_structure_path    = None
-final_structure_source  = None
+final_structure_path    = 0-download-inputs/data-files/AF-P38224-F1-model_v4-cleaved.pdb
+final_structure_source  = EBI-cleaved
 
 Attempting prediction for YCL040W
 Done with ΔG prediction for: YCL040W
@@ -3240,11 +3239,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YCR045C
-Prediction skipped for YCR045C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YCR045C
+Structure used: 0-download-inputs/data-files/AF-P25381-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YOR348C
 Prediction skipped for YOR348C:
@@ -3314,11 +3312,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YJL160C
-Prediction skipped for YJL160C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YJL160C
+Structure used: 0-download-inputs/data-files/AF-P46999-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YCR063W
 Done with ΔG prediction for: YCR063W
@@ -4065,11 +4062,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YEL068C
-Prediction skipped for YEL068C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YEL068C
+Structure used: 0-download-inputs/data-files/AF-P39977-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YFL017C
 Done with ΔG prediction for: YFL017C
@@ -4305,11 +4301,10 @@ DeepTMHMM_class: SP
 Structure source: AF2-cleaved
 
 Attempting prediction for YHR057C
-Prediction skipped for YHR057C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHR057C
+Structure used: 0-download-inputs/data-files/AF-P23285-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YHR128W
 Done with ΔG prediction for: YHR128W
@@ -4318,18 +4313,16 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YHR180W
-Prediction skipped for YHR180W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHR180W
+Structure used: 0-download-inputs/data-files/AF-P38868-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YIL162W
-Prediction skipped for YIL162W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YIL162W
+Structure used: 0-download-inputs/data-files/AF-P00724-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YJL153C
 Done with ΔG prediction for: YJL153C
@@ -4748,8 +4741,8 @@ Attempting prediction for YGR014W
 Prediction skipped for YGR014W:
 has_verified_seq       = True
 DeepTMHMM_class         = SP+TM
-final_structure_path    = None
-final_structure_source  = None
+final_structure_path    = 0-download-inputs/data-files/AF-P32334-F1-model_v4-cleaved.pdb
+final_structure_source  = EBI-cleaved
 
 Attempting prediction for YDL166C
 Done with ΔG prediction for: YDL166C
@@ -6919,11 +6912,10 @@ final_structure_path    = 0-download-inputs/data-files/AF-Q03362-F1-model_v4.pdb
 final_structure_source  = EBI
 
 Attempting prediction for YHR211W
-Prediction skipped for YHR211W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHR211W
+Structure used: 0-download-inputs/data-files/AF-P38894-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YDR477W
 Done with ΔG prediction for: YDR477W
@@ -7301,11 +7293,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YDR518W
-Prediction skipped for YDR518W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YDR518W
+Structure used: 0-download-inputs/data-files/AF-P32474-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YJR046W
 Done with ΔG prediction for: YJR046W
@@ -7906,11 +7897,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YHR204W
-Prediction skipped for YHR204W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHR204W
+Structure used: 0-download-inputs/data-files/AF-P38888-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YER128W
 Done with ΔG prediction for: YER128W
@@ -8021,11 +8011,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YER188W
-Prediction skipped for YER188W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YER188W
+Structure used: 0-download-inputs/data-files/AF-P40103-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YFL010C
 Prediction skipped for YFL010C:
@@ -8587,8 +8576,8 @@ Attempting prediction for YOL105C
 Prediction skipped for YOL105C:
 has_verified_seq       = True
 DeepTMHMM_class         = SP+TM
-final_structure_path    = None
-final_structure_source  = None
+final_structure_path    = 0-download-inputs/data-files/AF-Q12215-F1-model_v4-cleaved.pdb
+final_structure_source  = EBI-cleaved
 
 Attempting prediction for YOL145C
 Done with ΔG prediction for: YOL145C
@@ -8908,11 +8897,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YHR215W
-Prediction skipped for YHR215W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHR215W
+Structure used: 0-download-inputs/data-files/AF-P38693-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YOR039W
 Done with ΔG prediction for: YOR039W
@@ -9480,11 +9468,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YGR294W
-Prediction skipped for YGR294W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YGR294W
+Structure used: 0-download-inputs/data-files/AF-P53343-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YHL002W
 Done with ΔG prediction for: YHL002W
@@ -9619,11 +9606,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YHL046C
-Prediction skipped for YHL046C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YHL046C
+Structure used: 0-download-inputs/data-files/AF-P38725-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YHR005C
 Done with ΔG prediction for: YHR005C
@@ -9980,11 +9966,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YIL011W
-Prediction skipped for YIL011W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YIL011W
+Structure used: 0-download-inputs/data-files/AF-P40552-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YMR201C
 Done with ΔG prediction for: YMR201C
@@ -10175,11 +10160,10 @@ final_structure_path    = None
 final_structure_source  = None
 
 Attempting prediction for YLR121C
-Prediction skipped for YLR121C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YLR121C
+Structure used: 0-download-inputs/data-files/AF-Q12303-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YIL163C
 Done with ΔG prediction for: YIL163C
@@ -10975,11 +10959,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YLR157C
-Prediction skipped for YLR157C:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YLR157C
+Structure used: 0-download-inputs/data-files/AF-P0CX77-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YNL023C
 Done with ΔG prediction for: YNL023C
@@ -11426,11 +11409,10 @@ DeepTMHMM_class: GLOB
 Structure source: EBI
 
 Attempting prediction for YOR247W
-Prediction skipped for YOR247W:
-has_verified_seq       = True
-DeepTMHMM_class         = SP
-final_structure_path    = None
-final_structure_source  = None
+Done with ΔG prediction for: YOR247W
+Structure used: 0-download-inputs/data-files/AF-Q08673-F1-model_v4-cleaved.pdb
+DeepTMHMM_class: SP
+Structure source: EBI-cleaved
 
 Attempting prediction for YLR238W
 Done with ΔG prediction for: YLR238W
@@ -12393,4 +12375,4 @@ Structure used: 0-download-inputs/data-files/AF-P0CX60-F1-model_v4.pdb
 DeepTMHMM_class: GLOB
 Structure source: EBI
 
-Total execution time is: 0:08:09.460289
+Total execution time is: 0:08:15.906345
