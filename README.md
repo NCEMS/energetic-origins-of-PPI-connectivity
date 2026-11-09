@@ -173,6 +173,17 @@ After this download completes, update the `AF2_dir` parameter in `config-files/r
 AF2_dir: "/absolute/path/alphafold2_structures/s288c"
 ```
 
+**Note well** - all required data can also be downloaded from Zenodo as described in `0-download-inputs/README.md`. The downloaded tar file contains:
+
+```text
+required-data/0-download-inputs/data-files.tar.gz
+required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz
+required-data/5-dG-calculations/alphafold2-structures.tar.gz
+required-data/6-Rosetta-scoring/all-rosetta-20261027.tar.gz
+```
+
+by copying or moving the unpacked data in each of these subdirectories into the repository directory with the matching name, the same data as those stored on CyVerse may be reused to save time and expense on calculations. 
+
 **Step 5 - Run the pipeline**
 
 ```bash

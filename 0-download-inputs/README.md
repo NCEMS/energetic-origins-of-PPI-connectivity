@@ -2,6 +2,23 @@
 
 Corresponding configuration file section: `DOWNLOAD INPUT FILES`
 
+*N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
+
+### Use Zenodo data repository
+
+In a location on your computer outside of the `energetic-origins-of-PPI-connectivity` repository, download the file `required-data.tar.gz` from Zenodo [HERE]() and unpack it with the command `tar -xvf required-data.tar.gz`. 
+
+Unpack the contents of the `0-download-inputs` directory and move the folder `required-data/0-download-inputs/data-files/` to the `0-download-inputs` directory of the repository. Finally, run the Snakemake command:
+
+```bash
+snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-inputs/Snakefile.Zenodo --configfile config-files/s288c.config
+```
+
+to finish unpacking and pre-processing the required files. See below for a description of the files included. 
+
+
+### Use CyVerse data repository
+
 Anticipated execution time: 60-120 min
 
 This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`
@@ -14,7 +31,6 @@ snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-input
 
 * The runtime of this pipeline depends on connection speeds
 
-*N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
 
 #### Requirements for running this pipeline
 
