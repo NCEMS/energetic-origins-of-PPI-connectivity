@@ -2,6 +2,12 @@
 
 Corresponding configuration file section: `DOWNLOAD INPUT FILES`
 
+Most files required for building ANYI can be downloaded from either Zenodo or CyVerse (see below). However, a subset of files must be downloaded individually:
+
+1. Supplementary Data 1 from `10.1016/j.cels.2017.08.008`; download the .xlsx file, convert it to .csv, and save the resulting file in the 'data-files' subdirectory.
+2. Supplementary Table 4 from `10.1016/j.cels.2017.12.004`; download the .xlsx file, convert it to .csv, and save the resulting file in the 'data-files' subdirectory.
+3. Data file from SciKit Ribo for yeast can be downloaded directly from GitHub: `https://github.com/schatzlab/scikit-ribo_manuscript/blob/master/Data/skr_weinberg_genesTE.csv` and placed in the 'data-files' subdirectory. 
+
 *N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
 
 ### Use Zenodo data repository
