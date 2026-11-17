@@ -134,57 +134,35 @@ conda env create -f docker/environment.yaml
 conda activate anyi
 ```
 
-**Step 3 - Setup `gocommands`**
+**Step 3 - Download required data from Zenodo**
 
-* Follow the instructions to install `gocommands` in `0-download-inputs/README.md`
-* Insert the absolute path to the `gocmd` executable into the file `config-files/minimal-rerun-s288c.config` for the term `gocommands` so that you have the line `gocommands: "/absolute/path/gocmd"` in the `download_inputs` section
-* This series of steps enables the Snakemake pipeline in `0-download-inputs` to pull data from the CyVerse data store
+* To avoid rerunning expensive calculations we need to download some additional data from Zenodo. These downloads represent outputs from particularly long calculations.
 
-**Step 4 - Download required data from CyVerse**
-
-* To avoid rerunning expensive calculations we need to download some additional data from CyVerse. These downloads represent outputs from particularly long calculations.
-
-(1) Rosetta data: from the repo root directory, run the following commands:
+(1) Download the Zenodo archive from [HERE] and untar the archive in a location outside of the repository:
 
 ```bash
-cd 6-Rosetta-scoring
-gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/6-Rosetta-scoring/Rosetta-N10_20251016.tar.gz .
-tar -xvf Rosetta-N10_20251016.tar.gz
-touch processed-data/scores/.all_scores_done
+tar -xvf required-data.tar.gz
+```
+You need the following files and directories:
+
+```text
+required-data/0-download-inputs/data-files/
+required-data/10-predict-PTMs/PTMGPT2-predictions.tar.gz
+required-data/5-dG-calculations/alphafold2-structures.tar.gz
+required-data/6-Rosetta-scoring/all-rosetta-20261027.tar.gz
 ```
 
-(2) PTMGPT2 data: from the repo root directory, run the following commands:
-
-```bash
-cd 10-predict-PTMs
-gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz .
-tar -xvf PTMGPT2-predictions.tar.gz
-```
-
-(3) Updated AlphaFold2 predictions needed by the pipeline: from any directory not in the repository, run the commands:
-
-```bash
-gocmd get --progress /iplant/home/shared/NCEMS/working-groups/energetic-origins/required-data/5-dG-calculations/alphafold2-structures .
-```
-
-After this download completes, update the `AF2_dir` parameter in `config-files/rerun-s288c.config` to point to the `alphafold2-structures/s288c` directory in your downloads folder, like this:
+Copy the contents of the archive directory `required-data/0-download-inputs/data-files/` into the repository directory `required-data/0-download-inputs/data-files/`.
+Copy the archive file `required-data/10-predict-PTMs/PTMGPT2-predictions.tar.gz` into the repository directory `10-predict-PTMs/` and then run `tar -xvf PTMGPT2-predictions.tar.gz` from the `10-predict-PTMs` directory
+Place the archive file `required-data/5-dG-calculations/alphafold2-structures.tar.gz` in any location outside of the repository and unpack it; update the `AF2_dir` parameter in `config-files/rerun-s288c.config` to point to the `alphafold2-structures/s288c` directory in your downloads folder, like this:
 
 ```json
 AF2_dir: "/absolute/path/alphafold2_structures/s288c"
 ```
 
-**Note well** - all required data can also be downloaded from Zenodo as described in `0-download-inputs/README.md`. The downloaded tar file contains:
+Copy the archive file `required-data/6-Rosetta-scoring/all-rosetta-20261027.tar.gz` to the repository directory `6-Rosetta-scoring/` and then run `tar -xvf all-rosetta-20261027.tar.gz`
 
-```text
-required-data/0-download-inputs/data-files.tar.gz
-required-data/11-predict-PTMs/PTMGPT2-predictions.tar.gz
-required-data/5-dG-calculations/alphafold2-structures.tar.gz
-required-data/6-Rosetta-scoring/all-rosetta-20261027.tar.gz
-```
-
-by copying or moving the unpacked data in each of these subdirectories into the repository directory with the matching name, the same data as those stored on CyVerse may be reused to save time and expense on calculations. 
-
-**Step 5 - Run the pipeline**
+**Step 4 - Run the pipeline**
 
 ```bash
 bash minimal-rerun.sh config-files/minimal-rerun-s288c.config
@@ -201,8 +179,6 @@ bash minimal-rerun.sh config-files/minimal-rerun-s288c.config
 * Following these instructions will generate slightly different results from the data currently in `18-finalize/processed-data/20260210-s288c-ANnnotated-Yeast-Interactome.pkl` for Rosetta calculations
 * In some places, you will need to update `config-files/full-rerun-s288c.config` while following the instructions below. 
 
-**Important note**: the Snakemake pipeline in `0-download-inputs/Snakefile` will automatically download fixed versions of certain input data like, for example, open reading frame sequences from SGD. If you want to use updated versions, you will need to manually download them and then update `config-files/full-rerun-s288c.config` to point to these new files. 
-
 **Step 1 - Clone this repository**
 
 ```bash
@@ -217,12 +193,7 @@ conda env create -f docker/environment.yaml
 conda activate anyi
 ```
 
-**Step 3 - Setup `gocommands`**
-
-* Follow the instructions to install `gocommands` in `0-download-inputs/README.md`
-* Insert the absolute path to the `gocmd` executable into the file `config-files/rerun-s288c.config` for the term `gocommands` so that you have the line `gocommands: "/absolute/path/gocmd"` in the `download_inputs` section
-
-**Step 4 - Download required software**
+**Step 3 - Download required software**
 
 1) Rosetta
 
@@ -290,7 +261,7 @@ Note that we direct `gpt_model_path` to a single directory containing all of the
 * You will then need to supply the absolute path to the directory containing protein-level directories each containing predictions in `config-files/full-rerun-s288c.config` for the variable `AF2_dir`.
 * If you want to omit only this step, follow the instructions in `(3) Updated AlphaFold2 predictions needed by the pipeline` at the bottom of the `Run Mode 2` section of the README above.
 
-**Step 5 - execute the complute pipeline**
+**Step 4 - execute the complute pipeline**
 
 * You can run all required commands in series by executing the helper bash script `full-rerun.sh`:
 

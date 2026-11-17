@@ -10,7 +10,7 @@ Most files required for building ANYI can be downloaded from either Zenodo or Cy
 
 *N.B.*: Once all files are downloaded and unpacked, `0-download-inputs/data-files` will contain ~108 GB of data. 
 
-### Use Zenodo data repository
+### Get the Zenodo data repository
 
 In a location on your computer outside of the `energetic-origins-of-PPI-connectivity` repository, download the file `required-data.tar.gz` from Zenodo [HERE]() and unpack it with the command `tar -xvf required-data.tar.gz`. 
 
@@ -21,42 +21,6 @@ snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-input
 ```
 
 to finish unpacking and pre-processing the required files. See below for a description of the files included. 
-
-
-### Use CyVerse data repository
-
-Anticipated execution time: 60-120 min
-
-This section of the overall pipeline handles the download of required files to `0-download-inputs/data-files/`
-
-* To run this step in isolation, navigate to the main project directory (i.e., up one level from `0-download-inputs`) and run the command:
-
-```bash
-snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-inputs/Snakefile --configfile config-files/s288c.config
-```
-
-* The runtime of this pipeline depends on connection speeds
-
-
-#### Requirements for running this pipeline
-
-This pipeline requires that have a working `gocmd` executable on your machine. You will need:
-
-1. a CyVerse account (sign up [here](https://user.cyverse.org/register))
-2. the `gocmd` executable (download it [here](https://learning.cyverse.org/ds/gocommands/installation/))
-3. to `upgrade` your executable with `sudo gocmd upgrade`
-4. initialize 'gocmd' with `gocmd init` (input your credentials as below)
-
-`gocmd init` credentials:
-
-Upon running this command, you will be prompted to input five pieces of information in series on the command line:
-  * (1) `iRODS Host [data.cyverse.org]`: hit enter to accept the default of `data.cyverse.org`
-  * (2) `iRODS Port [1247]`: hit enter to accept the default of `1247`
-  * (3) `iRODS Zone [iplant]`: hit enter to accept the default of `iplant`
-  * (4) `iRODS Username`: type in your CyVerse username and then hit enter
-  * (5) `iRODS Password`: type in your CyVerse password and then hit enter. Note well: you will not see your password or asterisks representing the characters you have entered, but your keystrokes are being recorded. 
-
-You are now ready to run this phase of the overall pipeline - be sure to insert the path to your `gocmd` executable in the `config` file.
 
 #### Summary of data files
 
