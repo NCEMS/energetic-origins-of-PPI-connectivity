@@ -1,4 +1,3 @@
-snakemake -c all --use-conda --conda-frontend conda --snakefile 0-download-inputs/Snakefile --configfile config-files/full-rerun-s288c.config
 snakemake -c all --use-conda --conda-frontend conda --snakefile 1-network-centrality/Snakefile --configfile config-files/full-rerun-s288c.config
 snakemake -c all --use-conda --conda-frontend conda --snakefile 2-sequence-parsing/Snakefile --configfile config-files/full-rerun-s288c.config
 snakemake -c all --use-conda --conda-frontend conda --snakefile 3-uniprot-annotation/Snakefile --configfile config-files/full-rerun-s288c.config

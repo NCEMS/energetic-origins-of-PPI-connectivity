@@ -152,7 +152,7 @@ required-data/5-dG-calculations/alphafold2-structures.tar.gz
 required-data/6-Rosetta-scoring/all-rosetta-20261027.tar.gz
 ```
 
-Copy the contents of the archive directory `required-data/0-download-inputs/data-files/` into the repository directory `required-data/0-download-inputs/data-files/`.
+Copy the contents of the archive directory `required-data/0-download-inputs/data-files/` into the repository directory `required-data/0-download-inputs/data-files/`. You will need to run the `Snakefile.Zenodo` pipeline to unpack and prepare the input files.
 Copy the archive file `required-data/10-predict-PTMs/PTMGPT2-predictions.tar.gz` into the repository directory `10-predict-PTMs/` and then run `tar -xvf PTMGPT2-predictions.tar.gz` from the `10-predict-PTMs` directory
 Place the archive file `required-data/5-dG-calculations/alphafold2-structures.tar.gz` in any location outside of the repository and unpack it; update the `AF2_dir` parameter in `config-files/rerun-s288c.config` to point to the `alphafold2-structures/s288c` directory in your downloads folder, like this:
 
@@ -192,6 +192,10 @@ cd energetic-origins-of-PPI-connectivity
 conda env create -f docker/environment.yaml
 conda activate anyi
 ```
+
+**Step 3 - Download required data**
+
+Follow the steps in the `Run Mode 2` section to download all inputs into `0-download-inputs/data-files` and run the pipeline `Snakefile.Zenodo`
 
 **Step 3 - Download required software**
 
